@@ -1,0 +1,92 @@
+[
+  {
+    "type": "instruction",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "instruction_code",
+          "named": true
+        },
+        {
+          "type": "instruction_number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "mnemonic",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "row",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "instruction",
+          "named": true
+        },
+        {
+          "type": "mnemonic",
+          "named": true
+        },
+        {
+          "type": "other",
+          "named": true
+        },
+        {
+          "type": "row_number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "row",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "comment",
+    "named": true
+  },
+  {
+    "type": "instruction_code",
+    "named": true
+  },
+  {
+    "type": "instruction_number",
+    "named": true
+  },
+  {
+    "type": "other",
+    "named": true
+  },
+  {
+    "type": "row_number",
+    "named": true
+  }
+]
