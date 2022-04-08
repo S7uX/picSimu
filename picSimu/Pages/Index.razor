@@ -1,22 +1,18 @@
 @page "/"
-@implements IAsyncDisposable
+@* @implements IAsyncDisposable *@
 @inject IJSRuntime JS
 
 <PageTitle>Index</PageTitle>
 
 <InputFile OnChange="@LoadFiles" multiple/>
+@* <button disabled="@(InstructionCodes is null ? "true" : "false")" @onclick="RunSimulation">RUN</button> *@
+<button disabled="@(InstructionCodes is null ? true : false)" @onclick="RunSimulation">RUN</button>
 
 @code {
     private IJSObjectReference? module;
     private string? code;
-    
-    private async Task LoadFiles(InputFileChangeEventArgs e)
-    {
-        code = await new StreamReader(e.File.OpenReadStream()).ReadToEndAsync();
-        Console.WriteLine(code);
-        await ParsePic(code);
-    }
-    
+    private string? parsedInstructionCodes;
+    public string[]? InstructionCodes;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -25,23 +21,47 @@
             module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/parser.js");
         }
     }
-    
-    public async ValueTask<string?> ParsePic(string sourceCode)
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        code = await new StreamReader(e.File.OpenReadStream()).ReadToEndAsync();
+    // Console.WriteLine(code);
+        await DisplayPicCode(code);
+        parsedInstructionCodes = await GetInstructionCodes(code);
+        Console.Write("parsedInstructionCodes: " + parsedInstructionCodes);
+        if (parsedInstructionCodes != null)
+        {
+            InstructionCodes = parsedInstructionCodes.Split(",");
+            // runButtonDisabled = false;
+        }
+    }
+
+    public async ValueTask<string?> DisplayPicCode(string sourceCode)
     {
         return module is not null ?
             await module.InvokeAsync<string>("parsePic", sourceCode) : null;
     }
 
-    public async ValueTask DisposeAsync()
+    public async ValueTask<string?> GetInstructionCodes(string sourceCode)
     {
-        // if (module is not null)
-        // {
-        //     await module.DisposeAsync();
-        // }
+        return module is not null ?
+            await module.InvokeAsync<string>("getInstructionCodes", sourceCode) : null;
     }
 
-}
+    public async Task<bool> RunSimulation()
+    {
+        return false;
+    }
 
+    // public async ValueTask DisposeAsync()
+    // {
+    //     if (module is not null)
+    //     {
+    //         await module.DisposeAsync();
+    //     }
+    // }
+
+}
 
 
 <div id="code-block"></div>
