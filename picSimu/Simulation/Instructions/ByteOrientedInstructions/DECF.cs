@@ -2,7 +2,7 @@
 
 public class DECF : ByteOrientedInstruction
 {
-    public DECF(string binaryString) : base(binaryString)
+    public DECF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

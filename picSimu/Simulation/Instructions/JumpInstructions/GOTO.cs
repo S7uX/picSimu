@@ -2,12 +2,13 @@
 
 public class GOTO : JumpInstruction
 {
-    public GOTO(string binaryString) : base(binaryString)
+    public GOTO(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        _pic.Programmcounter = k;
+        return 0;
     }
 }

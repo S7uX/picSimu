@@ -2,7 +2,7 @@
 
 public class INCF : ByteOrientedInstruction
 {
-    public INCF(string binaryString) : base(binaryString)
+    public INCF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

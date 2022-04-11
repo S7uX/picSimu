@@ -2,7 +2,7 @@
 
 public class COMF : ByteOrientedInstruction
 {
-    public COMF(string binaryString) : base(binaryString)
+    public COMF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

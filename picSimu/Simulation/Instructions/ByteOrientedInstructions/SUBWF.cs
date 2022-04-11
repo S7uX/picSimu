@@ -2,7 +2,7 @@
 
 public class SUBWF : ByteOrientedInstruction
 {
-    public SUBWF(string binaryString) : base(binaryString)
+    public SUBWF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

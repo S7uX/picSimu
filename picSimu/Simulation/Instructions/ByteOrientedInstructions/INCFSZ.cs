@@ -2,7 +2,7 @@
 
 public class INCFSZ : ByteOrientedInstruction
 {
-    public INCFSZ(string binaryString) : base(binaryString)
+    public INCFSZ(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

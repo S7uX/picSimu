@@ -2,12 +2,12 @@
 
 public class NOP : ControlInstruciton
 {
-    public NOP(string binaryString) : base(binaryString)
+    public NOP(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        return 0;
     }
 }

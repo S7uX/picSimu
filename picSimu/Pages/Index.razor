@@ -1,4 +1,5 @@
 @page "/"
+@using picSimu.Simulation
 @* @implements IAsyncDisposable *@
 @inject IJSRuntime JS
 
@@ -50,6 +51,8 @@
 
     public async Task<bool> RunSimulation()
     {
+        Pic pic = new Pic();
+        pic.Run(InstructionCodes);
         return false;
     }
 

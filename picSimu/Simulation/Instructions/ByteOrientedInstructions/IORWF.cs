@@ -2,7 +2,7 @@
 
 public class IORWF : ByteOrientedInstruction
 {
-    public IORWF(string binaryString) : base(binaryString)
+    public IORWF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

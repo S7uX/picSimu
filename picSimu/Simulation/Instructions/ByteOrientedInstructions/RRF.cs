@@ -2,7 +2,7 @@
 
 public class RRF : ByteOrientedInstruction
 {
-    public RRF(string binaryString) : base(binaryString)
+    public RRF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

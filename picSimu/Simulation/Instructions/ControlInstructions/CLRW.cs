@@ -2,7 +2,7 @@
 
 public class CLRW : ControlInstruciton
 {
-    public CLRW(string binaryString) : base(binaryString)
+    public CLRW(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

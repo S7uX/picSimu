@@ -2,7 +2,7 @@
 
 public class MOVWF : ByteOrientedInstruction
 {
-    public MOVWF(string binaryString) : base(binaryString)
+    public MOVWF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

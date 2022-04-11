@@ -2,7 +2,7 @@
 
 public class XORWF : ByteOrientedInstruction
 {
-    public XORWF(string binaryString) : base(binaryString)
+    public XORWF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

@@ -2,7 +2,7 @@
 
 public class RLF : ByteOrientedInstruction
 {
-    public RLF(string binaryString) : base(binaryString)
+    public RLF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

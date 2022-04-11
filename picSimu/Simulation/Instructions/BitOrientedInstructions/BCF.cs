@@ -7,7 +7,7 @@ public class BCF : BitOrientedInstruction
         throw new NotImplementedException();
     }
 
-    public BCF(string binaryString) : base(binaryString)
+    public BCF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 }

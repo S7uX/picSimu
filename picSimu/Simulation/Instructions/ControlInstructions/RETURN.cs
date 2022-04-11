@@ -2,7 +2,7 @@
 
 public class RETURN : ControlInstruciton
 {
-    public RETURN(string binaryString) : base(binaryString)
+    public RETURN(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

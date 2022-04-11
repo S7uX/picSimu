@@ -2,7 +2,7 @@
 
 public class RETFIE : ControlInstruciton
 {
-    public RETFIE(string binaryString) : base(binaryString)
+    public RETFIE(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

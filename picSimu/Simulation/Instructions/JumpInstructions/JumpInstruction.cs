@@ -2,10 +2,10 @@
 
 public abstract class JumpInstruction : Instruction
 {
-    public string k { get; set; }
-    
-    protected JumpInstruction(string binaryString) : base(binaryString)
+    public ushort k { get; set; }
+
+    protected JumpInstruction(string binaryString, Pic pic) : base(binaryString, pic)
     {
-        k = binaryString.Substring(3, 11);
+        k = Convert.ToUInt16(binaryString.Substring(3, 11), 2);
     }
 }

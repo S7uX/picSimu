@@ -2,7 +2,7 @@
 
 public class MOVF : ByteOrientedInstruction
 {
-    public MOVF(string binaryString) : base(binaryString)
+    public MOVF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

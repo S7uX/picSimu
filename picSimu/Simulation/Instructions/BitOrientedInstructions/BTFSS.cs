@@ -7,7 +7,7 @@ public class BTFSS : BitOrientedInstruction
         throw new NotImplementedException();
     }
 
-    public BTFSS(string binaryString) : base(binaryString)
+    public BTFSS(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 }

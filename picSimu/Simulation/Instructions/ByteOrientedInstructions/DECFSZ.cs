@@ -2,7 +2,7 @@
 
 public class DECFSZ : ByteOrientedInstruction
 {
-    public DECFSZ(string binaryString) : base(binaryString)
+    public DECFSZ(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

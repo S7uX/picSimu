@@ -2,12 +2,14 @@
 
 public class CALL : JumpInstruction
 {
-    public CALL(string binaryString) : base(binaryString)
+    public CALL(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        _pic.Stack.push(_pic.Programmcounter + 1);
+        _pic.Programmcounter = k;
+        return 0;
     }
 }

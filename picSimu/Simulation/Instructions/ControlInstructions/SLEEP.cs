@@ -2,7 +2,7 @@
 
 public class SLEEP : ControlInstruciton
 {
-    public SLEEP(string binaryString) : base(binaryString)
+    public SLEEP(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

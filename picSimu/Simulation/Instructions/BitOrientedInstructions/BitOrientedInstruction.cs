@@ -2,12 +2,12 @@
 
 public abstract class BitOrientedInstruction : Instruction
 {
-    public string f { get; set; }
-    public string b { get; set; }
+    public ushort f { get; set; }
+    public ushort b { get; set; }
 
-    protected BitOrientedInstruction(string binaryString) : base(binaryString)
+    protected BitOrientedInstruction(string binaryString, Pic pic) : base(binaryString, pic)
     {
-        b = binaryString.Substring(4, 3);
-        f = binaryString.Substring(7, 7);
+        b = Convert.ToUInt16(binaryString.Substring(4, 3), 2);
+        f = Convert.ToUInt16(binaryString.Substring(7, 7), 2);
     }
 }

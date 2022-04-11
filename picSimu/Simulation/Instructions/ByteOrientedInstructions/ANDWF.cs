@@ -2,7 +2,7 @@
 
 public class ANDWF : ByteOrientedInstruction
 {
-    public ANDWF(string binaryString) : base(binaryString)
+    public ANDWF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
     

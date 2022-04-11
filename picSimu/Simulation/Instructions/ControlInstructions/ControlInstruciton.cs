@@ -2,7 +2,7 @@
 
 public abstract class ControlInstruciton : Instruction
 {
-    protected ControlInstruciton(string binaryString) : base(binaryString)
+    protected ControlInstruciton(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 }

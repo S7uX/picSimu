@@ -2,7 +2,7 @@
 
 public class SWAPF : ByteOrientedInstruction
 {
-    public SWAPF(string binaryString) : base(binaryString)
+    public SWAPF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

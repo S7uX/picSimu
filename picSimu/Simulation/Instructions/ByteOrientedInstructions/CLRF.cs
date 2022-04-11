@@ -2,7 +2,7 @@
 
 public class CLRF : ByteOrientedInstruction
 {
-    public CLRF(string binaryString) : base(binaryString)
+    public CLRF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 

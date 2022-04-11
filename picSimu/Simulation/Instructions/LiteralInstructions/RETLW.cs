@@ -2,7 +2,7 @@
 
 public class RETLW : LiteralInstruction
 {
-    public RETLW(string binaryString) : base(binaryString)
+    public RETLW(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
 
