@@ -8,6 +8,7 @@ public class RETURN : ControlInstruciton
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        _pic.Programmcounter = _pic.Stack.pop();
+        return 0;
     }
 }

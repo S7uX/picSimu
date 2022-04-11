@@ -8,6 +8,8 @@ public class RETLW : LiteralInstruction
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        _pic.Programmcounter = _pic.Stack.pop();
+        _pic.wRegister = k;
+        return 0;
     }
 }

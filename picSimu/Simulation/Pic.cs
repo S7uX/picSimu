@@ -29,10 +29,6 @@ public class Pic
 
         while (true)
         {
-            Console.WriteLine("Wregister = " + wRegister);
-            Console.WriteLine("PC = " + Programmcounter);
-            Console.WriteLine("Wregister = " + wRegister);
-            Console.WriteLine("Wregister = " + wRegister);
             _programMemory[Programmcounter].Execute();
         }
     }
