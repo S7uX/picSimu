@@ -29,7 +29,7 @@
     // Console.WriteLine(code);
         await DisplayPicCode(code);
         parsedInstructionCodes = await GetInstructionCodes(code);
-        Console.Write("parsedInstructionCodes: " + parsedInstructionCodes);
+        Console.WriteLine("parsedInstructionCodes: " + parsedInstructionCodes);
         if (parsedInstructionCodes != null)
         {
             InstructionCodes = parsedInstructionCodes.Split(",");

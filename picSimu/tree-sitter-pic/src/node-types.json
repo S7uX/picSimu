@@ -19,6 +19,16 @@
     }
   },
   {
+    "type": "instruction_code",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "instruction_number",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "mnemonic",
     "named": true,
     "fields": {}
@@ -71,14 +81,6 @@
   },
   {
     "type": "comment",
-    "named": true
-  },
-  {
-    "type": "instruction_code",
-    "named": true
-  },
-  {
-    "type": "instruction_number",
     "named": true
   },
   {

@@ -71,4 +71,8 @@
       <TypeScriptCompile Include="tree-sitter-pic\node_modules\tree-sitter-cli\dsl.d.ts" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\wasm\tree-sitter-pic.wasm" />
+    </ItemGroup>
+
 </Project>

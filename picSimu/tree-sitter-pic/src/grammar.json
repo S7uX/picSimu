@@ -76,7 +76,7 @@
     },
     "instruction_number": {
       "type": "PATTERN",
-      "value": "\\d{4}"
+      "value": "[0-9a-fA-F]{4}"
     },
     "instruction_code": {
       "type": "PATTERN",

@@ -13,6 +13,7 @@ export function parsePic(sourceCode) {
                 if (row.type === "row") {
                     const rowSpan = document.createElement('span');
                     for (const rowElement of row.children) {
+                        // console.log(row.text)
                         const whitespaceLength = rowElement.startPosition.column - rowLength;
                         rowSpan.insertAdjacentText("beforeend", " ".repeat(rowElement.startPosition.column - rowLength));
                         const elementHtml = `<span class="${rowElement.type}">${rowElement.text}<span/>`

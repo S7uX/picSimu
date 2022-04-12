@@ -1,5 +1,13 @@
 Emscripten 2.0.17 or earlier zum bauen
+
+./emsdk install 2.0.17
+./emsdk activate 2.0.17
+source /opt/user/emsdk/emsdk_env.sh
+
 https://github.com/tree-sitter/tree-sitter/issues/1098#issuecomment-842326203
 
- export PATH=$PATH:./node_modules/.bin
- source /opt/user/emsdk/emsdk_env.sh
+export PATH=$PATH:./node_modules/.bin
+tree-sitter generate
+tree-siiter parse example.LST
+
+

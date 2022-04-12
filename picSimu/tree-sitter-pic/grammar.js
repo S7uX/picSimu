@@ -18,7 +18,7 @@ module.exports = grammar({
             $.instruction_code
         ),
         
-        instruction_number: $ => /\d{4}/,
+        instruction_number: $ => /[0-9a-fA-F]{4}/,
         
         instruction_code: $ => /[0-9a-fA-F]{4}/,
 
