@@ -24,7 +24,7 @@ export async function parsePic(sourceCode) {
                 rowSpan.insertAdjacentHTML("beforeend", elementHtml)
                 rowLength += whitespaceLength + rowElement.text.length
             }
-            rowSpan.insertAdjacentText("beforeend", "\n");
+            rowSpan.insertAdjacentText("beforeend", "\n");  
             codeBlock.appendChild(rowSpan);
         }
     }
