@@ -1,33 +1,35 @@
-export function parsePic(sourceCode) {
+export async function parsePic(sourceCode) {
     console.log("parsePic invoked");
+
     const codeBlock = document.createElement('pre');
-    Parser.init().then(() => {
-        const parser = new Parser;
-        Parser.Language.load("wasm/tree-sitter-pic.wasm").then(Pic => {
-            parser.setLanguage(Pic);
-            const tree = parser.parse(sourceCode);
-            console.log(tree.rootNode);
 
-            for (const row of tree.rootNode.children) {
-                let rowLength = 0;
-                if (row.type === "row") {
-                    const rowSpan = document.createElement('span');
-                    for (const rowElement of row.children) {
-                        // console.log(row.text)
-                        const whitespaceLength = rowElement.startPosition.column - rowLength;
-                        rowSpan.insertAdjacentText("beforeend", " ".repeat(rowElement.startPosition.column - rowLength));
-                        const elementHtml = `<span class="${rowElement.type}">${rowElement.text}<span/>`
-                        rowSpan.insertAdjacentHTML("beforeend", elementHtml)
-                        rowLength += whitespaceLength + rowElement.text.length
-                    }
-                    rowSpan.insertAdjacentText("beforeend", "\n");
-                    codeBlock.appendChild(rowSpan);
-                }
+    await Parser.init();
+    const parser = new Parser;
+    const PicLang = await Parser.Language.load("wasm/tree-sitter-pic.wasm")
+    parser.setLanguage(PicLang);
+    
+    const tree = parser.parse(sourceCode);
+    console.log("syntax tree:");
+    console.log(tree.rootNode);
+
+    for (const row of tree.rootNode.children) {
+        let rowLength = 0;
+        if (row.type === "row") {
+            const rowSpan = document.createElement('span');
+            for (const rowElement of row.children) {
+                // console.log(row.text)
+                const whitespaceLength = rowElement.startPosition.column - rowLength;
+                rowSpan.insertAdjacentText("beforeend", " ".repeat(rowElement.startPosition.column - rowLength));
+                const elementHtml = `<span class="${rowElement.type}">${rowElement.text}<span/>`
+                rowSpan.insertAdjacentHTML("beforeend", elementHtml)
+                rowLength += whitespaceLength + rowElement.text.length
             }
+            rowSpan.insertAdjacentText("beforeend", "\n");
+            codeBlock.appendChild(rowSpan);
+        }
+    }
 
-            document.getElementById("code-block").replaceChildren(codeBlock);
-        });
-    });
+    document.getElementById("code-block").replaceChildren(codeBlock);
 }
 
 export async function getInstructionCodes(sourceCode) {
@@ -51,6 +53,6 @@ export async function getInstructionCodes(sourceCode) {
         }
     }
     console.log("parsed instruction codes " + returnString);
-    
+
     return returnString.slice(0, -1); // remove last comma
 }
