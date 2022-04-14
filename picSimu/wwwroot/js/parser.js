@@ -41,7 +41,7 @@ export async function getInstructionCodes(sourceCode) {
     parser.setLanguage(PicLang);
     const tree = parser.parse(sourceCode);
 
-    let returnString = "";
+    let returnString = ""; // comma separated instruction codes 
     for (const row of tree.rootNode.children) {
         if (row.type === "row") {
             for (const rowElement of row.children) {
