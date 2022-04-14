@@ -29,11 +29,10 @@
     // Console.WriteLine(code);
         await DisplayPicCode(code);
         parsedInstructionCodes = await GetInstructionCodes(code);
-        Console.WriteLine("parsedInstructionCodes: " + parsedInstructionCodes);
+        Console.WriteLine("parsed instruction codes: " + parsedInstructionCodes);
         if (parsedInstructionCodes != null)
         {
             InstructionCodes = parsedInstructionCodes.Split(",");
-            // runButtonDisabled = false;
         }
     }
 
@@ -51,8 +50,11 @@
 
     public async Task<bool> RunSimulation()
     {
-        Pic pic = new Pic();
-        pic.Run(InstructionCodes);
+        var pic = new Pic();
+        if (InstructionCodes != null)
+        {
+            pic.Run(InstructionCodes);
+        }
         return false;
     }
 

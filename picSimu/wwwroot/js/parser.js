@@ -25,7 +25,7 @@ export function parsePic(sourceCode) {
                 }
             }
 
-            document.getElementById("code-block").appendChild(codeBlock);
+            document.getElementById("code-block").replaceChildren(codeBlock);
         });
     });
 }
