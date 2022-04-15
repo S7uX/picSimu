@@ -5,7 +5,7 @@ namespace picSimu.Simulation;
 
 public static class InstructionDecoder
 {
-    public static Instruction? Decode(string instructionHexString, Pic pic)
+    public static Instruction Decode(string instructionHexString, Pic pic)
     {
         string binaryString = String.Join(String.Empty,
             instructionHexString.Select(c => Convert.ToString(Convert.ToInt32

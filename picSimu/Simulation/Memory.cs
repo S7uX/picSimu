@@ -126,5 +126,6 @@ public class Memory
         }
 
         _register[address] = value;
+        
     }
 }
