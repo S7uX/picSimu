@@ -8,6 +8,22 @@ public class COMF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        uint result = ~_pic.Memory.ReadRegister(f);
+        result &= 255;
+        if (d == 0)
+        {
+            _pic.wRegister = result;
+        }
+        else
+        {
+            _pic.Memory.WriteRegister(f, result);
+        }
+
+        if (result == 0)
+        {
+            //Set Zero-Flag
+        }
+        _pic.Programmcounter++;
+        return 0;
     }
 }

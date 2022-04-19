@@ -2,14 +2,14 @@ namespace picSimu.Simulation;
 
 public class Memory
 {
-    private ushort[] register = new ushort[256];
+    private uint[] register = new uint[256];
 
     public bool BankSelect()
     {
         return Lib.IsBitSet(register[3], 5);
     }
 
-    public ushort ReadRegister(uint address)
+    public uint ReadRegister(uint address)
     {
         if (!BankSelect())
         {
@@ -55,7 +55,7 @@ public class Memory
         return register[address];
     }
 
-    public void WriteRegister(uint address, ushort value)
+    public void WriteRegister(uint address, uint value)
     {
         if (!BankSelect())
         {

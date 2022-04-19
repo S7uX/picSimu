@@ -8,7 +8,27 @@ public class ANDWF : ByteOrientedInstruction
     
     public override int Execute()
     {
-        throw new NotImplementedException();
+        uint result = _pic.wRegister & _pic.Memory.ReadRegister(f);
+        if (result == 0)
+        {
+            //Zeroflag auf 1
+        }
+        else
+        {
+            //Zeroflag auf 0
+        }
+
+        if (d == 0)
+        {
+            _pic.wRegister = result;
+        }
+        else
+        {
+            _pic.Memory.WriteRegister(f, result);
+        }
+        
+        _pic.Programmcounter++;
+        return 0;
     }
 
 

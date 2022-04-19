@@ -8,6 +8,8 @@ public class MOVWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        _pic.Memory.WriteRegister(f, _pic.wRegister);
+        _pic.Programmcounter++;
+        return 0;
     }
 }

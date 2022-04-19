@@ -8,6 +8,26 @@ public class XORWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        uint result = _pic.wRegister ^ _pic.Memory.ReadRegister(f);
+
+        if (d == 0)
+        {
+            _pic.wRegister = result;
+        }
+        else
+        {
+            _pic.Memory.WriteRegister(f, result);
+        }
+
+        if (result == 0)
+        {
+            //Set Zeroflag
+        }
+        else
+        {
+            //Set Zeroflag
+        }
+        _pic.Programmcounter++;
+        return 0;
     }
 }

@@ -8,6 +8,26 @@ public class IORWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        uint result = _pic.Memory.ReadRegister(f) | _pic.wRegister;
+        if (result == 0)
+        {
+            //Zeroflag auf 1
+        }
+        else
+        {
+            //Zeroflag auf 0
+        }
+
+        if (d == 0)
+        {
+            _pic.wRegister = result;
+        }
+        else
+        {
+            _pic.Memory.WriteRegister(f, result);
+        }
+
+        _pic.Programmcounter++;
+        return 0;
     }
 }

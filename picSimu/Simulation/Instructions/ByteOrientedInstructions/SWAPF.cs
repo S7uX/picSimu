@@ -8,6 +8,23 @@ public class SWAPF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        string binarysString = Convert.ToString(_pic.Memory.ReadRegister(f), 2);
+        binarysString = binarysString.PadLeft(8, '0');
+        string lowerNipple = binarysString.Substring(4, 4);
+        string upperNipple = binarysString.Substring(0, 4);
+        string resultString = lowerNipple + upperNipple;
+        uint result = Convert.ToUInt32(resultString, 2);
+
+        if (d == 0)
+        {
+            _pic.wRegister = result;
+        }
+        else
+        {
+            _pic.Memory.WriteRegister(f, result);
+        }
+        
+        _pic.Programmcounter++;
+        return 0;
     }
 }

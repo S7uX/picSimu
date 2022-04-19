@@ -8,6 +8,9 @@ public class CLRF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        _pic.Memory.WriteRegister(f, 0);
+        //Set Zeroflag
+        _pic.Programmcounter++;
+        return 0;
     }
 }

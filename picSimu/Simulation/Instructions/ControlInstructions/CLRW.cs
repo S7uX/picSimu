@@ -8,6 +8,9 @@ public class CLRW : ControlInstruciton
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        _pic.wRegister = 0;
+        //Zero-Flag = 1
+        _pic.Programmcounter++;
+        return 0;
     }
 }

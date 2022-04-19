@@ -10,12 +10,15 @@ public class Pic
     private Instruction[] _programMemory;
     public Instruction[] ProgramMemory => _programMemory;
 
+    public readonly Memory Memory;
+
     public CircularStack Stack;
 
     public Pic()
     {
         _programMemory = new Instruction[1024];
         Stack =  new CircularStack(8);
+        Memory = new Memory();
     }
 
     public void Run(string[] hexStrings)
