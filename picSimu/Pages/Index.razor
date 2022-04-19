@@ -14,7 +14,8 @@
     private string? code;
     private string? parsedInstructionCodes;
     public string[]? InstructionCodes;
-    
+    private Pic? pic;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -29,11 +30,11 @@
     // Console.WriteLine(code);
         await DisplayPicCode(code);
         parsedInstructionCodes = await GetInstructionCodes(code);
-        Console.WriteLine("parsedInstructionCodes: " + parsedInstructionCodes);
+        Console.WriteLine("parsed instruction codes: " + parsedInstructionCodes);
         if (parsedInstructionCodes != null)
         {
             InstructionCodes = parsedInstructionCodes.Split(",");
-            // runButtonDisabled = false;
+            pic = new Pic();
         }
     }
 
@@ -51,8 +52,10 @@
 
     public async Task<bool> RunSimulation()
     {
-        Pic pic = new Pic();
-        pic.Run(InstructionCodes);
+        if (InstructionCodes != null && pic != null)
+        {
+            pic.Run(InstructionCodes);
+        }
         return false;
     }
 
@@ -66,5 +69,39 @@
 
 }
 
-
-<div id="code-block"></div>
+<div class="d-flex flex-row justify-content-between pt-4">
+    <div id="code-block" class="code-block"> </div>
+    <div>
+        <h2> Memory </h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Address Bank 0</th>
+                <th>Bank 0</th>
+                <th>Address Bank 1</th>
+                <th>Bank 1</th>
+            </tr>
+            </thead>
+            <tbody>
+            @{
+                if (pic != null)
+                {
+                    int i = 0;
+                    int y;
+                    @foreach (var register in pic.ProgramMemory)
+                    {
+                        y = i + 0x80;
+                        <tr>
+                            <td title="@i">@i.ToString("X2")h</td>
+                            <td>0</td>
+                            <td title="@y">@y.ToString("X2")h</td>
+                            <td>0</td>
+                        </tr>
+                        i++;
+                    }
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -2,12 +2,28 @@ namespace picSimu.Simulation;
 
 public class Memory
 {
-    private uint[] register = new uint[256];
+    private readonly uint[] _register = new uint[256];
 
     public bool BankSelect()
     {
-        return Lib.IsBitSet(register[3], 5);
+        return Lib.IsBitSet(_register[3], 5);
     }
+
+    public void SetCarryFlag(bool zeroFlag)
+    {
+        WriteRegister(0, ReadRegister(3).SetBit(zeroFlag, 0));
+    }
+
+    public void SetDigitCarryFlag(bool zeroFlag)
+    {
+        WriteRegister(1, ReadRegister(3).SetBit(zeroFlag, 1));
+    }
+
+    public void SetZeroFlag(bool zeroFlag)
+    {
+        WriteRegister(3, ReadRegister(3).SetBit(zeroFlag, 2));
+    }
+
 
     public uint ReadRegister(uint address)
     {
@@ -15,7 +31,7 @@ public class Memory
         {
             // bank 0
             address = address.SetBitTo0(7);
-            if (0x30 <= address || address == 7)
+            if (0x30 <= address || address == 7) // Unimplemented data memory location; read as ’0’.
             {
                 return 0;
             }
@@ -24,7 +40,7 @@ public class Memory
         {
             // bank 1
             address = address.SetBitTo1(7);
-            if (0xD0 <= address || address == 0x87)
+            if (0xD0 <= address || address == 0x87) // Unimplemented data memory location; read as ’0’.
             {
                 return 0;
             }
@@ -34,25 +50,25 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
-                return register[0];
+                return _register[0];
             case 2: // pcl
             case 0x82:
-                return register[2];
+                return _register[2];
             case 3: // status
             case 0x83:
-                return register[3];
+                return _register[3];
             case 4: // fsr
             case 0x84:
-                return register[4];
+                return _register[4];
             case 0x0A: // pclath
             case 0x8A:
-                return register[0x0A];
+                return _register[0x0A];
             case 0x0B: // intcon
             case 0X8B:
-                return register[0x0B];
+                return _register[0x0B];
         }
 
-        return register[address];
+        return _register[address];
     }
 
     public void WriteRegister(uint address, uint value)
@@ -80,35 +96,36 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
-                register[0] = value;
-                register[0x80] = value;
+                _register[0] = value;
+                _register[0x80] = value;
                 return;
             case 2: // pcl
             case 0x82:
-                register[2] = value;
-                register[0x82] = value;
+                _register[2] = value;
+                _register[0x82] = value;
                 return;
             case 3: // status
             case 0x83:
-                register[3] = value;
+                _register[3] = value;
                 return;
             case 4: // fsr
             case 0x84:
-                register[4] = value;
-                register[0X84] = value;
+                _register[4] = value;
+                _register[0X84] = value;
                 return;
             case 0x0A: // pclath
             case 0x8A:
-                register[0x0A] = value;
-                register[0x8A] = value;
+                _register[0x0A] = value;
+                _register[0x8A] = value;
                 return;
             case 0x0B: // intcon
             case 0X8B:
-                register[0x0B] = value;
-                register[0x8B] = value;
+                _register[0x0B] = value;
+                _register[0x8B] = value;
                 return;
         }
 
-        register[address] = value;
+        _register[address] = value;
+        
     }
 }
