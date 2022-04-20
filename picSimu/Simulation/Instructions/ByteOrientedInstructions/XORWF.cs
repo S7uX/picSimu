@@ -10,6 +10,15 @@ public class XORWF : ByteOrientedInstruction
     {
         uint result = _pic.wRegister ^ _pic.Memory.ReadRegister(f);
 
+        if (result == 0)
+        {
+            _pic.Memory.SetZeroFlag(true);
+        }
+        else
+        {
+            _pic.Memory.SetZeroFlag(false);
+        }
+        
         if (d == 0)
         {
             _pic.wRegister = result;
@@ -17,15 +26,6 @@ public class XORWF : ByteOrientedInstruction
         else
         {
             _pic.Memory.WriteRegister(f, result);
-        }
-
-        if (result == 0)
-        {
-            //Set Zeroflag
-        }
-        else
-        {
-            //Set Zeroflag
         }
         _pic.Programmcounter++;
         return 0;

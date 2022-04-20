@@ -11,11 +11,11 @@ public class ANDWF : ByteOrientedInstruction
         uint result = _pic.wRegister & _pic.Memory.ReadRegister(f);
         if (result == 0)
         {
-            //Zeroflag auf 1
+            _pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            //Zeroflag auf 0
+            _pic.Memory.SetZeroFlag(false);
         }
 
         if (d == 0)

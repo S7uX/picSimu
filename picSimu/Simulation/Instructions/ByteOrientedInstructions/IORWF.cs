@@ -11,11 +11,11 @@ public class IORWF : ByteOrientedInstruction
         uint result = _pic.Memory.ReadRegister(f) | _pic.wRegister;
         if (result == 0)
         {
-            //Zeroflag auf 1
+            _pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            //Zeroflag auf 0
+            _pic.Memory.SetZeroFlag(false);
         }
 
         if (d == 0)

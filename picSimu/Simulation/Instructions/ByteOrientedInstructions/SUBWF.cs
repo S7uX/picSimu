@@ -11,32 +11,32 @@ public class SUBWF : ByteOrientedInstruction
         uint result = _pic.Memory.ReadRegister(f) - _pic.wRegister;
         if (result == 0)
         {
-            //ZeroFlag = 1;
+            _pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            //ZeroFlag = 0;
+            _pic.Memory.SetZeroFlag(false);
         }
 
         if (result > 255)
         {
             result &= 255; //Maskierung auf nur lowest 8 Bit
-            //Carryflag = 1;
+            _pic.Memory.SetCarryFlag(true);
         }
         else
         {
-            //Carryflag = 0;
+            _pic.Memory.SetCarryFlag(false);
         }
 
         if (d == 0)
         {
             if (_pic.wRegister < 15 && result > 15)
             {
-                //CarryDigitFlag = 1;
+                _pic.Memory.SetDigitCarryFlag(true);
             }
             else
             {
-                //CarryDigitFlag = 0;
+                _pic.Memory.SetDigitCarryFlag(false);
             }
 
             _pic.wRegister = result;
@@ -45,11 +45,11 @@ public class SUBWF : ByteOrientedInstruction
         {
             if (_pic.Memory.ReadRegister(f) < 15 && result > 15)
             {
-                //CarryDigitFlag = 1;
+                _pic.Memory.SetDigitCarryFlag(true);
             }
             else
             {
-                //CarryDigitFlag = 0;
+                _pic.Memory.SetDigitCarryFlag(false);
             }
 
             _pic.Memory.WriteRegister(f, result);

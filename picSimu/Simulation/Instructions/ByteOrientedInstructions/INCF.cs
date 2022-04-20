@@ -24,7 +24,11 @@ public class INCF : ByteOrientedInstruction
 
         if (result == 0)
         {
-            //set Zero-Flag 
+            _pic.Memory.SetZeroFlag(true);
+        }
+        else
+        {
+            _pic.Memory.SetZeroFlag(false);
         }
         _pic.Programmcounter++;
         return 0;
