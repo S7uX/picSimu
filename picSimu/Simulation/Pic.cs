@@ -21,7 +21,7 @@ public class Pic
         Memory = new Memory();
     }
 
-    public void Run(string[] hexStrings)
+    public void LoadInstructionCodes(string[] hexStrings)
     {
         int i = 0;
         foreach (var hexString in hexStrings)
@@ -29,10 +29,24 @@ public class Pic
             _programMemory[i] = InstructionDecoder.Decode(hexString, this);
             i++;
         }
+    }
+    public void Run()
+    {
+        //TODO
+    }
 
-        while (true)
-        {
-            _programMemory[Programmcounter].Execute();
-        }
+    public void Step()
+    {
+        _programMemory[Programmcounter].Execute();
+    }
+
+    public void Stop()
+    {
+        //TODO
+    }
+
+    public void Reset()
+    {
+        
     }
 }

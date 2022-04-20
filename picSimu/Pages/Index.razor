@@ -7,7 +7,10 @@
 
 <InputFile OnChange="@LoadFiles" multiple/>
 @* <button disabled="@(InstructionCodes is null ? "true" : "false")" @onclick="RunSimulation">RUN</button> *@
-<button disabled="@(InstructionCodes is null ? true : false)" @onclick="RunSimulation">RUN</button>
+<button disabled="@(InstructionCodes is null ? true : false)" @onclick="RunSimulation">Start</button>
+<button disabled="@(InstructionCodes is null ? true : false)" @onclick="StopSimulation">Stop</button>
+<button disabled="@(InstructionCodes is null ? true : false)" @onclick="StepSimulation">Step</button>
+<button disabled="@(InstructionCodes is null ? true : false)" @onclick="ResetSimulation">Reset</button>
 
 @code {
     private IJSObjectReference? module;
@@ -27,7 +30,6 @@
     private async Task LoadFiles(InputFileChangeEventArgs e)
     {
         code = await new StreamReader(e.File.OpenReadStream()).ReadToEndAsync();
-    // Console.WriteLine(code);
         await DisplayPicCode(code);
         parsedInstructionCodes = await GetInstructionCodes(code);
         Console.WriteLine("parsed instruction codes: " + parsedInstructionCodes);
@@ -35,6 +37,11 @@
         {
             InstructionCodes = parsedInstructionCodes.Split(",");
             pic = new Pic();
+
+            if (InstructionCodes != null && pic != null)
+            {
+                pic.LoadInstructionCodes(InstructionCodes);
+            }
         }
     }
 
@@ -54,7 +61,34 @@
     {
         if (InstructionCodes != null && pic != null)
         {
-            pic.Run(InstructionCodes);
+            pic.Run();
+        }
+        return false;
+    }
+    
+    public async Task<bool> StopSimulation()
+    {
+        if (InstructionCodes != null && pic != null)
+        {
+            pic.Stop();
+        }
+        return false;
+    }
+    
+    public async Task<bool> StepSimulation()
+    {
+        if (InstructionCodes != null && pic != null)
+        {
+            pic.Step();
+        }
+        return false;
+    }
+    
+    public async Task<bool> ResetSimulation()
+    {
+        if (InstructionCodes != null && pic != null)
+        {
+            pic.Reset();
         }
         return false;
     }
@@ -88,7 +122,7 @@
                 {
                     int i = 0;
                     int y;
-                    @foreach (var register in pic.ProgramMemory)
+                    @foreach (var register in pic.Memory.Register)
                     {
                         y = i + 0x80;
                         <tr>

@@ -2,11 +2,11 @@ namespace picSimu.Simulation;
 
 public class Memory
 {
-    private readonly uint[] _register = new uint[256];
+    public readonly uint[] Register = new uint[128];
 
     public bool BankSelect()
     {
-        return Lib.IsBitSet(_register[3], 5);
+        return Lib.IsBitSet(Register[3], 5);
     }
 
     public void SetCarryFlag(bool zeroFlag)
@@ -50,25 +50,25 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
-                return _register[0];
+                return Register[0];
             case 2: // pcl
             case 0x82:
-                return _register[2];
+                return Register[2];
             case 3: // status
             case 0x83:
-                return _register[3];
+                return Register[3];
             case 4: // fsr
             case 0x84:
-                return _register[4];
+                return Register[4];
             case 0x0A: // pclath
             case 0x8A:
-                return _register[0x0A];
+                return Register[0x0A];
             case 0x0B: // intcon
             case 0X8B:
-                return _register[0x0B];
+                return Register[0x0B];
         }
 
-        return _register[address];
+        return Register[address];
     }
 
     public void WriteRegister(uint address, uint value)
@@ -96,36 +96,36 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
-                _register[0] = value;
-                _register[0x80] = value;
+                Register[0] = value;
+                Register[0x80] = value;
                 return;
             case 2: // pcl
             case 0x82:
-                _register[2] = value;
-                _register[0x82] = value;
+                Register[2] = value;
+                Register[0x82] = value;
                 return;
             case 3: // status
             case 0x83:
-                _register[3] = value;
+                Register[3] = value;
                 return;
             case 4: // fsr
             case 0x84:
-                _register[4] = value;
-                _register[0X84] = value;
+                Register[4] = value;
+                Register[0X84] = value;
                 return;
             case 0x0A: // pclath
             case 0x8A:
-                _register[0x0A] = value;
-                _register[0x8A] = value;
+                Register[0x0A] = value;
+                Register[0x8A] = value;
                 return;
             case 0x0B: // intcon
             case 0X8B:
-                _register[0x0B] = value;
-                _register[0x8B] = value;
+                Register[0x0B] = value;
+                Register[0x8B] = value;
                 return;
         }
 
-        _register[address] = value;
+        Register[address] = value;
         
     }
 }
