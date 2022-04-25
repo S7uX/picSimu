@@ -153,9 +153,9 @@
                 {
                     <tr>
                         <td title="@pic.wRegister">@pic.wRegister.ToString("X2")h</td>
-                        <td>@pic.Memory.GetCarryFlag()</td>
-                        <td>@pic.Memory.GetDigitCarryFlag()</td>
-                        <td>@pic.Memory.GetZeroFlag()</td>
+                        <td>@Convert.ToByte(pic.Memory.GetCarryFlag())</td>
+                        <td>@Convert.ToByte(pic.Memory.GetDigitCarryFlag())</td>
+                        <td>@Convert.ToByte(pic.Memory.GetZeroFlag())</td>
                     </tr>
                 }
             }
