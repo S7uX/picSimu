@@ -136,4 +136,30 @@
             </tbody>
         </table>
     </div>
+    <div>
+        <h2> State </h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>W</th>
+                <th>C</th>
+                <th>DC</th>
+                <th>Z</th>
+            </tr>
+            </thead>
+            <tbody>
+            @{
+                if (pic != null)
+                {
+                    <tr>
+                        <td title="@pic.wRegister">@pic.wRegister.ToString("X2")h</td>
+                        <td>@pic.Memory.GetCarryFlag()</td>
+                        <td>@pic.Memory.GetDigitCarryFlag()</td>
+                        <td>@pic.Memory.GetZeroFlag()</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
 </div>
