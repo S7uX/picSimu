@@ -126,9 +126,9 @@
                         y = i + 0x80;
                         <tr>
                             <td title="@i">@i.ToString("X2")h</td>
-                            <td>@pic.Memory.ReadRegister(i)</td>
+                            <td title="@pic.Memory.ReadRegister(i)">@pic.Memory.ReadRegister(i).ToString("X2")h</td>
                             <td title="@y">@y.ToString("X2")h</td>
-                            <td>@pic.Memory.ReadRegister(y)</td>
+                            <td title="@pic.Memory.ReadRegister(y)">@pic.Memory.ReadRegister(y).ToString("X2")h</td>
                         </tr>
                     }
                 }
