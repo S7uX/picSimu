@@ -101,6 +101,11 @@
     //     }
     // }
 
+    public string formatValue(uint value)
+    {
+        return pic.Memory.ReadRegister(value) + "\n" + Convert.ToString(pic.Memory.ReadRegister(value), 2).PadLeft(8, '0');
+    }
+
 }
 
 <div class="d-flex flex-row justify-content-between pt-4">
@@ -126,9 +131,9 @@
                         y = i + 0x80;
                         <tr>
                             <td title="@i">@i.ToString("X2")h</td>
-                            <td title="@pic.Memory.ReadRegister(i)">@pic.Memory.ReadRegister(i).ToString("X2")h</td>
+                            <td title="@formatValue(pic.Memory.ReadRegister(i))">@pic.Memory.ReadRegister(i).ToString("X2")h</td>
                             <td title="@y">@y.ToString("X2")h</td>
-                            <td title="@pic.Memory.ReadRegister(y)">@pic.Memory.ReadRegister(y).ToString("X2")h</td>
+                            <td title="@formatValue(pic.Memory.ReadRegister(y))">@pic.Memory.ReadRegister(y).ToString("X2")h</td>
                         </tr>
                     }
                 }
@@ -152,7 +157,7 @@
                 if (pic != null)
                 {
                     <tr>
-                        <td title="@pic.wRegister">@pic.wRegister.ToString("X2")h</td>
+                        <td title="@formatValue(pic.wRegister)">@pic.wRegister.ToString("X2")h</td>
                         <td>@Convert.ToByte(pic.Memory.GetCarryFlag())</td>
                         <td>@Convert.ToByte(pic.Memory.GetDigitCarryFlag())</td>
                         <td>@Convert.ToByte(pic.Memory.GetZeroFlag())</td>
