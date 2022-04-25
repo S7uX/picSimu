@@ -11,7 +11,7 @@ public class Memory
 
     public void SetCarryFlag(bool zeroFlag)
     {
-        WriteRegister(0, ReadRegister(3).SetBit(zeroFlag, 0));
+        WriteRegister(3, ReadRegister(3).SetBit(zeroFlag, 0));
     }
 
     public bool GetCarryFlag()
@@ -21,7 +21,7 @@ public class Memory
 
     public void SetDigitCarryFlag(bool zeroFlag)
     {
-        WriteRegister(1, ReadRegister(3).SetBit(zeroFlag, 1));
+        WriteRegister(3, ReadRegister(3).SetBit(zeroFlag, 1));
     }
 
     public bool GetDigitCarryFlag()

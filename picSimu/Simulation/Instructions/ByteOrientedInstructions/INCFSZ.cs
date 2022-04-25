@@ -7,7 +7,25 @@ public class INCFSZ : ByteOrientedInstruction
     }
 
     public override int Execute()
-    {
-        throw new NotImplementedException();
+    {        
+        var val = _pic.Memory.ReadRegister(f);
+        val++;
+        val &= 255;
+
+        if (d == 0)
+        {
+            _pic.wRegister = val;
+        }
+        else
+        {
+            _pic.Memory.WriteRegister(f, val);
+        }
+
+        if (val == 0)
+        {
+            _pic.Programmcounter++; //NOP
+        }
+        _pic.Programmcounter++;
+        return 0;
     }
 }
