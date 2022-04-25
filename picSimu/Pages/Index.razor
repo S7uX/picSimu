@@ -65,7 +65,7 @@
         }
         return false;
     }
-    
+
     public async Task<bool> StopSimulation()
     {
         if (InstructionCodes != null && pic != null)
@@ -74,7 +74,7 @@
         }
         return false;
     }
-    
+
     public async Task<bool> StepSimulation()
     {
         if (InstructionCodes != null && pic != null)
@@ -83,7 +83,7 @@
         }
         return false;
     }
-    
+
     public async Task<bool> ResetSimulation()
     {
         if (InstructionCodes != null && pic != null)
@@ -120,18 +120,16 @@
             @{
                 if (pic != null)
                 {
-                    int i = 0;
-                    int y;
-                    @foreach (var register in pic.Memory.Register)
+                    uint y;
+                    @for (uint i = 0; i < pic.Memory.Register.Length / 2; i++)
                     {
                         y = i + 0x80;
                         <tr>
                             <td title="@i">@i.ToString("X2")h</td>
-                            <td>0</td>
+                            <td>@pic.Memory.ReadRegister(i)</td>
                             <td title="@y">@y.ToString("X2")h</td>
-                            <td>0</td>
+                            <td>@pic.Memory.ReadRegister(y)</td>
                         </tr>
-                        i++;
                     }
                 }
             }

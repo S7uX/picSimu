@@ -2,7 +2,7 @@ namespace picSimu.Simulation;
 
 public class Memory
 {
-    public readonly uint[] Register = new uint[128];
+    public readonly uint[] Register = new uint[256];
 
     public bool BankSelect()
     {
@@ -13,15 +13,30 @@ public class Memory
     {
         WriteRegister(0, ReadRegister(3).SetBit(zeroFlag, 0));
     }
+    
+    public bool GetCarryFlag()
+    {
+        return Lib.IsBitSet(ReadRegister(3), 0);
+    }
 
     public void SetDigitCarryFlag(bool zeroFlag)
     {
         WriteRegister(1, ReadRegister(3).SetBit(zeroFlag, 1));
     }
+    
+    public bool GetDigitCarryFlag()
+    {
+        return Lib.IsBitSet(ReadRegister(3), 1);
+    }
 
     public void SetZeroFlag(bool zeroFlag)
     {
         WriteRegister(3, ReadRegister(3).SetBit(zeroFlag, 2));
+    }
+    
+    public bool GetZeroFlag()
+    {
+        return Lib.IsBitSet(ReadRegister(3), 2);
     }
 
 
