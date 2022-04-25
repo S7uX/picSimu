@@ -12,30 +12,34 @@ public class SUBLW : LiteralInstruction
         uint Wnew = WOld - k;
         if (Wnew == 0)
         {
-            //ZeroFlag = 1;
+            _pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            //ZeroFlag = 0;
+            _pic.Memory.SetZeroFlag(false);
         }
 
         if (Wnew > 255)
         {
             Wnew &= 255; //Maskierung auf nur lowest 8 Bit
             Wnew = 256 - Wnew; //Magic
-            //Carryflag = 1;
+            _pic.Memory.SetCarryFlag(true);
         }
         else
         {
-            //Carryflag = 0;
+            _pic.Memory.SetCarryFlag(false);
         }
-        if (WOld < 15 && Wnew > 15)
+
+        var val1 = WOld & 15; //Maskierung auf nur lowest 4 Bit
+        var val2 = k & 15; //Maskierung auf nur lowest 4 Bit
+
+        if (val1 - val2 <= 0) //inklusive 0 weil 2er komplement? also vielleicht :D
         {
-            //CarryDigitFlag = 1;
+            _pic.Memory.SetDigitCarryFlag(true);
         }
         else
         {
-            //CarryDigitFlag = 0;
+            _pic.Memory.SetDigitCarryFlag(false);
         }
         _pic.wRegister = Wnew;
         _pic.Programmcounter++;

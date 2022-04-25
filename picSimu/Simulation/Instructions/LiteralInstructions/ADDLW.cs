@@ -12,28 +12,30 @@ public class ADDLW : LiteralInstruction
         uint Wnew = WOld + k;
         if (Wnew == 0)
         {
-            //ZeroFlag = 1;
+            _pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            //ZeroFlag = 0;
+            _pic.Memory.SetZeroFlag(false);
         }
 
         if (Wnew > 255)
         {
-            //Carryflag = 1;
+            _pic.Memory.SetCarryFlag(true);
         }
         else
         {
-            //Carryflag = 0;
+            _pic.Memory.SetCarryFlag(false);
         }
-        if (WOld < 15 && Wnew > 15)
+        var val1 = WOld & 15; //Maskierung auf nur lowest 4 Bit
+        var val2 = k & 15; //Maskierung auf nur lowest 4 Bit
+        if (val1 + val2 > 15)
         {
-            //CarryDigitFlag = 1;
+            _pic.Memory.SetDigitCarryFlag(true);
         }
         else
         {
-            //CarryDigitFlag = 0;
+            _pic.Memory.SetDigitCarryFlag(false);
         }
         _pic.wRegister = Wnew;
         _pic.Programmcounter++;

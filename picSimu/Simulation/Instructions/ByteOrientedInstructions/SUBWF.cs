@@ -21,37 +21,31 @@ public class SUBWF : ByteOrientedInstruction
         if (result > 255)
         {
             result &= 255; //Maskierung auf nur lowest 8 Bit
-            _pic.Memory.SetCarryFlag(true);
+            _pic.Memory.SetCarryFlag(false);
         }
         else
         {
-            _pic.Memory.SetCarryFlag(false);
+            _pic.Memory.SetCarryFlag(true);
         }
 
+        var val1 = _pic.wRegister & 15; //Maskierung auf nur lowest 4 Bit
+        var val2 = _pic.Memory.ReadRegister(f) & 15; //Maskierung auf nur lowest 4 Bit
+
+        if (val1 - val2 > 128 || val1 - val2 == 0) //inklusive 0 weil 2er komplement? also vielleicht :D
+        {
+            _pic.Memory.SetDigitCarryFlag(true);
+        }
+        else
+        {
+            _pic.Memory.SetDigitCarryFlag(false);
+        }
+        
         if (d == 0)
         {
-            if (_pic.wRegister < 15 && result > 15)
-            {
-                _pic.Memory.SetDigitCarryFlag(true);
-            }
-            else
-            {
-                _pic.Memory.SetDigitCarryFlag(false);
-            }
-
             _pic.wRegister = result;
         }
         else
         {
-            if (_pic.Memory.ReadRegister(f) < 15 && result > 15)
-            {
-                _pic.Memory.SetDigitCarryFlag(true);
-            }
-            else
-            {
-                _pic.Memory.SetDigitCarryFlag(false);
-            }
-
             _pic.Memory.WriteRegister(f, result);
         }
 

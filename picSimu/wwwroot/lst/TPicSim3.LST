@@ -4,20 +4,6 @@
                     00004           ;aber kein DECFSZ, INCFSZ, RLF, RRF
                     00005           ;(c) St. Lehmann
                     00006           ;Ersterstellung: 23.03.2016
-                    00007           ;Korrekturen: 09.05.2017 (Fehler gefunden durch: Dominik Vogel)
-                    00008           ;19.05.2020
-                    00009           ;mod. 18.10.2018 für HSO
-                    00010           
-                    00011           ;Hinweis:
-                    00012           ;Bei diesen Befehlen entscheidet das d-Bit (Destination), ob das Ergebnis
-                    00013           ;dieser Operation ins W- oder File-Register geschrieben wird. Wird im
-                    00014           ;Assemblercode der Befehl mit ",W" geschrieben, bedeutet dies, dass das
-                    00015           ;d-Bit 0 ist und das Ergebnis ins W-Register kommt. Fehlt ",W" ist das 
-                    00016           ;d-Bit 1 und das Ergebnis wird ins Fileregister geschrieben.
-                    00017           ;
-                    00018           ;Alle Befehle die eine Fileregister-Adresse haben, können auch "indirekt"
-                    00019           ;adressieren. Dies ist im Testfile TPicSim6.LST beschrieben.
-                    00020           ;
                     00021           list c=132          ;Zeilenlänge im LST auf 132 Zeichen setzen
                     00022           
                     00023           ;Definition einiger Symbole

@@ -20,6 +20,7 @@ public class ADDWF : ByteOrientedInstruction
 
         if (result > 255)
         {
+            result &= 255;
             _pic.Memory.SetCarryFlag(true);
         }
         else

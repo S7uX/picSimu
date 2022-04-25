@@ -11,11 +11,11 @@ public class XORLW : LiteralInstruction
         _pic.wRegister ^= k;
         if (_pic.wRegister == 0)
         {
-            //Zeroflag auf 1
+            _pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            //Zeroflag auf 0
+            _pic.Memory.SetZeroFlag(false);
         }
         _pic.Programmcounter++;
         return 0;
