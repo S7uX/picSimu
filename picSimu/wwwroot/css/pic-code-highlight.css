@@ -14,7 +14,7 @@
 }
 
 .comment {
-    color: #0bc775 !important;
+    color: #008000 !important;
 }
 
 .row-number {
@@ -27,6 +27,14 @@
 
 .code-block pre {
     font-family: JetBrainsMono, monospace;
+}
+
+.code-line {
+    display: block;
+}
+
+.code-line-highlight{
+    background-color: #fff900;
 }
 
 
