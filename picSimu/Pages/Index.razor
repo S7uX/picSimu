@@ -108,11 +108,11 @@
 <PageTitle>Index</PageTitle>
 
 <div class="top-row px-4">
-    <InputFile OnChange="@LoadFiles" multiple/>
-    <button disabled="@(InstructionCodes is null)" @onclick="RunSimulation">Start</button>
-    <button disabled="@(InstructionCodes is null)" @onclick="StopSimulation">Stop</button>
-    <button disabled="@(InstructionCodes is null)" @onclick="StepSimulation">Step</button>
-    <button disabled="@(InstructionCodes is null)" @onclick="ResetSimulation">Reset</button>
+    <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple/>
+    <button class="btn btn-outline-dark btn-sm" disabled="@(InstructionCodes is null)" @onclick="RunSimulation">Start</button>
+    <button class="btn btn-outline-dark btn-sm" disabled="@(InstructionCodes is null)" @onclick="StopSimulation">Stop</button>
+    <button class="btn btn-outline-dark btn-sm" disabled="@(InstructionCodes is null)" @onclick="StepSimulation">Step</button>
+    <button class="btn btn-outline-dark btn-sm" disabled="@(InstructionCodes is null)" @onclick="ResetSimulation">Reset</button>
     <b style="margin-left: auto">picSimu</b>
 </div>
 
@@ -126,10 +126,10 @@
         }
     </span>
 
-    <div class="d-flex flex-row justify-content-between pt-4">
+    <div class="d-flex flex-row justify-content-between pt-2">
         <div id="code-block" class="code-block"> </div>
         <div style="height: 100ex; overflow: auto">
-            <h2> Memory </h2>
+            <h4> Memory </h4>
             <table class="table">
                 <thead>
                 <tr>
@@ -149,9 +149,9 @@
                             y = i + 0x80;
                             <tr>
                                 <td title="@i">@i.ToString("X2")h</td>
-                                <td title="@FormatValue(pic.Memory.ReadRegister(i))">@pic.Memory.ReadRegister(i).ToString("X2")h</td>
+                                <td contenteditable title="@FormatValue(pic.Memory.ReadRegister(i))">@pic.Memory.ReadRegister(i).ToString("X2")h</td>
                                 <td title="@y">@y.ToString("X2")h</td>
-                                <td title="@FormatValue(pic.Memory.ReadRegister(y))">@pic.Memory.ReadRegister(y).ToString("X2")h</td>
+                                <td contenteditable title="@FormatValue(pic.Memory.ReadRegister(y))">@pic.Memory.ReadRegister(y).ToString("X2")h</td>
                             </tr>
                         }
                     }
@@ -160,7 +160,7 @@
             </table>
         </div>
         <div>
-            <h2> State </h2>
+            <h4> State </h4>
             <table class="table">
                 <thead>
                 <tr>
