@@ -43,7 +43,52 @@
     }
 
     .top-row, article {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
+        padding-left: 1.1rem !important;
+        padding-right: 1.1rem !important;
     }
 }
+
+.sfr-value {
+    flex-grow: 2;
+}
+
+.sfr-label {
+    font-weight: bold;
+    white-space: pre;
+}
+
+.smaller-text {
+    font-size: 0.97em;
+}
+
+.table-sm {
+    font-size: 0.97em;
+    margin: 0;
+}
+
+.tr1 td {
+    height: 2ex;
+    overflow: hidden;
+}
+
+.tr1 th {
+    height: 1.5ex;
+}
+
+.tr2 td {
+    vertical-align: top;
+}
+
+.tr2 th {
+    vertical-align: top;
+}
+
+.port-table {
+    width: 100%;
+}
+
+.port-label{
+    width: 2.5em;
+}
+
+

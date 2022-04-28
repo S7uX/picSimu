@@ -8,7 +8,7 @@
     private string? code;
     private string? parsedInstructionCodes;
     public string[]? InstructionCodes;
-    private Pic? pic;
+    private Pic pic = new Pic();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -29,7 +29,7 @@
             InstructionCodes = parsedInstructionCodes.Split(",");
             pic = new Pic();
 
-            if (InstructionCodes != null && pic != null)
+            if (InstructionCodes != null)
             {
                 pic.LoadInstructionCodes(InstructionCodes);
             }
@@ -50,7 +50,7 @@
 
     public async Task<bool> RunSimulation()
     {
-        if (InstructionCodes != null && pic != null)
+        if (InstructionCodes != null)
         {
             pic.Run();
         }
@@ -59,7 +59,7 @@
 
     public async Task<bool> StopSimulation()
     {
-        if (InstructionCodes != null && pic != null)
+        if (InstructionCodes != null)
         {
             pic.Stop();
         }
@@ -68,7 +68,7 @@
 
     public async Task<bool> StepSimulation()
     {
-        if (InstructionCodes != null && pic != null)
+        if (InstructionCodes != null)
         {
             pic.Step();
         }
@@ -77,7 +77,7 @@
 
     public async Task<bool> ResetSimulation()
     {
-        if (InstructionCodes != null && pic != null)
+        if (InstructionCodes != null)
         {
             pic.Reset();
         }
@@ -103,6 +103,12 @@
         return $"{pc} ({pc.ToString("X2")}h)";
     }
 
+    public Port TrisA { get; set; } = new Port();
+    public Port PortA { get; set; } = new Port();
+    public Port TrisB { get; set; } = new Port();
+    public Port PortB { get; set; } = new Port();
+    public Timing Timing { get; set; } = new Timing() {QuartzFrequency = 32, ReleaseWatchdog = false};
+
 }
 
 <PageTitle>Index</PageTitle>
@@ -118,78 +124,330 @@
 
 
 <article class="content">
-    <span>
-        PC:
-        @if (pic != null)
-        {
-            @UpdateProgramCounter(pic.Programmcounter)
-        }
-    </span>
+<div class="d-flex flex-row">
+    <label class="h5 pe-5 smaller-text">SFR + W</label>
+    <label class="sfr-label">W: </label>
+    <label class="sfr-value">@UpdateProgramCounter(pic.Programmcounter)</label>
+    <label class="sfr-label">PCL: </label>
+    <label class="sfr-value">00h</label>
+    <label class="sfr-label">PCLATH: </label>
+    <label class="sfr-value">00h</label>
+    <label class="sfr-label">Status: </label>
+    <label class="sfr-value">00h</label>
+    <label class="sfr-label">FSR: </label>
+    <label class="sfr-value">00h</label>
+    <label class="sfr-label">Option: </label>
+    <label class="sfr-value">00h</label>
+    <label class="sfr-label">Prescaler: </label>
+    <label class="sfr-value">1:1</label>
+    <label class="sfr-label">Timer0: </label>
+    <label class="sfr-value">00h</label>
+</div>
 
-    <div class="d-flex flex-row overflow-hidden justify-content-between pt-2">
-        <div class="d-flex flex-column">
-            <h4> LST </h4>
-            <div id="code-block" class="code-block d-flex overflow-hidden"></div>
-        </div>
-        <div class="d-flex flex-column">
-            <h4> Memory </h4>
-            <div class="d-flex overflow-auto">
-                <table class="table">
-                    <thead>
+<hr class="my-1">
+
+<div class="d-flex flex-row overflow-hidden justify-content-between pt-2">
+<div style="flex-grow: 2" class="d-flex flex-column">
+    <label class="h5">LST</label>
+    <div id="code-block" class="code-block d-flex overflow-hidden"></div>
+</div>
+<div class="vr mx-3"></div>
+<div id="class-register-table" class="d-flex flex-column">
+    <label class="h5">File Regsiter (SFR & GPR)</label>
+    <div style="overflow-x: hidden;" class="d-flex">
+        <table class="table-sm">
+            <thead>
+            <tr>
+                <th>Address</th>
+                <th>Value</th>
+                <th>Address</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <th colspan="2">Bank 0</th>
+                <th colspan="2">Bank 1</th>
+            </tr>
+            </thead>
+            <tbody>
+            @{
+                uint y;
+                @for (uint i = 0; i < pic.Memory.Register.Length / 2; i++)
+                {
+                    y = i + 0x80;
                     <tr>
-                        <th>Address Bank 0</th>
-                        <th>Bank 0</th>
-                        <th>Address Bank 1</th>
-                        <th>Bank 1</th>
+                        <td title="@i">@i.ToString("X2")h</td>
+                        <td contenteditable title="@FormatValue(pic.Memory.ReadRegister(i))">@pic.Memory.ReadRegister(i).ToString("X2")h</td>
+                        <td title="@y">@y.ToString("X2")h</td>
+                        <td contenteditable title="@FormatValue(pic.Memory.ReadRegister(y))">@pic.Memory.ReadRegister(y).ToString("X2")h</td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    @{
-                        if (pic != null)
-                        {
-                            uint y;
-                            @for (uint i = 0; i < pic.Memory.Register.Length / 2; i++)
-                            {
-                                y = i + 0x80;
-                                <tr>
-                                    <td title="@i">@i.ToString("X2")h</td>
-                                    <td contenteditable title="@FormatValue(pic.Memory.ReadRegister(i))">@pic.Memory.ReadRegister(i).ToString("X2")h</td>
-                                    <td title="@y">@y.ToString("X2")h</td>
-                                    <td contenteditable title="@FormatValue(pic.Memory.ReadRegister(y))">@pic.Memory.ReadRegister(y).ToString("X2")h</td>
-                                </tr>
-                            }
-                        }
-                    }
-                    </tbody>
-                </table>
-            </div>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="vr mx-3"></div>
+<div class="d-flex flex-column justify-content-around">
+<EditForm Model="@Timing" id="timing-control" class="d-flex flex-column smaller-text">
+    <label class="h5">Timing</label>
+    <div>
+        <label class="sfr-label">Runtime: </label> <label>0 µs</label>
+    </div>
+    <div>
+        <label class="sfr-label">Quartz: </label>
+        <InputSelect class="form-select-sm" @bind-Value="Timing.QuartzFrequency">
+            <option value="32" selected>32 kHz</option>
+        </InputSelect>
+    </div>
+    <div>
+        <label class="sfr-label">Release Watchdog: </label>
+        <BootstrapCheckbox @bind-Value="Timing.ReleaseWatchdog"></BootstrapCheckbox>
+    </div>
+    <div>
+        <label class="sfr-label">Watchdog: </label> <label>00h</label>
+    </div>
+</EditForm>
+<hr>
+<div class="d-flex flex-row">
+    <div id="stack-table" class="d-flex flex-column">
+        <label class="h5">Stack</label>
+        <table class="table-sm">
+            <thead>
+            <tr>
+                <th>Ptr.</th>
+                <th>Adr.</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>0</td>
+                <td>00h</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>00h</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>00h</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>00h</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>00h</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>00h</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>00h</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>00h</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="vr mx-3"></div>
+    <div id="sfr-bits-table" class="d-flex flex-column ">
+        <label class="h5">SFR (Bits)</label>
+        <table style="height: 100%" class="table-sm">
+            <tbody>
+            <tr class="tr1">
+                <th>Status</th>
+                <td>IRP</td>
+                <td>RP1</td>
+                <td>RP0</td>
+                <td>
+                    <span style="text-decoration:overline">TO</span>
+                </td>
+                <td>
+                    <span style="text-decoration:overline">PD</span>
+                </td>
+                <td>Z</td>
+                <td>DC</td>
+                <td>C</td>
+            </tr>
+            <tr class="tr2">
+                <td></td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>@pic.Memory.GetCarryFlag().ToNumber()</td>
+                <td>@pic.Memory.GetDigitCarryFlag().ToNumber()</td>
+                <td>@pic.Memory.GetZeroFlag().ToNumber()</td>
+            </tr>
+            <tr class="tr1">
+                <th>Option</th>
+                <td>
+                    <span style="text-decoration:overline">RBPU</span>
+                </td>
+                <td>INTEDG</td>
+                <td>T0CS</td>
+                <td>T0SE</td>
+                <td>PSA</td>
+                <td>PS2</td>
+                <td>PS1</td>
+                <td>PS0</td>
+            </tr>
+            <tr class="tr2">
+                <td></td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            <tr class="tr1">
+                <th>Intcon</th>
+                <td>GIE</td>
+                <td>EEIE</td>
+                <td>T0IE</td>
+                <td>INTE</td>
+                <td>RBIE</td>
+                <td>T0IF</td>
+                <td>INTF</td>
+                <td>RBIF</td>
+            </tr>
+            <tr class="tr2">
+                <td></td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<hr>
+<label class="h5">Port A</label>
+<EditForm Model="@TrisA" class="d-flex flex-row justify-content-between me-2">
+        <div class="sfr-label port-label">Tris</div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisA.Pin0"/> 0
         </div>
         <div>
-            <h4> State </h4>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>W</th>
-                    <th>C</th>
-                    <th>DC</th>
-                    <th>Z</th>
-                </tr>
-                </thead>
-                <tbody>
-                @{
-                    if (pic != null)
-                    {
-                        <tr>
-                            <td title="@FormatValue(pic.wRegister)">@pic.wRegister.ToString("X2")h</td>
-                            <td>@Convert.ToByte(pic.Memory.GetCarryFlag())</td>
-                            <td>@Convert.ToByte(pic.Memory.GetDigitCarryFlag())</td>
-                            <td>@Convert.ToByte(pic.Memory.GetZeroFlag())</td>
-                        </tr>
-                    }
-                }
-                </tbody>
-            </table>
+            <BootstrapCheckbox @bind-Value="TrisA.Pin1"/> 1
         </div>
-    </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisA.Pin2"/> 2
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisA.Pin3"/> 3
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisA.Pin4"/> 4
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisA.Pin5"/> 5
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisA.Pin6"/> 6
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisA.Pin7"/> 7
+        </div>
+</EditForm>
+<EditForm Model="@PortB" class="d-flex flex-row justify-content-between me-2">
+        <div class="sfr-label port-label">Pin</div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortA.Pin0"/> 0
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortA.Pin1"/> 1
+        </div>
+        <td>
+            <BootstrapCheckbox @bind-Value="PortA.Pin2"/> 2
+        </td>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortA.Pin3"/> 3
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortA.Pin4"/> 4
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortA.Pin5"/> 5
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortA.Pin6"/> 6
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortA.Pin7"/> 7
+        </div>
+</EditForm>
+<hr>
+<label class="h5">Port B</label>
+<EditForm Model="@TrisB" class="d-flex flex-row justify-content-between me-2">
+        <div class="sfr-label port-label">Tris</div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisB.Pin0"/> 0
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisB.Pin1"/> 1
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisB.Pin2"/> 2
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisB.Pin3"/> 3
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisB.Pin4"/> 4
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisB.Pin5"/> 5
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisB.Pin6"/> 6
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="TrisB.Pin7"/> 7
+        </div>
+</EditForm>
+<EditForm Model="@PortB" class="d-flex flex-row justify-content-between me-2">
+        <div class="sfr-label port-label">Pin</div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortB.Pin0"/> 0
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortB.Pin1"/> 1
+        </div>
+        <td>
+            <BootstrapCheckbox @bind-Value="PortB.Pin2"/> 2
+        </td>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortB.Pin3"/> 3
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortB.Pin4"/> 4
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortB.Pin5"/> 5
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortB.Pin6"/> 6
+        </div>
+        <div>
+            <BootstrapCheckbox @bind-Value="PortB.Pin7"/> 7
+        </div>
+</EditForm>
+</div>
+</div>
 </article>
 <hr>

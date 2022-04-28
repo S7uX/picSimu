@@ -1,0 +1,14 @@
+@inherits InputBase<bool>
+
+<InputCheckbox class="form-check-input"
+    Value="@Value" ValueChanged="@ValueChanged" ValueExpression="@ValueExpression">
+</InputCheckbox>
+
+@code {
+
+    protected override bool TryParseValueFromString(string? value, out bool result, out string? validationErrorMessage)
+    {
+        throw new NotImplementedException();
+    }
+
+}

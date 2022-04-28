@@ -40,4 +40,9 @@ public static class Lib
 
         return value.SetBitTo0(position);
     }
+
+    public static int ToNumber(this bool value)
+    {
+        return Convert.ToByte(value);
+    }
 }
