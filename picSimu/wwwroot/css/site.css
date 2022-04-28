@@ -72,3 +72,11 @@ a, .btn-link {
 .blazor-error-boundary::after {
     content: "An error has occurred."
 }
+
+.btn-primary:active{
+    box-shadow: none !important;
+}
+
+.btn-primary{
+    transition:0s;
+}

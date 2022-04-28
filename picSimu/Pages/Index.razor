@@ -109,10 +109,10 @@
 
 <div class="top-row px-4">
     <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple/>
-    <button class="btn btn-outline-dark btn-sm" disabled="@(InstructionCodes is null)" @onclick="RunSimulation">Start</button>
-    <button class="btn btn-outline-dark btn-sm" disabled="@(InstructionCodes is null)" @onclick="StopSimulation">Stop</button>
-    <button class="btn btn-outline-dark btn-sm" disabled="@(InstructionCodes is null)" @onclick="StepSimulation">Step</button>
-    <button class="btn btn-outline-dark btn-sm" disabled="@(InstructionCodes is null)" @onclick="ResetSimulation">Reset</button>
+    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="RunSimulation">Start</button>
+    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="StopSimulation">Stop</button>
+    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="StepSimulation">Step</button>
+    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="ResetSimulation">Reset</button>
     <b style="margin-left: auto">picSimu</b>
 </div>
 
