@@ -27,6 +27,8 @@
 
 .code-block pre {
     font-family: JetBrainsMono, monospace;
+    padding-right: 2ex;
+    margin: 0;
 }
 
 .code-line {
