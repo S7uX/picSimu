@@ -44,9 +44,4 @@ public class Pic
     {
         //TODO
     }
-
-    public void Reset()
-    {
-        
-    }
 }
