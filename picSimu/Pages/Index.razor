@@ -366,116 +366,138 @@
 <hr>
 
 <label class="h5">Port A</label>
+<div class="d-flex flex-row justify-content-between me-2">
+    <div class="sfr-label port-label">Index</div>
+    <div>0</div>
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+    <div>4</div>
+    <div>5</div>
+    <div>6</div>
+    <div>7</div>
+</div>
 <EditForm Model="@TrisA" class="d-flex flex-row justify-content-between me-2">
     <div class="sfr-label port-label">Tris</div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisA.Pin0"/> 0
+        <BootstrapCheckbox @bind-Value="TrisA.Pin7"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisA.Pin1"/> 1
+        <BootstrapCheckbox @bind-Value="TrisA.Pin6"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisA.Pin2"/> 2
+        <BootstrapCheckbox @bind-Value="TrisA.Pin5"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisA.Pin3"/> 3
+        <BootstrapCheckbox @bind-Value="TrisA.Pin4"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisA.Pin4"/> 4
+        <BootstrapCheckbox @bind-Value="TrisA.Pin3"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisA.Pin5"/> 5
+        <BootstrapCheckbox @bind-Value="TrisA.Pin2"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisA.Pin6"/> 6
+        <BootstrapCheckbox @bind-Value="TrisA.Pin1"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisA.Pin7"/> 7
+        <BootstrapCheckbox @bind-Value="TrisA.Pin0"/>
     </div>
 </EditForm>
 <EditForm Model="@PortB" class="d-flex flex-row justify-content-between me-2">
     <div class="sfr-label port-label">Pin</div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin0"/> 0
+        <BootstrapCheckbox @bind-Value="PortA.Pin7"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin1"/> 1
-    </div>
-    <td>
-        <BootstrapCheckbox @bind-Value="PortA.Pin2"/> 2
-    </td>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin3"/> 3
+        <BootstrapCheckbox @bind-Value="PortA.Pin6"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin4"/> 4
+        <BootstrapCheckbox @bind-Value="PortA.Pin5"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin5"/> 5
+        <BootstrapCheckbox @bind-Value="PortA.Pin4"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin6"/> 6
+        <BootstrapCheckbox @bind-Value="PortA.Pin3"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin7"/> 7
+        <BootstrapCheckbox @bind-Value="PortA.Pin2"/>
+    </div>
+    <div>
+        <BootstrapCheckbox @bind-Value="PortA.Pin1"/>
+    </div>
+    <div>
+        <BootstrapCheckbox @bind-Value="PortA.Pin0"/>
     </div>
 </EditForm>
 
 <hr>
 
 <label class="h5">Port B</label>
+<div class="d-flex flex-row justify-content-between me-2">
+    <div class="sfr-label port-label">Index</div>
+    <div>0</div>
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+    <div>4</div>
+    <div>5</div>
+    <div>6</div>
+    <div>7</div>
+</div>
 <EditForm Model="@TrisB" class="d-flex flex-row justify-content-between me-2">
     <div class="sfr-label port-label">Tris</div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin0"/> 0
+        <BootstrapCheckbox @bind-Value="TrisB.Pin7"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin1"/> 1
+        <BootstrapCheckbox @bind-Value="TrisB.Pin6"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin2"/> 2
+        <BootstrapCheckbox @bind-Value="TrisB.Pin5"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin3"/> 3
+        <BootstrapCheckbox @bind-Value="TrisB.Pin4"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin4"/> 4
+        <BootstrapCheckbox @bind-Value="TrisB.Pin3"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin5"/> 5
+        <BootstrapCheckbox @bind-Value="TrisB.Pin2"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin6"/> 6
+        <BootstrapCheckbox @bind-Value="TrisB.Pin1"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin7"/> 7
+        <BootstrapCheckbox @bind-Value="TrisB.Pin0"/>
     </div>
 </EditForm>
-<EditForm Model="@PortB" class="d-flex flex-row justify-content-between me-2">
+<EditForm Model="@PortB" class="d-flex flex-row justify-content-between me-2 mb-2">
     <div class="sfr-label port-label">Pin</div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin0"/> 0
+        <BootstrapCheckbox @bind-Value="PortB.Pin7"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin1"/> 1
-    </div>
-    <td>
-        <BootstrapCheckbox @bind-Value="PortB.Pin2"/> 2
-    </td>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin3"/> 3
+        <BootstrapCheckbox @bind-Value="PortB.Pin6"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin4"/> 4
+        <BootstrapCheckbox @bind-Value="PortB.Pin5"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin5"/> 5
+        <BootstrapCheckbox @bind-Value="PortB.Pin4"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin6"/> 6
+        <BootstrapCheckbox @bind-Value="PortB.Pin3"/>
     </div>
     <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin7"/> 7
+        <BootstrapCheckbox @bind-Value="PortB.Pin2"/>
+    </div>
+    <div>
+        <BootstrapCheckbox @bind-Value="PortB.Pin1"/>
+    </div>
+    <div>
+        <BootstrapCheckbox @bind-Value="PortB.Pin0"/>
     </div>
 </EditForm>
 </div>
