@@ -2,7 +2,7 @@ namespace picSimu.Simulation;
 
 public static class Lib
 {
-    public static bool IsBitSet(uint b, int pos)
+    public static bool IsBitSet(this uint b, int pos)
     {
         return (b & (1 << pos)) != 0;
     }
@@ -44,5 +44,15 @@ public static class Lib
     public static int ToNumber(this bool value)
     {
         return Convert.ToByte(value);
+    }
+
+    public static string ToHexString(this uint value)
+    {
+        return value.ToString("X2") + "h";
+    }
+    
+    public static string ToTooltipString(this uint value)
+    {
+        return value + "\n" + Convert.ToString(value, 2).PadLeft(8, '0');
     }
 }

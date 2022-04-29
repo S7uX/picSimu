@@ -25,12 +25,17 @@
     color: #6f42c1 !important;
 }
 
+.code-block{
+    flex-grow: 1;
+}
+
 .code-block pre {
     font-family: JetBrainsMono, monospace;
-    padding-right: 2ex;
     margin: 0;
     width: 100%;
-    padding-bottom: 1ex;
+    background-color: #fdf6e3;
+    border-style: groove;
+    padding: 1ex .5em 1ex .7ex;
 }
 
 .code-line {
