@@ -1,5 +1,6 @@
 @page "/"
 @using picSimu.Simulation
+@using picSimu.Simulation.Registers
 @* @implements IAsyncDisposable *@
 @inject IJSRuntime JS
 
@@ -341,101 +342,44 @@
 <label class="h5">Port A</label>
 <div class="d-flex flex-row justify-content-between me-2">
     <div class="sfr-label port-label">Index</div>
-    <div>0</div>
-    <div>1</div>
-    <div>2</div>
-    <div>3</div>
-    <div>4</div>
-    <div>5</div>
-    <div>6</div>
     <div>7</div>
+    <div>6</div>
+    <div>5</div>
+    <div>4</div>
+    <div>3</div>
+    <div>2</div>
+    <div>1</div>
+    <div>0</div>
 </div>
-<EditForm Model="@TrisA" class="d-flex flex-row justify-content-between me-2">
+<EditForm Model="@pic.Memory.Register[0x85]" class="d-flex flex-row justify-content-between me-2">
     <div class="sfr-label port-label">Tris</div>
     @{
-        @for (int i = 0; i < pic.Memory.Register.Length / 2; i++)
+        @for (int i = 7; i >= 0; i--)
         {
+            RegisterBit bit = pic.Memory.GetRegisterBit(0x85, i);
             <div>
-                @* <BootstrapCheckbox @Value="@pic.Memory.ReadRegister(0x85).IsBitSet(i)"  *@
-                @*                    @onchange="args => pic.Memory.WriteRegister(0x85, pic.Memory.ReadRegister(0x85).SetBit((bool) args.Value))"/> *@
-                @* <InputCheckbox *@
-                @*     @Value="@pic.Memory.ReadRegister(0x85).IsBitSet(i)" *@
-                @*     @ValueChanged="@((ChangeEventArgs e) => pic.Memory.WriteRegister(0x85, pic.Memory.ReadRegister(0x85).SetBit(true, i)))" *@
-                @*     @ValueExpression="@(() => pic.Memory.ReadRegister(0x85).IsBitSet(i))"> *@
-                @* </InputCheckbox> *@
-                <InputCheckbox
-                    Value="@pic.Memory.ReadRegister(0x85).IsBitSet(i)"
-                    @* ValueChanged="@((ChangeEventArgs e) => pic.Memory.WriteRegister(0x85, pic.Memory.ReadRegister(0x85).SetBit(e.Equals(e), i)))" *@
-                    ValueChanged="@(b => { })"
-                    @* ValueExpression="@(() => pic.Memory.ReadRegister(0x85).IsBitSet(i))"> *@
-                    @* ValueExpression="@(() => pic.Memory.Register[0x85])"> *@
-                </InputCheckbox>
+                <BootstrapCheckbox
+                    Value="bit.Value"
+                    ValueChanged="@(b => bit.Value = b)"
+                    ValueExpression="@(() => bit.Value)">
+                </BootstrapCheckbox>
             </div>
         }
     }
-
-    @code{
-        bool value;
-        // ...
-        void ValueChanged(bool foo)
-        {
-            return;
-        }
-
-    }
-
-
-    @* <div> *@
-    @*     <BootstrapCheckbox @bind-Value="TrisA.Pin7"/> *@
-    @* </div> *@
-    @* <div> *@
-    @*     <BootstrapCheckbox @bind-Value="TrisA.Pin6"/> *@
-    @* </div> *@
-    @* <div> *@
-    @*     <BootstrapCheckbox @bind-Value="TrisA.Pin5"/> *@
-    @* </div> *@
-    @* <div> *@
-    @*     <BootstrapCheckbox @bind-Value="TrisA.Pin4"/> *@
-    @* </div> *@
-    @* <div> *@
-    @*     <BootstrapCheckbox @bind-Value="TrisA.Pin3"/> *@
-    @* </div> *@
-    @* <div> *@
-    @*     <BootstrapCheckbox @bind-Value="TrisA.Pin2"/> *@
-    @* </div> *@
-    @* <div> *@
-    @*     <BootstrapCheckbox @bind-Value="TrisA.Pin1"/> *@
-    @* </div> *@
-    @* <div> *@
-    @*     <BootstrapCheckbox @bind-Value="TrisA.Pin0"/> *@
-    @* </div> *@
 </EditForm>
-<EditForm Model="@PortB" class="d-flex flex-row justify-content-between me-2">
+<EditForm Model="@pic.Memory.Register[5]" class="d-flex flex-row justify-content-between me-2">
     <div class="sfr-label port-label">Pin</div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin7"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin6"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin5"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin4"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin3"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin2"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin1"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortA.Pin0"/>
-    </div>
+    @for (int i = 7; i >= 0; i--)
+    {
+        RegisterBit bit = pic.Memory.GetRegisterBit(5, i);
+        <div>
+            <BootstrapCheckbox
+                Value="bit.Value"
+                ValueChanged="@(b => bit.Value = b)"
+                ValueExpression="@(() => bit.Value)">
+            </BootstrapCheckbox>
+        </div>
+    }
 </EditForm>
 
 <hr>
@@ -443,68 +387,42 @@
 <label class="h5">Port B</label>
 <div class="d-flex flex-row justify-content-between me-2">
     <div class="sfr-label port-label">Index</div>
-    <div>0</div>
-    <div>1</div>
-    <div>2</div>
-    <div>3</div>
-    <div>4</div>
-    <div>5</div>
-    <div>6</div>
     <div>7</div>
+    <div>6</div>
+    <div>5</div>
+    <div>4</div>
+    <div>3</div>
+    <div>2</div>
+    <div>1</div>
+    <div>0</div>
 </div>
-<EditForm Model="@TrisB" class="d-flex flex-row justify-content-between me-2">
+<EditForm Model="@pic.Memory.Register[0x86]" class="d-flex flex-row justify-content-between me-2">
     <div class="sfr-label port-label">Tris</div>
-    <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin7"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin6"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin5"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin4"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin3"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin2"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin1"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="TrisB.Pin0"/>
-    </div>
+    @for (int i = 7; i >= 0; i--)
+    {
+        RegisterBit bit = pic.Memory.GetRegisterBit(0x86, i);
+        <div>
+            <BootstrapCheckbox
+                Value="bit.Value"
+                ValueChanged="@(b => bit.Value = b)"
+                ValueExpression="@(() => bit.Value)">
+            </BootstrapCheckbox>
+        </div>
+    }
 </EditForm>
-<EditForm Model="@PortB" class="d-flex flex-row justify-content-between me-2 mb-2">
+<EditForm Model="@pic.Memory.Register[6]" class="d-flex flex-row justify-content-between me-2 mb-2">
     <div class="sfr-label port-label">Pin</div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin7"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin6"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin5"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin4"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin3"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin2"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin1"/>
-    </div>
-    <div>
-        <BootstrapCheckbox @bind-Value="PortB.Pin0"/>
-    </div>
+    @for (int i = 7; i >= 0; i--)
+    {
+        RegisterBit bit = pic.Memory.GetRegisterBit(6, i);
+        <div>
+            <BootstrapCheckbox
+                Value="bit.Value"
+                ValueChanged="@(b => bit.Value = b)"
+                ValueExpression="@(() => bit.Value)">
+            </BootstrapCheckbox>
+        </div>
+    }
 </EditForm>
 </div>
 </div>

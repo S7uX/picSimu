@@ -1,3 +1,5 @@
+using picSimu.Simulation.Registers;
+
 namespace picSimu.Simulation;
 
 public class Memory
@@ -133,12 +135,17 @@ public class Memory
                 Register[0x8A] = value;
                 return;
             case 0x0B: // intcon
-            case 0X8B:
+            case 0x8B:
                 Register[0x0B] = value;
                 Register[0x8B] = value;
                 return;
         }
 
         Register[address] = value;
+    }
+
+    public RegisterBit GetRegisterBit(uint address, int bit)
+    {
+        return new RegisterBit(this, address, bit);
     }
 }
