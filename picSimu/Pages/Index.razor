@@ -99,10 +99,6 @@
         return pc;
     }
 
-    public Port TrisA { get; set; } = new Port();
-    public Port PortA { get; set; } = new Port();
-    public Port TrisB { get; set; } = new Port();
-    public Port PortB { get; set; } = new Port();
     public Timing Timing { get; set; } = new Timing() {QuartzFrequency = 32, ReleaseWatchdog = false};
 
 }
@@ -278,14 +274,13 @@
         </tr>
         <tr>
             <th></th>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>@pic.Memory.GetZeroFlag().ToNumber()</td>
-            <td>@pic.Memory.GetDigitCarryFlag().ToNumber()</td>
-            <td>@pic.Memory.GetCarryFlag().ToNumber()</td>
+            @{
+                uint statusReg = pic.Memory.ReadRegister(3);
+                @for (int i = 7; i >= 0; i--)
+                {
+                    <td>@statusReg.GetBit(i)</td>
+                }
+            }
         </tr>
         <tr>
             <th>Option</th>
@@ -302,14 +297,13 @@
         </tr>
         <tr>
             <th></th>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            @{
+                uint optionReg = pic.Memory.UnmaskedReadRegister(0x81);
+                @for (int i = 7; i >= 0; i--)
+                {
+                    <td>@optionReg.GetBit(i)</td>
+                }
+            }
         </tr>
         <tr>
             <th>Intcon</th>
@@ -324,14 +318,13 @@
         </tr>
         <tr>
             <th></th>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            @{
+                uint intconReg = pic.Memory.UnmaskedReadRegister(0xb);
+                @for (int i = 7; i >= 0; i--)
+                {
+                    <td>@intconReg.GetBit(i)</td>
+                }
+            }
         </tr>
         </tbody>
     </table>
@@ -353,18 +346,16 @@
 </div>
 <EditForm Model="@pic.Memory.Register[0x85]" class="d-flex flex-row justify-content-between me-2">
     <div class="sfr-label port-label">Tris</div>
-    @{
-        @for (int i = 7; i >= 0; i--)
-        {
-            RegisterBit bit = pic.Memory.GetRegisterBit(0x85, i);
-            <div>
-                <BootstrapCheckbox
-                    Value="bit.Value"
-                    ValueChanged="@(b => bit.Value = b)"
-                    ValueExpression="@(() => bit.Value)">
-                </BootstrapCheckbox>
-            </div>
-        }
+    @for (int i = 7; i >= 0; i--)
+    {
+        RegisterBit bit = pic.Memory.GetRegisterBit(0x85, i);
+        <div>
+            <BootstrapCheckbox
+                Value="bit.Value"
+                ValueChanged="@(b => bit.Value = b)"
+                ValueExpression="@(() => bit.Value)">
+            </BootstrapCheckbox>
+        </div>
     }
 </EditForm>
 <EditForm Model="@pic.Memory.Register[5]" class="d-flex flex-row justify-content-between me-2">

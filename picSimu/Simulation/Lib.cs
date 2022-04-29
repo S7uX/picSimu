@@ -6,6 +6,11 @@ public static class Lib
     {
         return (b & (1 << pos)) != 0;
     }
+    
+    public static int GetBit(this uint b, int pos)
+    {
+        return ((b & (1 << pos)) != 0).ToNumber();
+    }
 
     public static int SetBitTo1(this int value, int position)
     {

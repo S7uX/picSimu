@@ -11,6 +11,8 @@ public class Memory
         return Lib.IsBitSet(Register[3], 5);
     }
 
+    public uint FSR => Register[4];
+
     public void SetCarryFlag(bool zeroFlag)
     {
         WriteRegister(3, ReadRegister(3).SetBit(zeroFlag, 0));
@@ -72,6 +74,7 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
+                if (FSR == 0) return 0; // prevent infinite loop
                 return UnmaskedReadRegister(Register[4]);
             case 2: // pcl
             case 0x82:
@@ -109,6 +112,7 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
+                if (FSR == 0) return; // prevent infinite loop
                 UnmaskedWriteRegister(Register[4], value);
                 return;
             case 2: // pcl

@@ -6,7 +6,10 @@ public class CircularStack
 {
     private uint[] elements;
     private int pointer;
+    
     public readonly int Length = 8;
+
+    public int Pointer => pointer;
 
     public CircularStack(int count)
     {
