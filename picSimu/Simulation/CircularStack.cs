@@ -28,7 +28,7 @@ public class CircularStack
         elements[pointer % 8] = address;
     }
     
-    public uint get(uint i)
+    public uint get(int i)
     {
         return elements[i];
     }
