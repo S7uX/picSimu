@@ -65,7 +65,7 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
-                return Register[0];
+                return Register[ReadRegister(4)];
             case 2: // pcl
             case 0x82:
                 return Register[2];
@@ -111,8 +111,7 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
-                Register[0] = value;
-                Register[0x80] = value;
+                Register[ReadRegister(4)] = value;
                 return;
             case 2: // pcl
             case 0x82:
