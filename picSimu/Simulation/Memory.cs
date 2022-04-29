@@ -41,33 +41,38 @@ public class Memory
         return Lib.IsBitSet(ReadRegister(3), 2);
     }
 
-
-    public uint ReadRegister(uint address)
+    public uint MaskAddress(uint address)
     {
         if (!BankSelect())
         {
             // bank 0
-            address = address.SetBitTo0(7);
-            if (0x30 <= address || address == 7) // Unimplemented data memory location; read as ’0’.
-            {
-                return 0;
-            }
+            return address.SetBitTo0(7);
         }
         else
         {
             // bank 1
-            address = address.SetBitTo1(7);
-            if (0xD0 <= address || address == 0x87) // Unimplemented data memory location; read as ’0’.
-            {
-                return 0;
-            }
+            return address.SetBitTo1(7);
+        }
+    }
+
+
+    public uint ReadRegister(uint address)
+    {
+        return UnmaskedReadRegister(MaskAddress(address));
+    }
+
+    public uint UnmaskedReadRegister(uint address)
+    {
+        if ((0x30 <= address && 0x7F >= address) || (0xD0 <= address && 0xFF >= address) || address == 7) // Unimplemented data memory location; read as ’0’.
+        {
+            return 0;
         }
 
         switch (address)
         {
             case 0: // Indirect addr
             case 0x80:
-                return Register[ReadRegister(4)];
+                return UnmaskedReadRegister(Register[4]);
             case 2: // pcl
             case 0x82:
                 return Register[2];
@@ -90,30 +95,21 @@ public class Memory
 
     public void WriteRegister(uint address, uint value)
     {
-        if (!BankSelect())
+        UnmaskedWriteRegister(MaskAddress(address), value);
+    }
+
+    public void UnmaskedWriteRegister(uint address, uint value)
+    {
+        if ((0x30 <= address && 0x7F >= address) || (0xD0 <= address && 0xFF >= address) || address == 7) // Unimplemented data memory location; do nothing
         {
-            // bank 0
-            address = address.SetBitTo0(7);
-            if (0x30 <= address || address == 7)
-            {
-                return;
-            }
-        }
-        else
-        {
-            // bank 1
-            address = address.SetBitTo1(7);
-            if (0xD0 <= address || address == 0x87)
-            {
-                return;
-            }
+            return;
         }
 
         switch (address)
         {
             case 0: // Indirect addr
             case 0x80:
-                Register[ReadRegister(4)] = value;
+                UnmaskedWriteRegister(Register[4], value);
                 return;
             case 2: // pcl
             case 0x82:

@@ -170,7 +170,7 @@
 <div style="margin-left: 0.5em" class="vr"></div>
 
 <div id="register-table" class="d-flex flex-column">
-    <label class="h5">File Regsiter</label>
+    <label class="h5">File Register</label>
     <label class="h5">(SFR & GPR)</label>
     <div style="overflow-x: hidden;" class="d-flex">
         <table class="table-sm">
@@ -193,9 +193,9 @@
                     uint y = i + 0x80;
                     <tr>
                         <td title="@i">@i.ToHexString()</td>
-                        <td title="@pic.Memory.ReadRegister(i).ToTooltipString()">@pic.Memory.ReadRegister(i).ToHexString()</td>
+                        <td title="@pic.Memory.ReadRegister(i).ToTooltipString()">@pic.Memory.Register[i].ToHexString()</td>
                         <td title="@y">@y.ToHexString()</td>
-                        <td title="@pic.Memory.ReadRegister(y).ToTooltipString()">@pic.Memory.ReadRegister(y).ToHexString()</td>
+                        <td title="@pic.Memory.ReadRegister(y).ToTooltipString()">@pic.Memory.Register[y].ToHexString()</td>
                     </tr>
                 }
             }
@@ -283,9 +283,9 @@
             <td>0</td>
             <td>0</td>
             <td>0</td>
-            <td>@pic.Memory.GetCarryFlag().ToNumber()</td>
-            <td>@pic.Memory.GetDigitCarryFlag().ToNumber()</td>
             <td>@pic.Memory.GetZeroFlag().ToNumber()</td>
+            <td>@pic.Memory.GetDigitCarryFlag().ToNumber()</td>
+            <td>@pic.Memory.GetCarryFlag().ToNumber()</td>
         </tr>
         <tr>
             <th>Option</th>
