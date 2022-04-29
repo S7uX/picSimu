@@ -1,7 +1,9 @@
 export async function parsePic(sourceCode) {
     console.log("parsePic invoked");
+    let returnString = "";
 
-    const codeBlock = document.createElement('pre');
+    const codeBlock = document.getElementById("code-pre");
+    codeBlock.innerHTML = "";
 
     await Parser.init();
     const parser = new Parser;
@@ -13,6 +15,7 @@ export async function parsePic(sourceCode) {
     console.log(tree.rootNode);
 
     let instructionCount = 0;
+    let rowNumber = 0;
     for (const row of tree.rootNode.children) {
         let rowLength = 0;
         if (row.type === "row") {
@@ -21,8 +24,8 @@ export async function parsePic(sourceCode) {
                 if (rowElement.type === "instruction") {
                     rowSpan.id = "instruction-" + instructionCount;
                     instructionCount++;
+                    returnString += rowNumber + ",";
                 }
-                // console.log(row.text)
                 const whitespaceLength = rowElement.startPosition.column - rowLength;
                 rowSpan.insertAdjacentText("beforeend", " ".repeat(rowElement.startPosition.column - rowLength));
                 const elementHtml = `<span class="${rowElement.type}">${rowElement.text}<span/>`
@@ -32,15 +35,18 @@ export async function parsePic(sourceCode) {
             rowSpan.classList.add("code-line");
             rowSpan.insertAdjacentText("beforeend", "\n");
             codeBlock.appendChild(rowSpan);
+
+            rowNumber++;
         }
     }
 
-    document.getElementById("code-block").replaceChildren(codeBlock);
-
     const firstInstruction = document.getElementById("instruction-0");
-    if(firstInstruction !== null){
+    if (firstInstruction !== null) {
         firstInstruction.classList.add("code-line-highlight");
     }
+
+    console.log("instruction line numbers " + returnString);
+    return returnString.slice(0, -1); // remove last comma
 }
 
 export async function getInstructionCodes(sourceCode) {
@@ -69,8 +75,12 @@ export async function getInstructionCodes(sourceCode) {
 }
 
 export function highlightCodeLine(programCounter) {
+    console.log("test");
     // remove previous highlighting
-    document.getElementsByClassName("code-line-highlight")[0].classList.remove("code-line-highlight");
+    const old = document.getElementsByClassName("code-line-highlight")[0];
+    if (old !== undefined) {
+        old.classList.remove("code-line-highlight");
+    }
     // highlight new line
     document.getElementById("instruction-" + programCounter).classList.add("code-line-highlight");
 }

@@ -6,8 +6,9 @@
 
 @code {
     private IJSObjectReference? module;
-    private string? code;
-    private string? parsedInstructionCodes;
+    private string _sourceCode = "";
+    private string _parsedInstructionCodes = "";
+    private HashSet<int> _instructionRows = new HashSet<int>();
     public string[]? InstructionCodes;
     private Pic pic = new Pic();
 
@@ -21,13 +22,13 @@
 
     private async Task LoadFiles(InputFileChangeEventArgs e)
     {
-        code = await new StreamReader(e.File.OpenReadStream()).ReadToEndAsync();
-        await DisplayPicCode(code);
-        parsedInstructionCodes = await GetInstructionCodes(code);
-        Console.WriteLine("parsed instruction codes: " + parsedInstructionCodes);
-        if (parsedInstructionCodes != null)
+        _sourceCode = await new StreamReader(e.File.OpenReadStream()).ReadToEndAsync();
+        _instructionRows = await DisplayPicCode(_sourceCode) ?? new HashSet<int>();
+        _parsedInstructionCodes = await GetInstructionCodes(_sourceCode);
+        Console.WriteLine("parsed instruction codes: " + _parsedInstructionCodes);
+        if (_parsedInstructionCodes != null)
         {
-            InstructionCodes = parsedInstructionCodes.Split(",");
+            InstructionCodes = _parsedInstructionCodes.Split(",");
             pic = new Pic();
 
             if (InstructionCodes != null)
@@ -37,16 +38,22 @@
         }
     }
 
-    public async ValueTask<string?> DisplayPicCode(string sourceCode)
+    public async Task<HashSet<int>?> DisplayPicCode(string sourceCode)
     {
-        return module is not null ?
-            await module.InvokeAsync<string>("parsePic", sourceCode) : null;
+        if (module is not null)
+        {
+            var res = await module.InvokeAsync<string>("parsePic", sourceCode);
+            return new HashSet<int>(res.Split(",").Select(n => Convert.ToInt32(n)).ToArray());
+        }
+        return null;
     }
 
     public async ValueTask<string?> GetInstructionCodes(string sourceCode)
     {
-        return module is not null ?
-            await module.InvokeAsync<string>("getInstructionCodes", sourceCode) : null;
+        if (module is not null)
+            return await module.InvokeAsync<string>("getInstructionCodes", sourceCode);
+        else
+            return null;
     }
 
     public async Task<bool> RunSimulation()
@@ -158,8 +165,29 @@
 
 <div style="flex-grow: 2" class="d-flex flex-column overflow-hidden">
     <label class="h5">LST</label>
-    <div id="code-block" class="code-block d-flex overflow-auto">
-        <pre  ></pre>
+    <div id="code-block" class="code-block d-flex overflow-auto flex-row">
+        @{
+            int rowCount = _sourceCode.Split(new[] {'\n'}).Length;
+            <EditForm Model="@Timing" class="d-flex">
+                <pre style="width: 2em; white-space: break-spaces; background-color: #eee8d5">
+            @if (_sourceCode != "")
+            {
+                @for (int i = 0; i < rowCount - 1; i++)
+                {
+                    @if (_instructionRows.Contains(i))
+                    {
+                        <BootstrapCheckbox @bind-Value="Timing.ReleaseWatchdog"></BootstrapCheckbox>
+                    }
+                    else
+                    {
+                        <div>&zwnj;</div>
+                    }
+                }
+            }
+            </pre>
+            </EditForm>
+        }
+        <pre id="code-pre"></pre>
     </div>
 </div>
 

@@ -33,9 +33,11 @@
     font-family: JetBrainsMono, monospace;
     margin: 0;
     width: 100%;
+    border-width: 1px;
     background-color: #fdf6e3;
     border-style: groove;
     padding: 1ex .5em 1ex .7ex;
+    display: table;
 }
 
 .code-line {
