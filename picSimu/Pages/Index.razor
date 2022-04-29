@@ -1,6 +1,7 @@
 @page "/"
 @using picSimu.Simulation
 @using picSimu.Simulation.Registers
+@using System.Text.RegularExpressions
 @* @implements IAsyncDisposable *@
 @inject IJSRuntime JS
 
@@ -167,16 +168,19 @@
     <label class="h5">LST</label>
     <div id="code-block" class="code-block d-flex overflow-auto flex-row">
         @{
-            int rowCount = _sourceCode.Split(new[] {'\n'}).Length;
-            <EditForm Model="@Timing" class="d-flex">
-                <pre style="width: 2em; white-space: break-spaces; background-color: #eee8d5">
+            int rowCount = Regex.Matches(_sourceCode, "$", RegexOptions.Multiline).Count;
+            <EditForm Model="@pic" class="d-flex">
+                <pre id="breakpoint-pre" style="width: 2em; white-space: break-spaces; background-color: #eee8d5">
             @if (_sourceCode != "")
             {
+                int y = 0;
                 @for (int i = 0; i < rowCount - 1; i++)
                 {
                     @if (_instructionRows.Contains(i))
                     {
-                        <BootstrapCheckbox @bind-Value="Timing.ReleaseWatchdog"></BootstrapCheckbox>
+                        Breakpoint breakpoint = pic.GetBreakPoint(y);
+                        <BootstrapCheckbox @bind-Value="breakpoint.Value"></BootstrapCheckbox>
+                        y++;
                     }
                     else
                     {

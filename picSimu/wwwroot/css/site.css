@@ -19,6 +19,7 @@ hr {
     clear: both;
     margin-top: 1ex;
     margin-bottom: 1ex;
+    min-height: 1px;
 }
 
 a, .btn-link {
