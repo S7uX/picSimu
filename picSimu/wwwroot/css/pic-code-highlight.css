@@ -29,6 +29,7 @@
     font-family: JetBrainsMono, monospace;
     padding-right: 2ex;
     margin: 0;
+    width: 100%;
 }
 
 .code-line {

@@ -8,6 +8,7 @@ html, body {
 main {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 h1:focus {
@@ -16,6 +17,8 @@ h1:focus {
 
 hr {
     clear: both;
+    margin-top: 1ex;
+    margin-bottom: 1ex;
 }
 
 a, .btn-link {
