@@ -10,7 +10,7 @@
 
 <div class="top-row px-4">
     <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple/>
-    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="RunSimulation">Start</button>
+    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="RunSimulation">Run</button>
     <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="StopSimulation">Stop</button>
     <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="StepSimulation">Step</button>
     <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="ResetSimulation">Reset</button>
@@ -19,7 +19,7 @@
 
 
 <article class="content">
-<EditForm Model="@_regsiterBindings" class="d-flex flex-row justify-content-between">
+<EditForm Model="@_registerBindings" class="d-flex flex-row justify-content-between">
     <label class="h5 pe-5">SFR + W:</label>
     <div>
         <label class="sfr-label">W: </label>
@@ -27,31 +27,31 @@
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCL: </label>
-        <InputText title="@_regsiterBindings[2].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[2].Value"></InputText>
+        <input type="text" maxlength="2" title="@_registerBindings[2].ToolTip" class="form-control form-control-sm" @bind="@_registerBindings[2].Value">
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCLATH: </label>
-        <InputText title="@_regsiterBindings[0xA].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[0xA].Value"></InputText>
+        <InputText title="@_registerBindings[0xA].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[0xA].Value"></InputText>
     </div>
     <div class="hex-input">
         <label class="sfr-label">Status: </label>
-        <InputText title="@_regsiterBindings[3].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[3].Value"></InputText>
+        <InputText title="@_registerBindings[3].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[3].Value"></InputText>
     </div>
     <div class="hex-input">
         <label class="sfr-label">FSR: </label>
-        <InputText title="@_regsiterBindings[4].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[4].Value"></InputText>
+        <InputText title="@_registerBindings[4].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[4].Value"></InputText>
     </div>
     <div class="hex-input">
         <label class="sfr-label">Option: </label>
-        <InputText title="@_regsiterBindings[0x81].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[0x81].Value"></InputText>
+        <InputText title="@_registerBindings[0x81].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[0x81].Value"></InputText>
     </div>
     <div>
         <label class="sfr-label">Prescaler: </label>
         <label class="sfr-value">1:@pic.GetScaler()</label>
     </div>
-    <div>
+    <div class="hex-input">
         <label class="sfr-label">Timer0: </label>
-        <label title="@pic.Memory.ReadRegister(1).ToTooltipString()" class="sfr-value">@pic.Memory.ReadRegister(1).ToHexString()</label>
+        <InputText title="@_registerBindings[1].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[1].Value"></InputText>
     </div>
 </EditForm>
 
@@ -64,7 +64,7 @@
     <div id="code-block" class="code-block d-flex overflow-auto flex-row">
         @{
             int rowCount = Regex.Matches(_sourceCode, "$", RegexOptions.Multiline).Count;
-            <EditForm Model="@pic" class="d-flex">
+            <div class="d-flex">
                 <pre id="breakpoint-pre" style="width: 2em; white-space: break-spaces; background-color: #eee8d5">
             @if (_sourceCode != "")
             {
@@ -84,7 +84,7 @@
                 }
             }
             </pre>
-            </EditForm>
+            </div>
         }
         <pre id="code-pre"></pre>
     </div>
@@ -131,217 +131,194 @@
 
 <div class="d-flex flex-column justify-content-around">
 
-<div class="d-flex flex-row justify-content-around">
-    <EditForm Model="@Timing" id="timing-control" class="d-flex flex-column smaller-text justify-content-center">
-        <label class="h5">Timing</label>
-        <div>
-            <label class="sfr-label">Runtime: </label> <label>@pic.GetRuntime() µs</label>
+    <div class="d-flex flex-row justify-content-around">
+        <div id="timing-control" class="d-flex flex-column smaller-text justify-content-center">
+            <label class="h5">Timing</label>
+            <div>
+                <label class="sfr-label">Runtime: </label> <label>@pic.GetRuntime() µs</label>
+            </div>
+            <div>
+                <label class="sfr-label">Quartz: </label>
+                <select class="form-select-sm" @bind="Timing.QuartzFrequency">
+                    <option value="4" selected>4 MHz</option>
+                    <option value="32">32 MHz</option>
+                </select>
+            </div>
+            <div>
+                <label class="sfr-label">Release Watchdog: </label>
+                <BootstrapCheckbox @bind-Value="Timing.ReleaseWatchdog"></BootstrapCheckbox>
+            </div>
+            <div>
+                <label class="sfr-label">Watchdog: </label> <label>00h</label>
+            </div>
         </div>
-        <div>
-            <label class="sfr-label">Quartz: </label>
-            <InputSelect class="form-select-sm" @bind-Value="Timing.QuartzFrequency">
-                <option value="32" selected>4 MHz</option>
-            </InputSelect>
-        </div>
-        <div>
-            <label class="sfr-label">Release Watchdog: </label>
-            <BootstrapCheckbox @bind-Value="Timing.ReleaseWatchdog"></BootstrapCheckbox>
-        </div>
-        <div>
-            <label class="sfr-label">Watchdog: </label> <label>00h</label>
-        </div>
-    </EditForm>
 
-    <div class="vr"></div>
+        <div class="vr"></div>
 
-    <div style="flex-grow: 2; align-items: center;" id="stack-table" class="d-flex flex-column">
-        <label class="h5">Stack</label>
-        <table style="width: fit-content" class="table-sm">
-            <thead>
-            <tr>
-                <th>Ptr.</th>
-                <th>Adr.</th>
-            </tr>
-            </thead>
-            <tbody>
-            @{
-                @for (int i = 0; i < pic.Stack.Length; i++)
-                {
-                    <tr class='@(pic.Stack.Pointer == i ? "stack-highlight" : "")'>
-                        <td>@i</td>
-                        <td>@pic.Stack.get(i).ToHexString()</td>
-                    </tr>
+        <div style="flex-grow: 2; align-items: center;" id="stack-table" class="d-flex flex-column">
+            <label class="h5">Stack</label>
+            <table style="width: fit-content" class="table-sm">
+                <thead>
+                <tr>
+                    <th>Ptr.</th>
+                    <th>Adr.</th>
+                </tr>
+                </thead>
+                <tbody>
+                @{
+                    @for (int i = 0; i < pic.Stack.Length; i++)
+                    {
+                        <tr class='@(pic.Stack.Pointer == i ? "stack-highlight" : "")'>
+                            <td>@i</td>
+                            <td>@pic.Stack.get(i).ToHexString()</td>
+                        </tr>
+                    }
                 }
-            }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr>
+
+    <div id="sfr-bits-table" class="d-flex flex-column">
+        <label class="h5">SFR (Bits)</label>
+        <table style="height: 100%" class="table-sm">
+            <tbody>
+            <tr>
+                <th>Status</th>
+                <td>IRP</td>
+                <td>RP1</td>
+                <td>RP0</td>
+                <td>
+                    <span style="text-decoration:overline">TO</span>
+                </td>
+                <td>
+                    <span style="text-decoration:overline">PD</span>
+                </td>
+                <td>Z</td>
+                <td>DC</td>
+                <td>C</td>
+            </tr>
+            <tr>
+                <th></th>
+                @{
+                    uint statusReg = pic.Memory.ReadRegister(3);
+                    @for (int i = 7; i >= 0; i--)
+                    {
+                        <td>@statusReg.GetBit(i)</td>
+                    }
+                }
+            </tr>
+            <tr>
+                <th>Option</th>
+                <td>
+                    <span style="text-decoration:overline">RBPU</span>
+                </td>
+                <td>INTEDG</td>
+                <td>T0CS</td>
+                <td>T0SE</td>
+                <td>PSA</td>
+                <td>PS2</td>
+                <td>PS1</td>
+                <td>PS0</td>
+            </tr>
+            <tr>
+                <th></th>
+                @{
+                    uint optionReg = pic.Memory.UnmaskedReadRegister(0x81);
+                    @for (int i = 7; i >= 0; i--)
+                    {
+                        <td>@optionReg.GetBit(i)</td>
+                    }
+                }
+            </tr>
+            <tr>
+                <th>Intcon</th>
+                <td>GIE</td>
+                <td>EEIE</td>
+                <td>T0IE</td>
+                <td>INTE</td>
+                <td>RBIE</td>
+                <td>T0IF</td>
+                <td>INTF</td>
+                <td>RBIF</td>
+            </tr>
+            <tr>
+                <th></th>
+                @{
+                    uint intconReg = pic.Memory.UnmaskedReadRegister(0xb);
+                    @for (int i = 7; i >= 0; i--)
+                    {
+                        <td>@intconReg.GetBit(i)</td>
+                    }
+                }
+            </tr>
             </tbody>
         </table>
     </div>
-</div>
 
-<hr>
+    <hr>
 
-<div id="sfr-bits-table" class="d-flex flex-column">
-    <label class="h5">SFR (Bits)</label>
-    <table style="height: 100%" class="table-sm">
-        <tbody>
-        <tr>
-            <th>Status</th>
-            <td>IRP</td>
-            <td>RP1</td>
-            <td>RP0</td>
-            <td>
-                <span style="text-decoration:overline">TO</span>
-            </td>
-            <td>
-                <span style="text-decoration:overline">PD</span>
-            </td>
-            <td>Z</td>
-            <td>DC</td>
-            <td>C</td>
-        </tr>
-        <tr>
-            <th></th>
-            @{
-                uint statusReg = pic.Memory.ReadRegister(3);
-                @for (int i = 7; i >= 0; i--)
-                {
-                    <td>@statusReg.GetBit(i)</td>
-                }
-            }
-        </tr>
-        <tr>
-            <th>Option</th>
-            <td>
-                <span style="text-decoration:overline">RBPU</span>
-            </td>
-            <td>INTEDG</td>
-            <td>T0CS</td>
-            <td>T0SE</td>
-            <td>PSA</td>
-            <td>PS2</td>
-            <td>PS1</td>
-            <td>PS0</td>
-        </tr>
-        <tr>
-            <th></th>
-            @{
-                uint optionReg = pic.Memory.UnmaskedReadRegister(0x81);
-                @for (int i = 7; i >= 0; i--)
-                {
-                    <td>@optionReg.GetBit(i)</td>
-                }
-            }
-        </tr>
-        <tr>
-            <th>Intcon</th>
-            <td>GIE</td>
-            <td>EEIE</td>
-            <td>T0IE</td>
-            <td>INTE</td>
-            <td>RBIE</td>
-            <td>T0IF</td>
-            <td>INTF</td>
-            <td>RBIF</td>
-        </tr>
-        <tr>
-            <th></th>
-            @{
-                uint intconReg = pic.Memory.UnmaskedReadRegister(0xb);
-                @for (int i = 7; i >= 0; i--)
-                {
-                    <td>@intconReg.GetBit(i)</td>
-                }
-            }
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <label class="h5">Port A</label>
+    <div class="d-flex flex-row justify-content-between me-2">
+        <div class="sfr-label port-label">Index</div>
+        <div>7</div>
+        <div>6</div>
+        <div>5</div>
+        <div>4</div>
+        <div>3</div>
+        <div>2</div>
+        <div>1</div>
+        <div>0</div>
+    </div>
+    <div class="d-flex flex-row justify-content-between me-2">
+        <div class="sfr-label port-label">Tris</div>
+        @for (int i = 7; i >= 0; i--)
+        {
+            RegisterBit bit = pic.Memory.GetRegisterBit(0x85, i);
+            <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
+        }
+    </div>
+    <div class="d-flex flex-row justify-content-between me-2">
+        <div class="sfr-label port-label">Pin</div>
+        @for (int i = 7; i >= 0; i--)
+        {
+            RegisterBit bit = pic.Memory.GetRegisterBit(5, i);
+            <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
+        }
+    </div>
 
-<hr>
+    <hr>
 
-<label class="h5">Port A</label>
-<div class="d-flex flex-row justify-content-between me-2">
-    <div class="sfr-label port-label">Index</div>
-    <div>7</div>
-    <div>6</div>
-    <div>5</div>
-    <div>4</div>
-    <div>3</div>
-    <div>2</div>
-    <div>1</div>
-    <div>0</div>
-</div>
-<EditForm Model="@pic.Memory.Register[0x85]" class="d-flex flex-row justify-content-between me-2">
-    <div class="sfr-label port-label">Tris</div>
-    @for (int i = 7; i >= 0; i--)
-    {
-        RegisterBit bit = pic.Memory.GetRegisterBit(0x85, i);
-        <div>
-            <BootstrapCheckbox
-                Value="bit.Value"
-                ValueChanged="@(b => bit.Value = b)"
-                ValueExpression="@(() => bit.Value)">
-            </BootstrapCheckbox>
-        </div>
-    }
-</EditForm>
-<EditForm Model="@pic.Memory.Register[5]" class="d-flex flex-row justify-content-between me-2">
-    <div class="sfr-label port-label">Pin</div>
-    @for (int i = 7; i >= 0; i--)
-    {
-        RegisterBit bit = pic.Memory.GetRegisterBit(5, i);
-        <div>
-            <BootstrapCheckbox
-                Value="bit.Value"
-                ValueChanged="@(b => bit.Value = b)"
-                ValueExpression="@(() => bit.Value)">
-            </BootstrapCheckbox>
-        </div>
-    }
-</EditForm>
-
-<hr>
-
-<label class="h5">Port B</label>
-<div class="d-flex flex-row justify-content-between me-2">
-    <div class="sfr-label port-label">Index</div>
-    <div>7</div>
-    <div>6</div>
-    <div>5</div>
-    <div>4</div>
-    <div>3</div>
-    <div>2</div>
-    <div>1</div>
-    <div>0</div>
-</div>
-<EditForm Model="@pic.Memory.Register[0x86]" class="d-flex flex-row justify-content-between me-2">
-    <div class="sfr-label port-label">Tris</div>
-    @for (int i = 7; i >= 0; i--)
-    {
-        RegisterBit bit = pic.Memory.GetRegisterBit(0x86, i);
-        <div>
-            <BootstrapCheckbox
-                Value="bit.Value"
-                ValueChanged="@(b => bit.Value = b)"
-                ValueExpression="@(() => bit.Value)">
-            </BootstrapCheckbox>
-        </div>
-    }
-</EditForm>
-<EditForm Model="@pic.Memory.Register[6]" class="d-flex flex-row justify-content-between me-2 mb-2">
-    <div class="sfr-label port-label">Pin</div>
-    @for (int i = 7; i >= 0; i--)
-    {
-        RegisterBit bit = pic.Memory.GetRegisterBit(6, i);
-        <div>
-            <BootstrapCheckbox
-                Value="bit.Value"
-                ValueChanged="@(b => bit.Value = b)"
-                ValueExpression="@(() => bit.Value)">
-            </BootstrapCheckbox>
-        </div>
-    }
-</EditForm>
+    <label class="h5">Port B</label>
+    <div class="d-flex flex-row justify-content-between me-2">
+        <div class="sfr-label port-label">Index</div>
+        <div>7</div>
+        <div>6</div>
+        <div>5</div>
+        <div>4</div>
+        <div>3</div>
+        <div>2</div>
+        <div>1</div>
+        <div>0</div>
+    </div>
+    <div class="d-flex flex-row justify-content-between me-2">
+        <div class="sfr-label port-label">Tris</div>
+        @for (int i = 7; i >= 0; i--)
+        {
+            RegisterBit bit = pic.Memory.GetRegisterBit(0x86, i);
+            <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
+        }
+    </div>
+    <div class="d-flex flex-row justify-content-between me-2 mb-2">
+        <div class="sfr-label port-label">Pin</div>
+        @for (int i = 7; i >= 0; i--)
+        {
+            RegisterBit bit = pic.Memory.GetRegisterBit(6, i);
+            <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
+        }
+    </div>
 </div>
 </div>
 </article>

@@ -123,20 +123,20 @@
 .hex-input {
     display: flex;
     flex-direction: row;
-    height: 1ex;
+    height: fit-content;
+    align-items: center;
 }
 
 /* position the unit to the right of the wrapper */
 .hex-input::after {
-    position: absolute;
-    top: 2px;   
-    right: .5em;
+    position: relative;
+    right: 1em;
     content: "h";
-    height: 1ex;
+    bottom: 1px;
 }
 
 .hex-input ::deep input {
-    width: 3.3em;
+    width: 3em;
 }
 
 /* Firefox */

@@ -15,20 +15,20 @@ public partial class Index : ComponentBase
     public string[]? InstructionCodes;
 
     private Pic pic;
-    private Regsiter[] _regsiterBindings;
+    private Regsiter[] _registerBindings;
     
     public Index()
     {
         pic = new Pic();
-        _regsiterBindings = new Regsiter[Pic.ProgramMemoryLength];
+        _registerBindings = new Regsiter[Pic.ProgramMemoryLength];
         _createRegisterBindings();
     }
 
     private void _createRegisterBindings()
     {
-        for (uint i = 0; i < _regsiterBindings.Length; i++)
+        for (uint i = 0; i < _registerBindings.Length; i++)
         {
-            _regsiterBindings[i] = pic.Memory.GetRegister(i);
+            _registerBindings[i] = pic.Memory.GetRegister(i);
         }
     }
     
@@ -89,6 +89,7 @@ public partial class Index : ComponentBase
         if (InstructionCodes != null)
         {
             pic.Run();
+            await UpdateProgramCounter();
         }
         return false;
     }

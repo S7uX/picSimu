@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
+
 namespace picSimu.Simulation.Registers;
 
 public class RegisterBit
@@ -24,11 +27,18 @@ public class Regsiter
 {
     private uint[] _register;
     public readonly uint Address;
+    private static Regex regex = new Regex("^[a-fA-F0-9]{2}$", RegexOptions.Compiled);
 
     public string Value
     {
         get => _register[Address].ToString("X2");
-        set => _register[Address] = Convert.ToUInt32(value, 16);
+        set
+        {
+            if (regex.IsMatch(value))
+            {
+                _register[Address] = Convert.ToUInt32(value, 16);
+            }
+        }
     }
 
     public string ToolTip => _register[Address].ToTooltipString();
@@ -44,8 +54,12 @@ public class Breakpoint
 {
     private bool[] BreakPoints;
     private int i;
-    
-    public bool Value { get => BreakPoints[i]; set => BreakPoints[i] = value; }
+
+    public bool Value
+    {
+        get => BreakPoints[i];
+        set => BreakPoints[i] = value;
+    }
 
 
     public Breakpoint(bool[] breakPoints, int i)
