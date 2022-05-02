@@ -5,111 +5,6 @@
 @* @implements IAsyncDisposable *@
 @inject IJSRuntime JS
 
-@code {
-    private IJSObjectReference? module;
-    private string _sourceCode = "";
-    private string _parsedInstructionCodes = "";
-    private HashSet<int> _instructionRows = new HashSet<int>();
-    public string[]? InstructionCodes;
-    private Pic pic = new Pic();
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/parser.js");
-        }
-    }
-
-    private async Task LoadFiles(InputFileChangeEventArgs e)
-    {
-        _sourceCode = await new StreamReader(e.File.OpenReadStream()).ReadToEndAsync();
-        _instructionRows = await DisplayPicCode(_sourceCode) ?? new HashSet<int>();
-        _parsedInstructionCodes = await GetInstructionCodes(_sourceCode);
-        Console.WriteLine("parsed instruction codes: " + _parsedInstructionCodes);
-        if (_parsedInstructionCodes != null)
-        {
-            InstructionCodes = _parsedInstructionCodes.Split(",");
-            pic = new Pic();
-
-            if (InstructionCodes != null)
-            {
-                pic.LoadInstructionCodes(InstructionCodes);
-            }
-        }
-    }
-
-    public async Task<HashSet<int>?> DisplayPicCode(string sourceCode)
-    {
-        if (module is not null)
-        {
-            var res = await module.InvokeAsync<string>("parsePic", sourceCode);
-            return new HashSet<int>(res.Split(",").Select(n => Convert.ToInt32(n)).ToArray());
-        }
-        return null;
-    }
-
-    public async ValueTask<string?> GetInstructionCodes(string sourceCode)
-    {
-        if (module is not null)
-            return await module.InvokeAsync<string>("getInstructionCodes", sourceCode);
-        else
-            return null;
-    }
-
-    public async Task<bool> RunSimulation()
-    {
-        if (InstructionCodes != null)
-        {
-            pic.Run();
-        }
-        return false;
-    }
-
-    public async Task<bool> StopSimulation()
-    {
-        if (InstructionCodes != null)
-        {
-            pic.Stop();
-        }
-        return false;
-    }
-
-    public async Task<bool> StepSimulation()
-    {
-        if (InstructionCodes != null)
-        {
-            pic.Step();
-        }
-        return false;
-    }
-
-    public async Task<bool> ResetSimulation()
-    {
-        if (InstructionCodes != null)
-        {
-            pic = new Pic();
-        }
-        return false;
-    }
-
-    // public async ValueTask DisposeAsync()
-    // {
-    //     if (module is not null)
-    //     {
-    //         await module.DisposeAsync();
-    //     }
-    // }
-
-    private uint UpdateProgramCounter(uint pc)
-    {
-        module?.InvokeAsync<string>("highlightCodeLine", pc.ToString());
-        return pc;
-    }
-
-    public Timing Timing { get; set; } = new Timing() {QuartzFrequency = 32, ReleaseWatchdog = false};
-
-}
 
 <PageTitle>Index</PageTitle>
 
@@ -124,31 +19,31 @@
 
 
 <article class="content">
-<div class="d-flex flex-row justify-content-between">
+<EditForm Model="@_regsiterBindings" class="d-flex flex-row justify-content-between">
     <label class="h5 pe-5">SFR + W:</label>
     <div>
         <label class="sfr-label">W: </label>
         <label title="@pic.wRegister.ToTooltipString()" class="sfr-value">@pic.wRegister.ToHexString()</label>
     </div>
-    <div>
+    <div class="hex-input">
         <label class="sfr-label">PCL: </label>
-        <label title="@pic.Memory.ReadRegister(2).ToTooltipString()" class="sfr-value">@UpdateProgramCounter(pic.Memory.ReadRegister(2)).ToHexString()</label>
+        <InputText title="@_regsiterBindings[2].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[2].Value"></InputText>
     </div>
-    <div>
+    <div class="hex-input">
         <label class="sfr-label">PCLATH: </label>
-        <label title="@pic.Memory.ReadRegister(0xA).ToTooltipString()" class="sfr-value">@pic.Memory.ReadRegister(0xA).ToHexString()</label>
+        <InputText title="@_regsiterBindings[0xA].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[0xA].Value"></InputText>
     </div>
-    <div>
+    <div class="hex-input">
         <label class="sfr-label">Status: </label>
-        <label title="@pic.Memory.ReadRegister(3).ToTooltipString()" class="sfr-value">@pic.Memory.ReadRegister(3).ToHexString()</label>
+        <InputText title="@_regsiterBindings[3].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[3].Value"></InputText>
     </div>
-    <div>
+    <div class="hex-input">
         <label class="sfr-label">FSR: </label>
-        <label title="@pic.Memory.ReadRegister(4).ToTooltipString()" class="sfr-value">@pic.Memory.ReadRegister(4).ToHexString()</label>
+        <InputText title="@_regsiterBindings[4].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[4].Value"></InputText>
     </div>
-    <div>
+    <div class="hex-input">
         <label class="sfr-label">Option: </label>
-        <label title="@pic.Memory.ReadRegister(0x81).ToTooltipString()" class="sfr-value">@pic.Memory.ReadRegister(0x81).ToHexString()</label>
+        <InputText title="@_regsiterBindings[0x81].ToolTip" class="form-control form-control-sm" @bind-Value="@_regsiterBindings[0x81].Value"></InputText>
     </div>
     <div>
         <label class="sfr-label">Prescaler: </label>
@@ -158,7 +53,7 @@
         <label class="sfr-label">Timer0: </label>
         <label title="@pic.Memory.ReadRegister(1).ToTooltipString()" class="sfr-value">@pic.Memory.ReadRegister(1).ToHexString()</label>
     </div>
-</div>
+</EditForm>
 
 <hr class="my-1">
 
