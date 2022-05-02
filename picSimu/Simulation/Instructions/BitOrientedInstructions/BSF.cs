@@ -9,7 +9,7 @@ public class BSF : BitOrientedInstruction
         val = val.SetBitTo1(b);
 
         _pic.Memory.WriteRegister(f, val);
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 

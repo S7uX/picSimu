@@ -26,7 +26,7 @@ public class MOVF : ByteOrientedInstruction
             _pic.Memory.WriteRegister(f, _pic.Memory.ReadRegister(f));
         }
         
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }

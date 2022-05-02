@@ -38,7 +38,7 @@ public class RLF : ByteOrientedInstruction
         }
 
         
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }

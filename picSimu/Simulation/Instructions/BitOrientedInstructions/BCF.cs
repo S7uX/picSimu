@@ -9,7 +9,7 @@ public class BCF : BitOrientedInstruction
         val = val.SetBitTo0(b);
 
         _pic.Memory.WriteRegister(f, val);
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 

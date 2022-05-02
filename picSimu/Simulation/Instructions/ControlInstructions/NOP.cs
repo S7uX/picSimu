@@ -8,7 +8,7 @@ public class NOP : ControlInstruciton
 
     public override int Execute()
     {
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }

@@ -37,7 +37,7 @@ public class RRF : ByteOrientedInstruction
             _pic.Memory.WriteRegister(f, Convert.ToUInt16(value.Substring(0, 8), 2));
         }
 
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }

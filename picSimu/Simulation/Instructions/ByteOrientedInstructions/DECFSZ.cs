@@ -23,9 +23,9 @@ public class DECFSZ : ByteOrientedInstruction
 
         if (val == 0)
         {
-            _pic.Programmcounter++; //NOP
+            _pic.IncreaseProgramCounter(); //NOP
         }
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }
