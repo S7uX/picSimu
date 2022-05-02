@@ -39,6 +39,11 @@ public class Pic
 
     public void ResetScaler()
     {
+        Scaler = GetScaler();
+    }
+
+    public uint GetScaler()
+    {
         bool PS0 = Memory.UnmaskedReadRegister(0x81).IsBitSet(0);
         bool PS1 = Memory.UnmaskedReadRegister(0x81).IsBitSet(1);
         bool PS2 = Memory.UnmaskedReadRegister(0x81).IsBitSet(2);
@@ -48,35 +53,35 @@ public class Pic
             //assigned to WDT
             if (PS2 && PS1 && PS0)
             {
-                Scaler = 128;
+                return 128;
             }
             else if (PS2 && PS1 && !PS0)
             {
-                Scaler = 64;
+                return 64;
             }
             else if (PS2 && !PS1 && PS0)
             {
-                Scaler = 32;
+                return 32;
             }
             else if (PS2 && !PS1 && !PS0)
             {
-                Scaler = 16;
+                return 16;
             }
             else if (!PS2 && PS1 && PS0)
             {
-                Scaler = 8;
+                return 8;
             }
             else if (!PS2 && PS1 && !PS0)
             {
-                Scaler = 4;
+                return 4;
             }
             else if (!PS2 && !PS1 && PS0)
             {
-                Scaler = 2;
+                return 2;
             }
             else if (!PS2 && !PS1 && !PS0)
             {
-                Scaler = 1;
+                return 1;
             }
         }
         else
@@ -84,43 +89,46 @@ public class Pic
             //assigned to Timer0
             if (PS2 && PS1 && PS0)
             {
-                Scaler = 256;
+                return 256;
             }
             else if (PS2 && PS1 && !PS0)
             {
-                Scaler = 128;
+                return 128;
             }
             else if (PS2 && !PS1 && PS0)
             {
-                Scaler = 64;
+                return 64;
             }
             else if (PS2 && !PS1 && !PS0)
             {
-                Scaler = 32;
+                return 32;
             }
             else if (!PS2 && PS1 && PS0)
             {
-                Scaler = 16;
+                return 16;
             }
             else if (!PS2 && PS1 && !PS0)
             {
-                Scaler = 8;
+                return 8;
             }
             else if (!PS2 && !PS1 && PS0)
             {
-                Scaler = 4;
+                return 4;
             }
             else if (!PS2 && !PS1 && !PS0)
             {
-                Scaler = 2;
+                return 2;
             }
         }
+
+        throw new IndexOutOfRangeException();
     }
+
     public void IncreaseProgramCounter()
     {
         Programmcounter++;
         Programmcounter &= 255;
-        
+
         Runtime++;
         Scaler--;
         if (Scaler == 0)
@@ -128,7 +136,7 @@ public class Pic
             ResetScaler();
             bool PSA = Memory.UnmaskedReadRegister(0x81).IsBitSet(3);
             if (PSA == true)
-            { 
+            {
                 //WDT  
             }
             else
@@ -142,12 +150,30 @@ public class Pic
     private void IncreaseTimer()
     {
         var value = Memory.ReadRegister(1);
-        Memory.WriteRegister(1, ++value);
+        value++;
+        value &= 255;
+        Memory.WriteRegister(1, value);
+    }
+
+    public double GetRuntime()
+    {
+        double frequenzInMhz = 4;
+        double result = 4 / frequenzInMhz * Runtime;
+        return result;
     }
 
     public void Run()
     {
-        //TODO
+        _programMemory[Programmcounter].Execute();
+        while (true)
+        {
+            if (BreakPoints[Programmcounter])
+            {
+                break;
+            }
+
+            _programMemory[Programmcounter].Execute();
+        }
     }
 
     public void Step()
@@ -157,7 +183,7 @@ public class Pic
 
     public void Stop()
     {
-        //TODO
+        BreakPoints[Programmcounter + 1] = true;
     }
 
     public Breakpoint GetBreakPoint(int i)
@@ -170,8 +196,12 @@ public class Breakpoint
 {
     private bool[] BreakPoints;
     private int i;
-    
-    public bool Value { get => BreakPoints[i]; set => BreakPoints[i] = value; }
+
+    public bool Value
+    {
+        get => BreakPoints[i];
+        set => BreakPoints[i] = value;
+    }
 
 
     public Breakpoint(bool[] breakPoints, int i)

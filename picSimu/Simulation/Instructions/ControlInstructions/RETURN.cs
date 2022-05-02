@@ -8,6 +8,9 @@ public class RETURN : ControlInstruciton
 
     public override int Execute()
     {
+        _pic.IncreaseProgramCounter();
+        _pic.IncreaseProgramCounter();
+        
         _pic.Programmcounter = _pic.Stack.pop();
         return 0;
     }

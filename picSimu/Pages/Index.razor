@@ -152,7 +152,7 @@
     </div>
     <div>
         <label class="sfr-label">Prescaler: </label>
-        <label class="sfr-value">1:1</label>
+        <label class="sfr-value">1:@pic.GetScaler()</label>
     </div>
     <div>
         <label class="sfr-label">Timer0: </label>
@@ -240,12 +240,12 @@
     <EditForm Model="@Timing" id="timing-control" class="d-flex flex-column smaller-text justify-content-center">
         <label class="h5">Timing</label>
         <div>
-            <label class="sfr-label">Runtime: </label> <label>0 µs</label>
+            <label class="sfr-label">Runtime: </label> <label>@pic.GetRuntime() µs</label>
         </div>
         <div>
             <label class="sfr-label">Quartz: </label>
             <InputSelect class="form-select-sm" @bind-Value="Timing.QuartzFrequency">
-                <option value="32" selected>32 kHz</option>
+                <option value="32" selected>4 MHz</option>
             </InputSelect>
         </div>
         <div>

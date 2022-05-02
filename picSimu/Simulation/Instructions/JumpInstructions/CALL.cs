@@ -8,8 +8,12 @@ public class CALL : JumpInstruction
 
     public override int Execute()
     {
+        _pic.IncreaseProgramCounter();
+        _pic.IncreaseProgramCounter();
+        
         _pic.Stack.push(_pic.Programmcounter + 1);
         _pic.Programmcounter = k;
+        
         return 0;
     }
 }
