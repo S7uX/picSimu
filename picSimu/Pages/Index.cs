@@ -133,7 +133,7 @@ public partial class Index : ComponentBase
     {
         if (module != null)
         {
-            await module.InvokeAsync<string>("highlightCodeLine", pic.Programmcounter.ToString());
+            await module.InvokeAsync<string>("highlightCodeLine", pic.Memory.ReadRegister(2).ToString());
         }
     }
 
