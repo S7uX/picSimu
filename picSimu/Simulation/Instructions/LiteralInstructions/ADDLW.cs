@@ -38,7 +38,7 @@ public class ADDLW : LiteralInstruction
             _pic.Memory.SetDigitCarryFlag(false);
         }
         _pic.wRegister = Wnew;
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }

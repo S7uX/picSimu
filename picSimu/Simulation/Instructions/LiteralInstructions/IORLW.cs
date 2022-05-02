@@ -17,7 +17,7 @@ public class IORLW : LiteralInstruction
         {
             _pic.Memory.SetZeroFlag(false);
         }
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }

@@ -10,7 +10,7 @@ public class CLRW : ControlInstruciton
     {
         _pic.wRegister = 0;
         _pic.Memory.SetZeroFlag(true);
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }

@@ -24,7 +24,7 @@ public class SWAPF : ByteOrientedInstruction
             _pic.Memory.WriteRegister(f, result);
         }
         
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }

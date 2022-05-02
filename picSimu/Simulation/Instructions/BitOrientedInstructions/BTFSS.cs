@@ -7,10 +7,10 @@ public class BTFSS : BitOrientedInstruction
         var val = _pic.Memory.ReadRegister(f);
         if (Lib.IsBitSet(val, b))
         {
-            _pic.Programmcounter++; //NOP
+            _pic.IncreaseProgramCounter(); //NOP
         }
 
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 

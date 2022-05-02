@@ -10,7 +10,7 @@ public class CLRF : ByteOrientedInstruction
     {
         _pic.Memory.WriteRegister(f, 0);
         _pic.Memory.SetZeroFlag(true);
-        _pic.Programmcounter++;
+        _pic.IncreaseProgramCounter();
         return 0;
     }
 }
