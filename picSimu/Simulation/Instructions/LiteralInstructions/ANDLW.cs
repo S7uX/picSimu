@@ -8,8 +8,8 @@ public class ANDLW : LiteralInstruction
 
     public override int Execute()
     {
-        _pic.wRegister &= k;
-        if (_pic.wRegister == 0)
+        _pic.WRegister &= k;
+        if (_pic.WRegister == 0)
         {
             _pic.Memory.SetZeroFlag(true);
         }

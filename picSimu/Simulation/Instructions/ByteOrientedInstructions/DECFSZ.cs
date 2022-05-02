@@ -14,7 +14,7 @@ public class DECFSZ : ByteOrientedInstruction
 
         if (d == 0)
         {
-            _pic.wRegister = val;
+            _pic.WRegister = val;
         }
         else
         {

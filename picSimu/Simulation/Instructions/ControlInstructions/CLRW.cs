@@ -8,7 +8,7 @@ public class CLRW : ControlInstruciton
 
     public override int Execute()
     {
-        _pic.wRegister = 0;
+        _pic.WRegister = 0;
         _pic.Memory.SetZeroFlag(true);
         _pic.IncreaseProgramCounter();
         return 0;

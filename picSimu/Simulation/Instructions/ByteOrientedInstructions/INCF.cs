@@ -15,7 +15,7 @@ public class INCF : ByteOrientedInstruction
         }
         if (d == 0)
         {
-            _pic.wRegister = result;
+            _pic.WRegister = result;
         }
         else
         {

@@ -12,7 +12,7 @@ public class COMF : ByteOrientedInstruction
         result &= 255;
         if (d == 0)
         {
-            _pic.wRegister = result;
+            _pic.WRegister = result;
         }
         else
         {

@@ -35,9 +35,10 @@
     width: 100%;
     border-width: 1px;
     background-color: #fdf6e3;
-    border-style: groove;
+    border-style: solid;
     padding: 1ex .5em 1ex .7ex;
     display: table;
+    border-color: #93a1a1;
 }
 
 .code-line {

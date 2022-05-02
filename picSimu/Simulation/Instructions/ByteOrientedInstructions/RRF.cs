@@ -30,7 +30,7 @@ public class RRF : ByteOrientedInstruction
         
         if (d == 0)
         {
-            _pic.wRegister = Convert.ToUInt16(value.Substring(0, 8), 2);
+            _pic.WRegister = Convert.ToUInt16(value.Substring(0, 8), 2);
         }
         else
         {

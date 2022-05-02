@@ -8,7 +8,7 @@ public class ANDWF : ByteOrientedInstruction
     
     public override int Execute()
     {
-        uint result = _pic.wRegister & _pic.Memory.ReadRegister(f);
+        uint result = _pic.WRegister & _pic.Memory.ReadRegister(f);
         if (result == 0)
         {
             _pic.Memory.SetZeroFlag(true);
@@ -20,7 +20,7 @@ public class ANDWF : ByteOrientedInstruction
 
         if (d == 0)
         {
-            _pic.wRegister = result;
+            _pic.WRegister = result;
         }
         else
         {

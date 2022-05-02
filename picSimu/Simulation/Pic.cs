@@ -5,8 +5,8 @@ namespace picSimu.Simulation;
 
 public class Pic
 {
-    public static int ProgramMemoryLength = 1024;
-    public uint wRegister = 0;
+    public static readonly int ProgramMemoryLength = 1024;
+    public uint WRegister = 0;
     public uint Runtime = 0;
     public uint Scaler = 0;
 
@@ -16,11 +16,11 @@ public class Pic
 
     public readonly Memory Memory;
 
-    public CircularStack Stack;
+    public readonly CircularStack Stack;
 
     public Pic()
     {
-        _programMemory = new Instruction[1024];
+        _programMemory = new Instruction[ProgramMemoryLength];
         Stack = new CircularStack(8);
         Memory = new Memory();
         ResetScaler();

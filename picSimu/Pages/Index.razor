@@ -23,11 +23,11 @@
     <label class="h5 pe-5">SFR + W:</label>
     <div>
         <label class="sfr-label">W: </label>
-        <label title="@pic.wRegister.ToTooltipString()" class="sfr-value">@pic.wRegister.ToHexString()</label>
+        <label title="@pic.WRegister.ToTooltipString()" class="sfr-value">@pic.WRegister.ToHexString()</label>
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCL: </label>
-        <input type="text" maxlength="2" title="@_registerBindings[2].ToolTip" class="form-control form-control-sm" @bind="@_registerBindings[2].Value">
+        <input type="text" maxlength="2" title="@_registerBindings[2].ToolTip" class="form-control" @bind="@_registerBindings[2].Value">
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCLATH: </label>

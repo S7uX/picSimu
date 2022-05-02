@@ -17,7 +17,7 @@ public class SWAPF : ByteOrientedInstruction
 
         if (d == 0)
         {
-            _pic.wRegister = result;
+            _pic.WRegister = result;
         }
         else
         {

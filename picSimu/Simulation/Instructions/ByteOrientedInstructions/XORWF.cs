@@ -8,7 +8,7 @@ public class XORWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = _pic.wRegister ^ _pic.Memory.ReadRegister(f);
+        uint result = _pic.WRegister ^ _pic.Memory.ReadRegister(f);
 
         if (result == 0)
         {
@@ -21,7 +21,7 @@ public class XORWF : ByteOrientedInstruction
         
         if (d == 0)
         {
-            _pic.wRegister = result;
+            _pic.WRegister = result;
         }
         else
         {

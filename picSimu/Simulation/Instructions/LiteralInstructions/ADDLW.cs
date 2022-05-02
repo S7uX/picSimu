@@ -8,7 +8,7 @@ public class ADDLW : LiteralInstruction
 
     public override int Execute()
     {
-        uint WOld = _pic.wRegister;
+        uint WOld = _pic.WRegister;
         uint Wnew = WOld + k;
         if (Wnew == 0)
         {
@@ -37,7 +37,7 @@ public class ADDLW : LiteralInstruction
         {
             _pic.Memory.SetDigitCarryFlag(false);
         }
-        _pic.wRegister = Wnew;
+        _pic.WRegister = Wnew;
         _pic.IncreaseProgramCounter();
         return 0;
     }

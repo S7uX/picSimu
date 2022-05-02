@@ -19,7 +19,7 @@ public class MOVF : ByteOrientedInstruction
         
         if (d == 0)
         {
-            _pic.wRegister = _pic.Memory.ReadRegister(f);
+            _pic.WRegister = _pic.Memory.ReadRegister(f);
         }
         else
         {
