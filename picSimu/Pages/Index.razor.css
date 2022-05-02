@@ -116,6 +116,37 @@
     border-color: rgb(0, 0, 0, .25);
 }
 
-.stack-highlight{
+.stack-highlight {
     background-color: rgb(137, 73, 227, 0.5);
+}
+
+.hex-input {
+    display: flex;
+    flex-direction: row;
+    height: 1ex;
+}
+
+/* position the unit to the right of the wrapper */
+.hex-input::after {
+    position: absolute;
+    top: 2px;   
+    right: .5em;
+    content: "h";
+    height: 1ex;
+}
+
+.hex-input ::deep input {
+    width: 3.3em;
+}
+
+/* Firefox */
+.hex-input ::deep input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Chrome, Edge, Safari */
+.hex-input ::deep input::-webkit-outer-spin-button,
+.hex-input ::deep input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }

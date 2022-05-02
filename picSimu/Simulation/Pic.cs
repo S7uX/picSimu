@@ -1,9 +1,11 @@
 using picSimu.Simulation.Instructions;
+using picSimu.Simulation.Registers;
 
 namespace picSimu.Simulation;
 
 public class Pic
 {
+    public static int ProgramMemoryLength = 1024;
     public uint wRegister = 0;
     public uint Programmcounter = 0;
 
@@ -52,20 +54,5 @@ public class Pic
     public Breakpoint GetBreakPoint(int i)
     {
         return new Breakpoint(BreakPoints, i);
-    }
-}
-
-public class Breakpoint
-{
-    private bool[] BreakPoints;
-    private int i;
-    
-    public bool Value { get => BreakPoints[i]; set => BreakPoints[i] = value; }
-
-
-    public Breakpoint(bool[] breakPoints, int i)
-    {
-        BreakPoints = breakPoints;
-        this.i = i;
     }
 }
