@@ -10,7 +10,7 @@ public class GOTO : JumpInstruction
     {
         _pic.IncreaseProgramCounter();
         _pic.IncreaseProgramCounter();
-        _pic.Programmcounter = k;
+        _pic.Memory.WriteRegister(2, k);
         
         return 0;
     }

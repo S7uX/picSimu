@@ -11,8 +11,8 @@ public class CALL : JumpInstruction
         _pic.IncreaseProgramCounter();
         _pic.IncreaseProgramCounter();
         
-        _pic.Stack.push(_pic.Programmcounter + 1);
-        _pic.Programmcounter = k;
+        _pic.Stack.push(_pic.Memory.ReadRegister(2) + 1);
+        _pic.Memory.WriteRegister(2, k);
         
         return 0;
     }

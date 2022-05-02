@@ -132,7 +132,7 @@
     </div>
     <div>
         <label class="sfr-label">PCL: </label>
-        <label title="@pic.Programmcounter.ToTooltipString()" class="sfr-value">@UpdateProgramCounter(pic.Programmcounter).ToHexString()</label>
+        <label title="@pic.Memory.ReadRegister(2).ToTooltipString()" class="sfr-value">@UpdateProgramCounter(pic.Memory.ReadRegister(2)).ToHexString()</label>
     </div>
     <div>
         <label class="sfr-label">PCLATH: </label>

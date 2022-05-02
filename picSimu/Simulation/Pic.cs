@@ -5,7 +5,6 @@ namespace picSimu.Simulation;
 public class Pic
 {
     public uint wRegister = 0;
-    public uint Programmcounter = 0;
     public uint Runtime = 0;
     public uint Scaler = 0;
 
@@ -126,8 +125,10 @@ public class Pic
 
     public void IncreaseProgramCounter()
     {
-        Programmcounter++;
-        Programmcounter &= 255;
+        var value = Memory.ReadRegister(2);
+        value++;
+        value &= 255;
+        Memory.WriteRegister(2, value);
 
         Runtime++;
         Scaler--;
@@ -164,26 +165,26 @@ public class Pic
 
     public void Run()
     {
-        _programMemory[Programmcounter].Execute();
+        _programMemory[Memory.ReadRegister(2)].Execute();
         while (true)
         {
-            if (BreakPoints[Programmcounter])
+            if (BreakPoints[Memory.ReadRegister(2)])
             {
                 break;
             }
 
-            _programMemory[Programmcounter].Execute();
+            _programMemory[Memory.ReadRegister(2)].Execute();
         }
     }
 
     public void Step()
     {
-        _programMemory[Programmcounter].Execute();
+        _programMemory[Memory.ReadRegister(2)].Execute();
     }
 
     public void Stop()
     {
-        BreakPoints[Programmcounter + 1] = true;
+        BreakPoints[Memory.ReadRegister(2) + 1] = true;
     }
 
     public Breakpoint GetBreakPoint(int i)

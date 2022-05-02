@@ -10,8 +10,8 @@ public class RETLW : LiteralInstruction
     {
         _pic.IncreaseProgramCounter();
         _pic.IncreaseProgramCounter();
-        
-        _pic.Programmcounter = _pic.Stack.pop();
+
+        _pic.Memory.WriteRegister(2, _pic.Stack.pop());
         _pic.wRegister = k;
         return 0;
     }

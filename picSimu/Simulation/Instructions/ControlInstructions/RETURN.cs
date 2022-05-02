@@ -11,7 +11,7 @@ public class RETURN : ControlInstruciton
         _pic.IncreaseProgramCounter();
         _pic.IncreaseProgramCounter();
         
-        _pic.Programmcounter = _pic.Stack.pop();
+        _pic.Memory.WriteRegister(2, _pic.Stack.pop());
         return 0;
     }
 }
