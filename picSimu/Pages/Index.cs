@@ -15,12 +15,12 @@ public partial class Index : ComponentBase
     public string[]? InstructionCodes;
 
     private Pic pic;
-    private Regsiter[] _registerBindings;
+    private Register[] _registerBindings;
     
     public Index()
     {
         pic = new Pic();
-        _registerBindings = new Regsiter[Pic.ProgramMemoryLength];
+        _registerBindings = new Register[Pic.ProgramMemoryLength];
         _createRegisterBindings();
     }
 

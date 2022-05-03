@@ -19,7 +19,7 @@
 
 
 <article class="content">
-<EditForm Model="@_registerBindings" class="d-flex flex-row justify-content-between">
+<div class="d-flex flex-row justify-content-between">
     <label class="h5 pe-5">SFR + W:</label>
     <div>
         <label class="sfr-label">W: </label>
@@ -27,23 +27,23 @@
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCL: </label>
-        <input type="text" maxlength="2" title="@_registerBindings[2].ToolTip" class="form-control" @bind="@_registerBindings[2].Value">
+        <HexInput class="form-control" @bind-Value="_registerBindings[2]"></HexInput>
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCLATH: </label>
-        <InputText title="@_registerBindings[0xA].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[0xA].Value"></InputText>
+        <HexInput class="form-control" @bind-Value="_registerBindings[0xA]"></HexInput>
     </div>
     <div class="hex-input">
         <label class="sfr-label">Status: </label>
-        <InputText title="@_registerBindings[3].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[3].Value"></InputText>
+        <HexInput class="form-control" @bind-Value="_registerBindings[3]"></HexInput>
     </div>
     <div class="hex-input">
         <label class="sfr-label">FSR: </label>
-        <InputText title="@_registerBindings[4].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[4].Value"></InputText>
+        <HexInput class="form-control" @bind-Value="_registerBindings[4]"></HexInput>
     </div>
     <div class="hex-input">
         <label class="sfr-label">Option: </label>
-        <InputText title="@_registerBindings[0x81].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[0x81].Value"></InputText>
+        <HexInput class="form-control" @bind-Value="_registerBindings[0x81]"></HexInput>
     </div>
     <div>
         <label class="sfr-label">Prescaler: </label>
@@ -51,9 +51,9 @@
     </div>
     <div class="hex-input">
         <label class="sfr-label">Timer0: </label>
-        <InputText title="@_registerBindings[1].ToolTip" class="form-control form-control-sm" @bind-Value="@_registerBindings[1].Value"></InputText>
+        <HexInput class="form-control" @bind-Value="_registerBindings[1]"></HexInput>
     </div>
-</EditForm>
+</div>
 
 <hr class="my-1">
 
@@ -110,17 +110,20 @@
             </tr>
             </thead>
             <tbody>
-            @{
-                @for (uint i = 0; i < pic.Memory.Register.Length / 2; i++)
-                {
-                    uint y = i + 0x80;
-                    <tr>
-                        <td title="@i">@i.ToHexString()</td>
-                        <td title="@pic.Memory.ReadRegister(i).ToTooltipString()">@pic.Memory.Register[i].ToHexString()</td>
-                        <td title="@y">@y.ToHexString()</td>
-                        <td title="@pic.Memory.ReadRegister(y).ToTooltipString()">@pic.Memory.Register[y].ToHexString()</td>
-                    </tr>
-                }
+            @for (uint i = 0; i < pic.Memory.Register.Length / 2; i++)
+            {
+                uint il = i;
+                uint y = i + 0x80;
+                <tr>
+                    <td title="@i">@i.ToHexString()</td>
+                    <td class="hex-input" title="@pic.Memory.ReadRegister(i).ToTooltipString()">
+                        <HexInput class="" @bind-Value="_registerBindings[il]"></HexInput>
+                    </td>
+                    <td title="@y">@y.ToHexString()</td>
+                    <td class="hex-input" title="@pic.Memory.ReadRegister(y).ToTooltipString()">
+                        <HexInput class="" @bind-Value="_registerBindings[y]"></HexInput>
+                    </td>
+                </tr>
             }
             </tbody>
         </table>

@@ -23,7 +23,7 @@ public class RegisterBit
     }
 }
 
-public class Regsiter
+public class Register
 {
     private uint[] _register;
     public readonly uint Address;
@@ -43,7 +43,7 @@ public class Regsiter
 
     public string ToolTip => _register[Address].ToTooltipString();
 
-    public Regsiter(uint[] register, uint address)
+    public Register(uint[] register, uint address)
     {
         _register = register;
         Address = address;

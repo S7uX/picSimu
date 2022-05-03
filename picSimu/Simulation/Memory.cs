@@ -149,8 +149,8 @@ public class Memory
         return new RegisterBit(this, address, bit);
     }
 
-    public Regsiter GetRegister(uint address)
+    public Register GetRegister(uint address)
     {
-        return new Regsiter(Register, address);
+        return new Register(Register, address);
     }
 }
