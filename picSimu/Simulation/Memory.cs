@@ -123,6 +123,7 @@ public class Memory
             case 3: // status
             case 0x83:
                 Register[3] = value;
+                Register[0x83] = value;
                 return;
             case 4: // fsr
             case 0x84:
@@ -151,6 +152,6 @@ public class Memory
 
     public Register GetRegister(uint address)
     {
-        return new Register(Register, address);
+        return new Register(this, address);
     }
 }

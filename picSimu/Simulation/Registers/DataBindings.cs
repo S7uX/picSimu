@@ -25,27 +25,27 @@ public class RegisterBit
 
 public class Register
 {
-    private uint[] _register;
+    private Memory _memory;
     public readonly uint Address;
     private static Regex regex = new Regex("^[a-fA-F0-9]{2}$", RegexOptions.Compiled);
 
     public string Value
     {
-        get => _register[Address].ToString("X2");
+        get => _memory.Register[Address].ToString("X2");
         set
         {
             if (regex.IsMatch(value))
             {
-                _register[Address] = Convert.ToUInt32(value, 16);
+                _memory.UnmaskedWriteRegister(Address, Convert.ToUInt32(value, 16));
             }
         }
     }
 
-    public string ToolTip => _register[Address].ToTooltipString();
+    public string ToolTip => _memory.Register[Address].ToTooltipString();
 
-    public Register(uint[] register, uint address)
+    public Register(Memory memory, uint address)
     {
-        _register = register;
+        _memory = memory;
         Address = address;
     }
 }
