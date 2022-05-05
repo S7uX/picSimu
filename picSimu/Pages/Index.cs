@@ -8,18 +8,22 @@ namespace picSimu.Pages;
 
 public partial class Index : ComponentBase
 {
-    private IJSObjectReference? module;
+    private IJSObjectReference? _module;
     private string _sourceCode = "";
-    private string _parsedInstructionCodes = "";
     private HashSet<int> _instructionRows = new HashSet<int>();
-    public string[]? InstructionCodes;
+    private string? _parsedInstructionCodes = "";
+    private string[]? _instructionCodes;
+    private int _visualizedProgramCounter;
+    private bool _autoStep = false;
+    private CancellationTokenSource? _picRun;
 
-    private Pic pic;
+    private Pic _pic;
     private Register[] _registerBindings;
-    
+
     public Index()
     {
-        pic = new Pic();
+        _pic = new Pic();
+        _visualizedProgramCounter = -1;
         _registerBindings = new Register[Pic.ProgramMemoryLength];
         _createRegisterBindings();
     }
@@ -28,15 +32,22 @@ public partial class Index : ComponentBase
     {
         for (uint i = 0; i < _registerBindings.Length; i++)
         {
-            _registerBindings[i] = pic.Memory.GetRegister(i);
+            _registerBindings[i] = _pic.Memory.GetRegister(i);
         }
     }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/parser.js");
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/parser.js");
+        }
+
+        uint pc = _pic.Memory.ReadRegister(2);
+        if (_pic.ProgramLoaded && pc != _visualizedProgramCounter)
+        {
+            await UpdateProgramCounter();
+            _visualizedProgramCounter = (int) pc;
         }
     }
 
@@ -45,9 +56,9 @@ public partial class Index : ComponentBase
         _sourceCode = await new StreamReader(e.File.OpenReadStream()).ReadToEndAsync();
         _instructionRows = await DisplayPicCode(_sourceCode) ?? new HashSet<int>();
         _parsedInstructionCodes = await GetInstructionCodes(_sourceCode);
-        Console.WriteLine("parsed instruction codes: " + _parsedInstructionCodes);
         if (_parsedInstructionCodes != null)
         {
+            Console.WriteLine("parsed instruction codes: " + _parsedInstructionCodes);
             _initializePic();
         }
     }
@@ -55,72 +66,100 @@ public partial class Index : ComponentBase
 
     private void _initializePic()
     {
-        InstructionCodes = _parsedInstructionCodes.Split(",");
-        pic = new Pic();
-
-        if (InstructionCodes != null)
-        {
-            pic.LoadInstructionCodes(InstructionCodes);
-        }
-
+        _pic = new Pic();
+        _visualizedProgramCounter = -1;
         _createRegisterBindings();
+
+        if (_parsedInstructionCodes != null)
+        {
+            _instructionCodes = _parsedInstructionCodes.Split(",");
+
+            if (!_instructionCodes[0].Equals(""))
+            {
+                _pic.LoadInstructionCodes(_instructionCodes);
+            }
+        }
     }
 
-    public async Task<HashSet<int>?> DisplayPicCode(string sourceCode)
+    private async Task<HashSet<int>?> DisplayPicCode(string sourceCode)
     {
-        if (module is not null)
+        if (_module is not null)
         {
-            var res = await module.InvokeAsync<string>("parsePic", sourceCode);
+            var res = await _module.InvokeAsync<string>("parsePic", sourceCode);
             return new HashSet<int>(res.Split(",").Select(n => Convert.ToInt32(n)).ToArray());
         }
+
         return null;
     }
 
-    public async ValueTask<string?> GetInstructionCodes(string sourceCode)
+    private async ValueTask<string?> GetInstructionCodes(string sourceCode)
     {
-        if (module is not null)
-            return await module.InvokeAsync<string>("getInstructionCodes", sourceCode);
+        if (_module is not null)
+            return await _module.InvokeAsync<string>("getInstructionCodes", sourceCode);
         else
             return null;
     }
 
-    public async Task<bool> RunSimulation()
+    private void RunSimulation()
     {
-        if (InstructionCodes != null)
+        if (_instructionCodes != null && _picRun == null)
         {
-            pic.Run();
-            await UpdateProgramCounter();
+            _picRun = new CancellationTokenSource();
+            _pic.Run(_picRun.Token);
         }
-        return false;
     }
 
-    public async Task<bool> StopSimulation()
+    private void StopSimulation()
     {
-        if (InstructionCodes != null)
+        if (_autoStep)
         {
-            pic.Stop();
+            _autoStep = false;
         }
-        return false;
+        else if (_picRun != null)
+        {
+            _picRun.Cancel();
+            _picRun = null;
+            ShouldRender();
+        }
     }
 
-    public async Task<bool> StepSimulation()
+    private void StepSimulation()
     {
-        if (InstructionCodes != null)
+        if (_instructionCodes != null)
         {
-            pic.Step();
-            await UpdateProgramCounter();
+            _pic.Step();
         }
-        return false;
     }
 
-    public async Task<bool> ResetSimulation()
+    private async void AutoStepSimulation()
     {
-        if (InstructionCodes != null)
+        if (!_autoStep)
         {
-            pic = new Pic();
+            _autoStep = true;
+            while (_autoStep)
+            {
+                StepSimulation();
+                StateHasChanged();
+                await Task.Delay(100);
+            }
         }
-        return false;
     }
+
+    private void ResetSimulation()
+    {
+        _initializePic();
+    }
+
+
+    private async ValueTask UpdateProgramCounter()
+    {
+        if (_module != null)
+        {
+            await _module.InvokeAsync<string>("highlightCodeLine", _pic.Memory.ReadRegister(2).ToString());
+        }
+    }
+
+    public Timing Timing { get; set; } = new Timing() {QuartzFrequency = 32, ReleaseWatchdog = false};
 
     // public async ValueTask DisposeAsync()
     // {
@@ -129,14 +168,4 @@ public partial class Index : ComponentBase
     //         await module.DisposeAsync();
     //     }
     // }
-
-    private async ValueTask UpdateProgramCounter()
-    {
-        if (module != null)
-        {
-            await module.InvokeAsync<string>("highlightCodeLine", pic.Memory.ReadRegister(2).ToString());
-        }
-    }
-
-    public Timing Timing { get; set; } = new Timing() {QuartzFrequency = 32, ReleaseWatchdog = false};
 }

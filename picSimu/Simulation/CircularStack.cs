@@ -3,14 +3,15 @@
 public class CircularStack
 {
     private readonly uint[] _elements;
-    public const int Length = 8;
+    public readonly int Length;
 
     public int Pointer { get; private set; }
 
     public CircularStack(int count)
     {
+        Length = count;
         Pointer = 0;
-        _elements = new uint[count];
+        _elements = new uint[Length];
     }
 
     public uint Pop()

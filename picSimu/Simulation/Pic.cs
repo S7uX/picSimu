@@ -6,36 +6,44 @@ namespace picSimu.Simulation;
 public class Pic
 {
     public static readonly int ProgramMemoryLength = 1024;
-    public uint WRegister = 0;
-    public uint Runtime = 0;
-    public uint Scaler = 0;
+    public uint WRegister;
+    public uint Runtime;
+    public uint Scaler;
 
-    private Instruction[] _programMemory;
-    public Instruction[] ProgramMemory => _programMemory;
+    public Instruction[] ProgramMemory { get; private set; }
+    public bool ProgramLoaded { get; private set; }
+
     public bool[] BreakPoints = Array.Empty<bool>();
 
     public readonly Memory Memory;
 
     public readonly CircularStack Stack;
+    
 
     public Pic()
     {
-        _programMemory = new Instruction[ProgramMemoryLength];
+        ProgramMemory = Array.Empty<Instruction>();
+        ProgramLoaded = false;
         Stack = new CircularStack(8);
         Memory = new Memory();
+        WRegister = 0;
+        Runtime = 0;
+        Scaler = 0;
         ResetScaler();
     }
 
     public void LoadInstructionCodes(string[] hexStrings)
     {
         int i = 0;
-        foreach (var hexString in hexStrings)
+        ProgramMemory = new Instruction[ProgramMemoryLength];
+        foreach (string hexString in hexStrings)
         {
-            _programMemory[i] = InstructionDecoder.Decode(hexString, this);
+            ProgramMemory[i] = InstructionDecoder.Decode(hexString, this);
             i++;
         }
 
-        BreakPoints = new bool[_programMemory.Length];
+        BreakPoints = new bool[ProgramMemory.Length];
+        ProgramLoaded = true;
     }
 
     public void ResetScaler()
@@ -127,10 +135,10 @@ public class Pic
 
     public void IncreaseProgramCounter()
     {
-        var value = Memory.ReadRegister(2);
-        value++;
-        value &= 255;
-        Memory.WriteRegister(2, value);
+        uint pc = Memory.ReadRegister(2);
+        pc++;
+        pc &= 255;
+        Memory.WriteRegister(2, pc);
 
         Runtime++;
         Scaler--;
@@ -165,28 +173,30 @@ public class Pic
         return result;
     }
 
-    public void Run()
+    public void Run(CancellationToken cancellationToken)
     {
-        _programMemory[Memory.ReadRegister(2)].Execute();
-        while (true)
+        Task.Run(async () =>
         {
-            if (BreakPoints[Memory.ReadRegister(2)])
+            await Task.Delay(100);
+            while (true)
             {
-                break;
-            }
+                if (BreakPoints[Memory.ReadRegister(2)] || cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
 
-            _programMemory[Memory.ReadRegister(2)].Execute();
-        }
+                ProgramMemory[Memory.ReadRegister(2)].Execute();
+            }
+        }, cancellationToken);
     }
 
     public void Step()
     {
-        _programMemory[Memory.ReadRegister(2)].Execute();
+        ProgramMemory[Memory.ReadRegister(2)].Execute();
     }
 
-    public void Stop()
+    public void HardwareReset()
     {
-        BreakPoints[Memory.ReadRegister(2) + 1] = true;
     }
 
     public Breakpoint GetBreakPoint(int i)

@@ -75,12 +75,15 @@ export async function getInstructionCodes(sourceCode) {
 }
 
 export function highlightCodeLine(programCounter) {
-    console.log("test");
     // remove previous highlighting
     const old = document.getElementsByClassName("code-line-highlight")[0];
     if (old !== undefined) {
         old.classList.remove("code-line-highlight");
     }
     // highlight new line
-    document.getElementById("instruction-" + programCounter).classList.add("code-line-highlight");
+    const toHighlight = document.getElementById("instruction-" + programCounter);
+    if (toHighlight !== null) {
+        document.getElementById("instruction-" + programCounter).classList.add("code-line-highlight");
+        console.log("error")
+    }
 }

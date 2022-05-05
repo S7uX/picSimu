@@ -9,11 +9,12 @@
 <PageTitle>Index</PageTitle>
 
 <div class="top-row px-4">
-    <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple/>
-    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="RunSimulation">Run</button>
-    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="StopSimulation">Stop</button>
-    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="StepSimulation">Step</button>
-    <button class="btn btn-primary btn-sm" disabled="@(InstructionCodes is null)" @onclick="ResetSimulation">Reset</button>
+    <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple disabled="@(_autoStep || _picRun is not null)"/>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _autoStep || _picRun is not null)" @onclick="RunSimulation">Run</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _autoStep || _picRun is not null)" @onclick="StepSimulation">Step</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _autoStep || _picRun is not null)" @onclick="AutoStepSimulation">Auto Step</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!(_autoStep || _picRun is not null))" @onclick="StopSimulation">Stop</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _autoStep || _picRun is not null)" @onclick="ResetSimulation">Reset</button>
     <b style="margin-left: auto">picSimu</b>
 </div>
 
@@ -23,7 +24,7 @@
     <label class="h5 pe-5">SFR + W:</label>
     <div>
         <label class="sfr-label">W: </label>
-        <label title="@pic.WRegister.ToTooltipString()" class="sfr-value">@pic.WRegister.ToHexString()</label>
+        <label title="@_pic.WRegister.ToTooltipString()" class="sfr-value">@_pic.WRegister.ToHexString()</label>
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCL: </label>
@@ -47,7 +48,7 @@
     </div>
     <div>
         <label class="sfr-label">Prescaler: </label>
-        <label class="sfr-value">1:@pic.GetScaler()</label>
+        <label class="sfr-value">1:@_pic.GetScaler()</label>
     </div>
     <div class="hex-input">
         <label class="sfr-label">Timer0: </label>
@@ -73,7 +74,7 @@
                 {
                     @if (_instructionRows.Contains(i))
                     {
-                        Breakpoint breakpoint = pic.GetBreakPoint(y);
+                        Breakpoint breakpoint = _pic.GetBreakPoint(y);
                         <BootstrapCheckbox @bind-Value="breakpoint.Value"></BootstrapCheckbox>
                         y++;
                     }
@@ -110,17 +111,17 @@
             </tr>
             </thead>
             <tbody>
-            @for (uint i = 0; i < pic.Memory.Register.Length / 2; i++)
+            @for (uint i = 0; i < _pic.Memory.Register.Length / 2; i++)
             {
                 uint il = i;
                 uint y = i + 0x80;
                 <tr>
                     <td title="@i">@i.ToHexString()</td>
-                    <td class="hex-input" title="@pic.Memory.ReadRegister(i).ToTooltipString()">
+                    <td class="hex-input" title="@_pic.Memory.ReadRegister(i).ToTooltipString()">
                         <HexInput class="" @bind-Value="_registerBindings[il]"></HexInput>
                     </td>
                     <td title="@y">@y.ToHexString()</td>
-                    <td class="hex-input" title="@pic.Memory.ReadRegister(y).ToTooltipString()">
+                    <td class="hex-input" title="@_pic.Memory.ReadRegister(y).ToTooltipString()">
                         <HexInput class="" @bind-Value="_registerBindings[y]"></HexInput>
                     </td>
                 </tr>
@@ -138,7 +139,7 @@
         <div id="timing-control" class="d-flex flex-column smaller-text justify-content-center">
             <label class="h5">Timing</label>
             <div>
-                <label class="sfr-label">Runtime: </label> <label>@pic.GetRuntime() µs</label>
+                <label class="sfr-label">Runtime: </label> <label>@_pic.GetRuntime() µs</label>
             </div>
             <div>
                 <label class="sfr-label">Quartz: </label>
@@ -169,11 +170,11 @@
                 </thead>
                 <tbody>
                 @{
-                    @for (int i = 0; i < CircularStack.Length; i++)
+                    @for (int i = 0; i < _pic.Stack.Length; i++)
                     {
-                        <tr class='@(pic.Stack.Pointer == i ? "stack-highlight" : "")'>
+                        <tr class='@(_pic.Stack.Pointer == i ? "stack-highlight" : "")'>
                             <td>@i</td>
-                            <td>@pic.Stack.Get(i).ToHexString()</td>
+                            <td>@_pic.Stack.Get(i).ToHexString()</td>
                         </tr>
                     }
                 }
@@ -206,7 +207,7 @@
             <tr>
                 <th></th>
                 @{
-                    uint statusReg = pic.Memory.ReadRegister(3);
+                    uint statusReg = _pic.Memory.ReadRegister(3);
                     @for (int i = 7; i >= 0; i--)
                     {
                         <td>@statusReg.GetBit(i)</td>
@@ -229,7 +230,7 @@
             <tr>
                 <th></th>
                 @{
-                    uint optionReg = pic.Memory.UnmaskedReadRegister(0x81);
+                    uint optionReg = _pic.Memory.UnmaskedReadRegister(0x81);
                     @for (int i = 7; i >= 0; i--)
                     {
                         <td>@optionReg.GetBit(i)</td>
@@ -250,7 +251,7 @@
             <tr>
                 <th></th>
                 @{
-                    uint intconReg = pic.Memory.UnmaskedReadRegister(0xb);
+                    uint intconReg = _pic.Memory.UnmaskedReadRegister(0xb);
                     @for (int i = 7; i >= 0; i--)
                     {
                         <td>@intconReg.GetBit(i)</td>
@@ -279,7 +280,7 @@
         <div class="sfr-label port-label">Tris</div>
         @for (int i = 7; i >= 0; i--)
         {
-            RegisterBit bit = pic.Memory.GetRegisterBit(0x85, i);
+            RegisterBit bit = _pic.Memory.GetRegisterBit(0x85, i);
             <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
         }
     </div>
@@ -287,7 +288,7 @@
         <div class="sfr-label port-label">Pin</div>
         @for (int i = 7; i >= 0; i--)
         {
-            RegisterBit bit = pic.Memory.GetRegisterBit(5, i);
+            RegisterBit bit = _pic.Memory.GetRegisterBit(5, i);
             <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
         }
     </div>
@@ -310,7 +311,7 @@
         <div class="sfr-label port-label">Tris</div>
         @for (int i = 7; i >= 0; i--)
         {
-            RegisterBit bit = pic.Memory.GetRegisterBit(0x86, i);
+            RegisterBit bit = _pic.Memory.GetRegisterBit(0x86, i);
             <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
         }
     </div>
@@ -318,7 +319,7 @@
         <div class="sfr-label port-label">Pin</div>
         @for (int i = 7; i >= 0; i--)
         {
-            RegisterBit bit = pic.Memory.GetRegisterBit(6, i);
+            RegisterBit bit = _pic.Memory.GetRegisterBit(6, i);
             <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
         }
     </div>
