@@ -19,6 +19,12 @@ public class Pic
 
     public readonly CircularStack Stack;
     
+    public uint ProgramCounter
+    {
+        get => Memory.ReadRegister(2);
+        set => Memory.WriteRegister(2, value);
+    }
+    
 
     public Pic()
     {
@@ -173,11 +179,11 @@ public class Pic
         return result;
     }
 
-    public void Run(CancellationToken cancellationToken)
+    public async Task Run(CancellationToken cancellationToken)
     {
-        Task.Run(async () =>
+        await Task.Run(async () =>
         {
-            await Task.Delay(100);
+            await Task.Delay(100, cancellationToken);
             while (true)
             {
                 if (BreakPoints[Memory.ReadRegister(2)] || cancellationToken.IsCancellationRequested)

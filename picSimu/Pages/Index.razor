@@ -19,7 +19,7 @@
 </div>
 
 
-<article class="content">
+<fieldset class="content" disabled="@(_autoStep || _picRun is not null)">
 <div class="d-flex flex-row justify-content-between">
     <label class="h5 pe-5">SFR + W:</label>
     <div>
@@ -61,12 +61,18 @@
 <div class="d-flex flex-row overflow-hidden pt-2">
 
 <div style="flex-grow: 2" class="d-flex flex-column overflow-hidden">
-    <label class="h5">LST</label>
-    <div id="code-block" class="code-block d-flex overflow-auto flex-row">
+    <div class="d-flex flex-row align-items-baseline">
+        <label style="margin-right: 2em" class="h5">LST</label>
+        <div class="d-flex flex-row align-items-center @(_picRun is null ? "visually-hidden" : "")">
+            <b style="color: #268bd2">Running</b>
+            <div class="dot-flashing"></div>
+        </div>
+    </div>
+    <div id="code-block" class="code-block d-flex overflow-auto flex-row @(_picRun is not null ? "code-block-disabled" : "")">
         @{
             int rowCount = Regex.Matches(_sourceCode, "$", RegexOptions.Multiline).Count;
-            <div class="d-flex">
-                <pre id="breakpoint-pre" style="width: 2em; white-space: break-spaces; background-color: #eee8d5">
+            <div class="d-flex code-block-breakpoints">
+                <pre id="breakpoint-pre">
             @if (_sourceCode != "")
             {
                 int y = 0;
@@ -264,6 +270,7 @@
 
     <hr>
 
+    @* Port A *@
     <label class="h5">Port A</label>
     <div class="d-flex flex-row justify-content-between me-2">
         <div class="sfr-label port-label">Index</div>
@@ -292,9 +299,10 @@
             <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
         }
     </div>
-
+    @* Port A *@
     <hr>
 
+    @* Port B *@
     <label class="h5">Port B</label>
     <div class="d-flex flex-row justify-content-between me-2">
         <div class="sfr-label port-label">Index</div>
@@ -323,7 +331,8 @@
             <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
         }
     </div>
+    @* Port B *@
 </div>
 </div>
-</article>
+</fieldset>
 <hr class="mt-1">

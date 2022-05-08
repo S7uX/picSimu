@@ -105,7 +105,8 @@ public partial class Index : ComponentBase
         if (_instructionCodes != null && _picRun == null)
         {
             _picRun = new CancellationTokenSource();
-            _pic.Run(_picRun.Token);
+            Task picSimulationBackgroundTask = _pic.Run(_picRun.Token);
+            picSimulationBackgroundTask.ContinueWith(_ => InvokeAsync(StateHasChanged), TaskContinuationOptions.NotOnCanceled);
         }
     }
 
@@ -138,10 +139,18 @@ public partial class Index : ComponentBase
             _autoStep = true;
             while (_autoStep)
             {
+                if (_pic.BreakPoints[_pic.ProgramCounter])
+                {
+                    break;
+                }
+
                 StepSimulation();
                 StateHasChanged();
                 await Task.Delay(100);
             }
+
+            StopSimulation();
+            StateHasChanged();
         }
     }
 

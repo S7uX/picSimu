@@ -25,7 +25,7 @@
     color: #6f42c1 !important;
 }
 
-.code-block{
+.code-block {
     flex-grow: 1;
 }
 
@@ -41,11 +41,21 @@
     border-color: #93a1a1;
 }
 
+.code-block-disabled pre {
+    background-color: #eee8d5;
+}
+
+.code-block-breakpoints pre {
+    width: 2em;
+    white-space: break-spaces;
+    background-color: #c7d5de
+}
+
 .code-line {
     display: block;
 }
 
-.code-line-highlight{
+.code-line-highlight {
     background-color: #fff900;
 }
 
