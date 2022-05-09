@@ -9,9 +9,10 @@ public class Pic
 {
     private SerialHandler _serialHandler;
     public static readonly int ProgramMemoryLength = 1024;
-    public uint WRegister;
-    public uint Runtime;
-    public uint Scaler;
+    public uint WRegister = 0;
+    public uint Cycles = 0;
+    public uint Scaler = 0;
+    public double FrequencyInMhz = 4;
 
     public Instruction[] ProgramMemory { get; private set; }
     public bool ProgramLoaded { get; private set; }
@@ -35,9 +36,6 @@ public class Pic
         ProgramLoaded = false;
         Stack = new CircularStack(8);
         Memory = new Memory();
-        WRegister = 0;
-        Runtime = 0;
-        Scaler = 0;
         ResetScaler();
         _serialHandler = new SerialHandler("COM2", Memory);
     }
@@ -150,7 +148,7 @@ public class Pic
         pc &= 255;
         Memory.WriteRegister(2, pc);
 
-        Runtime++;
+        Cycles++;
         Scaler--;
         if (Scaler == 0)
         {
@@ -243,11 +241,9 @@ public class Pic
         Memory.WriteRegister(1, value);
     }
 
-    public double GetRuntime()
+    public double CalculateRuntime()
     {
-        double frequenzInMhz = 4;
-        double result = 4 / frequenzInMhz * Runtime;
-        return result;
+        return 4 / FrequencyInMhz * Cycles; // µs
     }
 
     public async Task Run(CancellationToken cancellationToken)
