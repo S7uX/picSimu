@@ -144,14 +144,18 @@
     <div class="d-flex flex-row justify-content-around">
         <div id="timing-control" class="d-flex flex-column smaller-text justify-content-center">
             <label class="h5">Timing</label>
-            <div>
-                <label class="sfr-label">Runtime: </label> <label>@_pic.GetRuntime() µs</label>
-            </div>
+            <label class="sfr-label">Runtime: </label>
+            <label>@_pic.CalculateRuntime() µs</label>
             <div>
                 <label class="sfr-label">Quartz: </label>
-                <select class="form-select-sm" @bind="Timing.QuartzFrequency">
-                    <option value="4" selected>4 MHz</option>
+                <select class="form-select-sm" @bind="_pic.FrequencyInMhz">
+                    <option value="0.032">32 KHz</option>
+                    <option value="0.1">100 MHz</option>
+                    <option value="4">4 MHz</option>
+                    <option value="8">8 MHz</option>
+                    <option value="16">16 MHz</option>
                     <option value="32">32 MHz</option>
+                    <option value="64">64 MHz</option>
                 </select>
             </div>
             <div>
