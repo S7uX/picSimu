@@ -117,7 +117,7 @@
             </tr>
             </thead>
             <tbody>
-            @for (uint i = 0; i < _pic.Memory.Register.Length / 2; i++)
+            @for (uint i = 0; i < _pic.Memory.Registers.Length / 2; i++)
             {
                 uint il = i;
                 uint y = i + 0x80;
@@ -269,17 +269,16 @@
     <hr>
 
     @* Port A *@
-    <label class="h5">Port A</label>
+    <div class="d-flex flex-row">
+        <label class="h5">Port A</label>
+        <label style="margin-left: auto">Tris 1: Input / 0: Output</label>
+    </div>
     <div class="d-flex flex-row justify-content-between me-2">
         <div class="sfr-label port-label">Index</div>
-        <div>7</div>
-        <div>6</div>
-        <div>5</div>
-        <div>4</div>
-        <div>3</div>
-        <div>2</div>
-        <div>1</div>
-        <div>0</div>
+        @for (int i = 7; i >= 0; i--)
+        {
+            <div>@i</div>
+        }
     </div>
     <div class="d-flex flex-row justify-content-between me-2">
         <div class="sfr-label port-label">Tris</div>
@@ -293,7 +292,7 @@
         <div class="sfr-label port-label">Pin</div>
         @for (int i = 7; i >= 0; i--)
         {
-            RegisterBit bit = _pic.Memory.GetRegisterBit(5, i);
+            var bit = new PortBit(_pic.Memory.PortA, i);
             <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
         }
     </div>
@@ -304,14 +303,10 @@
     <label class="h5">Port B</label>
     <div class="d-flex flex-row justify-content-between me-2">
         <div class="sfr-label port-label">Index</div>
-        <div>7</div>
-        <div>6</div>
-        <div>5</div>
-        <div>4</div>
-        <div>3</div>
-        <div>2</div>
-        <div>1</div>
-        <div>0</div>
+        @for (int i = 7; i >= 0; i--)
+        {
+            <div>@i</div>
+        }
     </div>
     <div class="d-flex flex-row justify-content-between me-2">
         <div class="sfr-label port-label">Tris</div>
@@ -325,7 +320,7 @@
         <div class="sfr-label port-label">Pin</div>
         @for (int i = 7; i >= 0; i--)
         {
-            RegisterBit bit = _pic.Memory.GetRegisterBit(6, i);
+            var bit = new PortBit(_pic.Memory.PortB, i);
             <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
         }
     </div>

@@ -4,14 +4,22 @@ namespace picSimu.Simulation;
 
 public class Memory
 {
-    public readonly uint[] Register = new uint[256];
+    public readonly uint[] Registers = new uint[256];
+    public readonly Port PortA;
+    public readonly Port PortB;
+
+    public Memory()
+    {
+        PortA = new Port(this, 5, 0x85);
+        PortB = new Port(this, 6, 0x86);
+    }
 
     public bool BankSelect()
     {
-        return Lib.IsBitSet(Register[3], 5);
+        return Lib.IsBitSet(Registers[3], 5);
     }
 
-    public uint FSR => Register[4];
+    public uint FSR => Registers[4];
 
     public void SetCarryFlag(bool zeroFlag)
     {
@@ -75,25 +83,29 @@ public class Memory
             case 0: // Indirect addr
             case 0x80:
                 if (FSR == 0) return 0; // prevent infinite loop
-                return UnmaskedReadRegister(Register[4]);
+                return UnmaskedReadRegister(Registers[4]);
             case 2: // pcl
             case 0x82:
-                return Register[2];
+                return Registers[2];
             case 3: // status
             case 0x83:
-                return Register[3];
+                return Registers[3];
             case 4: // fsr
             case 0x84:
-                return Register[4];
+                return Registers[4];
+            case 5:
+                return PortA.InternalValue;
+            case 6:
+                return PortB.InternalValue;
             case 0x0A: // pclath
             case 0x8A:
-                return Register[0x0A];
+                return Registers[0x0A];
             case 0x0B: // intcon
             case 0X8B:
-                return Register[0x0B];
+                return Registers[0x0B];
         }
 
-        return Register[address];
+        return Registers[address];
     }
 
     public void WriteRegister(uint address, uint value)
@@ -113,36 +125,42 @@ public class Memory
             case 0: // Indirect addr
             case 0x80:
                 if (FSR == 0) return; // prevent infinite loop
-                UnmaskedWriteRegister(Register[4], value);
+                UnmaskedWriteRegister(Registers[4], value);
                 return;
             case 2: // pcl
             case 0x82:
-                Register[2] = value;
-                Register[0x82] = value;
+                Registers[2] = value;
+                Registers[0x82] = value;
                 return;
             case 3: // status
             case 0x83:
-                Register[3] = value;
-                Register[0x83] = value;
+                Registers[3] = value;
+                Registers[0x83] = value;
                 return;
             case 4: // fsr
             case 0x84:
-                Register[4] = value;
-                Register[0X84] = value;
+                Registers[4] = value;
+                Registers[0X84] = value;
+                return;
+            case 5:
+                PortA.InternalValue = value;
+                return;
+            case 6:
+                PortB.InternalValue = value;
                 return;
             case 0x0A: // pclath
             case 0x8A:
-                Register[0x0A] = value;
-                Register[0x8A] = value;
+                Registers[0x0A] = value;
+                Registers[0x8A] = value;
                 return;
             case 0x0B: // intcon
             case 0x8B:
-                Register[0x0B] = value;
-                Register[0x8B] = value;
+                Registers[0x0B] = value;
+                Registers[0x8B] = value;
                 return;
         }
 
-        Register[address] = value;
+        Registers[address] = value;
     }
 
     public RegisterBit GetRegisterBit(uint address, int bit)

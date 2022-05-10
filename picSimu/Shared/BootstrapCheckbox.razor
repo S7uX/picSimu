@@ -1,7 +1,8 @@
-<input type="checkbox" class="form-check-input" @oninput="@OnInputChange" checked="@(Value?"checked":null)">
+<input type="checkbox" class="form-check-input"
+       @oninput="@OnInputChange" @onchange="@OnChange"
+       checked="@(Value ? "checked" : null)">
 
 @code {
-
     [Parameter]
     public bool Value { get; set; }
 
@@ -9,6 +10,11 @@
     public EventCallback<bool> ValueChanged { get; set; }
 
     private async Task OnInputChange(ChangeEventArgs args)
+    {
+        Value = (bool) args.Value;
+    }
+
+    private async Task OnChange(ChangeEventArgs args)
     {
         Value = (bool) args.Value;
         await ValueChanged.InvokeAsync(Value);

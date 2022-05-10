@@ -1,5 +1,6 @@
 using System.IO.Ports;
 using System.Text;
+using System.Security.Cryptography;
 using picSimu.Simulation.Instructions;
 using picSimu.Simulation.Registers;
 

@@ -31,7 +31,7 @@ public class Register
 
     public string Value
     {
-        get => _memory.Register[Address].ToString("X2");
+        get => _memory.Registers[Address].ToString("X2");
         set
         {
             if (regex.IsMatch(value))
@@ -41,7 +41,7 @@ public class Register
         }
     }
 
-    public string ToolTip => _memory.Register[Address].ToTooltipString();
+    public string ToolTip => _memory.Registers[Address].ToTooltipString();
 
     public Register(Memory memory, uint address)
     {
