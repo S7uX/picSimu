@@ -1,6 +1,5 @@
-using System.IO.Ports;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Security.Cryptography;
 using picSimu.Simulation.Instructions;
 using picSimu.Simulation.Registers;
 
@@ -8,7 +7,7 @@ namespace picSimu.Simulation;
 
 public class Pic
 {
-    private SerialHandler _serialHandler;
+    private SerialHandler? _serialHandler;
     public static readonly int ProgramMemoryLength = 1024;
     public uint WRegister = 0;
     public uint Cycles = 0;
@@ -23,13 +22,13 @@ public class Pic
     public readonly Memory Memory;
 
     public readonly CircularStack Stack;
-    
+
     public uint ProgramCounter
     {
         get => Memory.ReadRegister(2);
         set => Memory.WriteRegister(2, value);
     }
-    
+
 
     public Pic()
     {
@@ -38,7 +37,35 @@ public class Pic
         Stack = new CircularStack(8);
         Memory = new Memory();
         ResetScaler();
-        _serialHandler = new SerialHandler("COM2", Memory);
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            _serialHandler = new SerialHandler("COM2", Memory);
+        }
+    }
+
+
+    public async Task Run(CancellationToken cancellationToken)
+    {
+        await Task.Run(async () =>
+        {
+            await Task.Delay(100, cancellationToken);
+            while (true)
+            {
+                if (BreakPoints[Memory.ReadRegister(2)] || cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                ProgramMemory[Memory.ReadRegister(2)].Execute();
+            }
+        }, cancellationToken);
+    }
+
+    public void Step()
+    {
+        ProgramMemory[Memory.ReadRegister(2)].Execute();
+        _serialHandler?.Write(GenerateSerialPayload());
     }
 
     public void LoadInstructionCodes(string[] hexStrings)
@@ -165,8 +192,6 @@ public class Pic
                 IncreaseTimer();
             }
         }
-        
-        _serialHandler.Write(GenerateSerialPayload());
     }
 
     private byte[] GenerateSerialPayload()
@@ -178,59 +203,59 @@ public class Pic
         sb.Append(Memory.GetRegisterBit(0x85, 6).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x85, 5).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x85, 4).Value.ToNumber());
-        payload[0] = Convert.ToByte(sb.ToString(),2);
+        payload[0] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
         sb.Append(Memory.GetRegisterBit(0x85, 3).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x85, 2).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x85, 1).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x85, 0).Value.ToNumber());
-        payload[1] = Convert.ToByte(sb.ToString(),2);
+        payload[1] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
         sb.Append(Memory.GetRegisterBit(0x05, 7).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x05, 6).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x05, 5).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x05, 4).Value.ToNumber());
-        payload[2] = Convert.ToByte(sb.ToString(),2);
+        payload[2] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
         sb.Append(Memory.GetRegisterBit(0x05, 3).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x05, 2).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x05, 1).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x05, 0).Value.ToNumber());
-        payload[3] = Convert.ToByte(sb.ToString(),2);
+        payload[3] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
         sb.Append(Memory.GetRegisterBit(0x86, 7).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x86, 6).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x86, 5).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x86, 4).Value.ToNumber());
-        payload[4] = Convert.ToByte(sb.ToString(),2);
+        payload[4] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
         sb.Append(Memory.GetRegisterBit(0x86, 3).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x86, 2).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x86, 1).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x86, 0).Value.ToNumber());
-        payload[5] = Convert.ToByte(sb.ToString(),2);
+        payload[5] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
         sb.Append(Memory.GetRegisterBit(0x06, 7).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x06, 6).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x06, 5).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x06, 4).Value.ToNumber());
-        payload[6] = Convert.ToByte(sb.ToString(),2);
+        payload[6] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
         sb.Append(Memory.GetRegisterBit(0x06, 3).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x06, 2).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x06, 1).Value.ToNumber());
         sb.Append(Memory.GetRegisterBit(0x06, 0).Value.ToNumber());
-        payload[7] = Convert.ToByte(sb.ToString(),2);
+        payload[7] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("00001101");
-        payload[0] = Convert.ToByte(sb.ToString(),2);
+        payload[0] = Convert.ToByte(sb.ToString(), 2);
         return payload;
     }
 
@@ -245,28 +270,6 @@ public class Pic
     public double CalculateRuntime()
     {
         return 4 / FrequencyInMhz * Cycles; // µs
-    }
-
-    public async Task Run(CancellationToken cancellationToken)
-    {
-        await Task.Run(async () =>
-        {
-            await Task.Delay(100, cancellationToken);
-            while (true)
-            {
-                if (BreakPoints[Memory.ReadRegister(2)] || cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                ProgramMemory[Memory.ReadRegister(2)].Execute();
-            }
-        }, cancellationToken);
-    }
-
-    public void Step()
-    {
-        ProgramMemory[Memory.ReadRegister(2)].Execute();
     }
 
     public void HardwareReset()
