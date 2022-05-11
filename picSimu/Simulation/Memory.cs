@@ -12,11 +12,21 @@ public class Memory
     {
         PortA = new Port(this, 5, 0x85);
         PortB = new Port(this, 6, 0x86);
+        PowerOnReset();
     }
 
     public bool BankSelect()
     {
         return Lib.IsBitSet(Registers[3], 5);
+    }
+
+    public void PowerOnReset()
+    {
+        UnmaskedWriteRegister(0x03, 0b_00011000);
+        UnmaskedWriteRegister(0x81, 0b_11111111);
+        UnmaskedWriteRegister(0x83, 0b_00011000);
+        UnmaskedWriteRegister(0x85, 0b_00011111);
+        UnmaskedWriteRegister(0x86, 0b_11111111);
     }
 
     public uint FSR => Registers[4];

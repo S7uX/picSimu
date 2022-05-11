@@ -8,6 +8,13 @@ public class SLEEP : ControlInstruciton
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        _pic.IncreaseProgramCounter();
+        /*
+        00h → WDT,
+        0 → WDT prescaler,
+        1 → TO,
+        0 → PD
+        */
+        return 0;
     }
 }
