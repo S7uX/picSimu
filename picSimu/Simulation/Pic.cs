@@ -35,7 +35,7 @@ public class Pic
         ProgramMemory = Array.Empty<Instruction>();
         ProgramLoaded = false;
         Stack = new CircularStack(8);
-        Memory = new Memory();
+        Memory = new Memory(this);
         ResetScaler();
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -181,16 +181,7 @@ public class Pic
         if (Scaler == 0)
         {
             ResetScaler();
-            bool PSA = Memory.UnmaskedReadRegister(0x81).IsBitSet(3);
-            if (PSA == true)
-            {
-                //WDT  
-            }
-            else
-            {
-                //Timer0
-                IncreaseTimer();
-            }
+            IncreaseTimer();
         }
     }
 
@@ -264,7 +255,7 @@ public class Pic
         var value = Memory.ReadRegister(1);
         value++;
         value &= 255;
-        Memory.WriteRegister(1, value);
+        Memory.UnmaskedWriteRegister(0x01, value);
     }
 
     public double CalculateRuntime()

@@ -4,18 +4,25 @@ namespace picSimu.Simulation;
 
 public class Memory
 {
+    private Pic _pic;
     public readonly uint[] Registers = new uint[256];
     public readonly Port PortA;
     public readonly Port PortB;
 
-    public Memory()
+    public Memory(Pic pic)
     {
+        _pic = pic;
         PortA = new Port(this, 5, 0x85);
         PortB = new Port(this, 6, 0x86);
         PowerOnReset();
     }
 
     public bool BankSelect()
+    {
+        return Lib.IsBitSet(Registers[3], 5);
+    }
+    
+    public bool IsSleeping()
     {
         return Lib.IsBitSet(Registers[3], 5);
     }
@@ -136,6 +143,14 @@ public class Memory
             case 0x80:
                 if (FSR == 0) return; // prevent infinite loop
                 UnmaskedWriteRegister(Registers[4], value);
+                return;
+            case 1: //TIMER0
+                if (!Lib.IsBitSet(ReadRegister(0x81), 3))
+                {
+                    //IF Prescaler is assigned to TMR0 (PSA = 0)
+                    _pic.ResetScaler();
+                }
+                Registers[1] = value;
                 return;
             case 2: // pcl
             case 0x82:
