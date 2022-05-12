@@ -31,7 +31,6 @@ public class Pic
             returnVal &= 0b_1111_1111; // mask low byte 
             uint pclath = Memory.UnmaskedReadRegister(0x0A) & 0b_0001_1111;
             pclath <<= 8; // high byte
-            Console.WriteLine(pclath.ToTooltipString());
             returnVal |= pclath; // PCLATH register <4:0> bits <--> high byte bits PC<12:8>
             return returnVal;
         }

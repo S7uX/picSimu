@@ -1,13 +1,13 @@
                     00001           ;TPicSim3
                     00002           ;Programm zum Test des 16F84-Simulators.
-                    00003           ;Es werden die Byte-orientieren File-Register Befehle geprüft
+                    00003           ;Es werden die Byte-orientieren File-Register Befehle geprÃ¼ft
                     00004           ;aber kein DECFSZ, INCFSZ, RLF, RRF
                     00005           ;(c) St. Lehmann
                     00006           ;Ersterstellung: 23.03.2016
-                    00021           list c=132          ;Zeilenlänge im LST auf 132 Zeichen setzen
+                    00021           list c=132          ;ZeilenlÃ¤nge im LST auf 132 Zeichen setzen
                     00022           
                     00023           ;Definition einiger Symbole
-                    00024           ;für den Benutzer frei verwendbare Register
+                    00024           ;fÃ¼r den Benutzer frei verwendbare Register
                     00025           wert1    equ 0ch             ;Variable Nr.1
                     00026           wert2    equ 0dh             ;Variable Nr.2
                     00027           ergeb    equ 0eh             ;Variable Nr.3

@@ -10,7 +10,6 @@ public abstract class JumpInstruction : Instruction
         uint pclath = Memory.UnmaskedReadRegister(0x0A) & 0b_0001_1111;
         pclath <<= 8; // high byte
         pclath &= 0b_0001_1000; // mask PCLATH<4:3> bits 
-        Console.WriteLine(pclath.ToTooltipString());
         jumpAddressOpcode |= pclath; // PCLATH register <4:0> bits <--> high byte bits PC<12:8>
         return jumpAddressOpcode;
     }
