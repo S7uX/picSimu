@@ -6,14 +6,12 @@ public class Memory
 {
     private Pic _pic;
     public readonly uint[] Registers = new uint[256];
-    public readonly Port PortA;
-    public readonly Port PortB;
+    public readonly Ports Ports;
 
     public Memory(Pic pic)
     {
         _pic = pic;
-        PortA = new Port(this, 5, 0x85);
-        PortB = new Port(this, 6, 0x86);
+        Ports = new Ports(this);
         PowerOnReset();
     }
 
@@ -32,8 +30,8 @@ public class Memory
         UnmaskedWriteRegister(0x03, 0b_00011000);
         UnmaskedWriteRegister(0x81, 0b_11111111);
         UnmaskedWriteRegister(0x83, 0b_00011000);
-        UnmaskedWriteRegister(0x85, 0b_00011111);
-        UnmaskedWriteRegister(0x86, 0b_11111111);
+        UnmaskedWriteRegister(0x85, 0b_00011111); // tris a
+        UnmaskedWriteRegister(0x86, 0b_11111111); // tris b
     }
 
     public uint FSR => Registers[4];
@@ -111,9 +109,13 @@ public class Memory
             case 0x84:
                 return Registers[4];
             case 5:
-                return PortA.InternalValue;
+                return Ports.AInternalValue;
+            case 0x85: // Tris a
+                return Registers[0x85] & 0b_00011111;
             case 6:
-                return PortB.InternalValue;
+                return Ports.BInternalValue;
+            case 0x86: // Tris b
+                return Registers[0x86];
             case 0x0A: // pclath
             case 0x8A:
                 return Registers[0x0A];
@@ -168,10 +170,16 @@ public class Memory
                 Registers[0X84] = value;
                 return;
             case 5:
-                PortA.InternalValue = value;
+                Ports.AInternalValue = value;
+                return;
+            case 0x85: // tris a
+                Registers[0x85] = value & 0b_00011111;
                 return;
             case 6:
-                PortB.InternalValue = value;
+                Ports.BInternalValue = value;
+                return;
+            case 0x86: // tris b
+                Registers[0x86] = value;
                 return;
             case 0x0A: // pclath
             case 0x8A:
