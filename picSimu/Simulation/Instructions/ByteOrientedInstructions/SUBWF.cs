@@ -8,48 +8,48 @@ public class SUBWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = _pic.Memory.ReadRegister(f) - _pic.WRegister;
+        uint result = Pic.Memory.ReadRegister(f) - Pic.WRegister;
         if (result == 0)
         {
-            _pic.Memory.SetZeroFlag(true);
+            Pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            _pic.Memory.SetZeroFlag(false);
+            Pic.Memory.SetZeroFlag(false);
         }
 
         if (result > 255)
         {
             result &= 255; //Maskierung auf nur lowest 8 Bit
-            _pic.Memory.SetCarryFlag(false);
+            Pic.Memory.SetCarryFlag(false);
         }
         else
         {
-            _pic.Memory.SetCarryFlag(true);
+            Pic.Memory.SetCarryFlag(true);
         }
 
-        var val1 = _pic.WRegister & 15; //Maskierung auf nur lowest 4 Bit
-        var val2 = _pic.Memory.ReadRegister(f) & 15; //Maskierung auf nur lowest 4 Bit
+        var val1 = Pic.WRegister & 15; //Maskierung auf nur lowest 4 Bit
+        var val2 = Pic.Memory.ReadRegister(f) & 15; //Maskierung auf nur lowest 4 Bit
 
         if (val1 - val2 > 128 || val1 - val2 == 0) //inklusive 0 weil 2er komplement? also vielleicht :D
         {
-            _pic.Memory.SetDigitCarryFlag(true);
+            Pic.Memory.SetDigitCarryFlag(true);
         }
         else
         {
-            _pic.Memory.SetDigitCarryFlag(false);
-        }
-        
-        if (d == 0)
-        {
-            _pic.WRegister = result;
-        }
-        else
-        {
-            _pic.Memory.WriteRegister(f, result);
+            Pic.Memory.SetDigitCarryFlag(false);
         }
 
-        _pic.IncreaseProgramCounter();
+        if (d == 0)
+        {
+            Pic.WRegister = result;
+        }
+        else
+        {
+            Pic.Memory.WriteRegister(f, result);
+        }
+
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 }

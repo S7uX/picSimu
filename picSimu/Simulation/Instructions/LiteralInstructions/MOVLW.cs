@@ -8,8 +8,8 @@ public class MOVLW : LiteralInstruction
 
     public override int Execute()
     {
-        _pic.WRegister = k;
-        _pic.IncreaseProgramCounter();
+        Pic.WRegister = k;
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 }

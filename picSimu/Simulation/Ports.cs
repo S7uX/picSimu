@@ -4,7 +4,7 @@ public class Ports
 {
     private readonly Memory _memory;
     private uint _port;
-    
+
     private const uint PortARegisterAddress = 5;
     private const uint TrisARegisterAddress = 0x85;
     private const uint PortBRegisterAddress = 6;
@@ -14,7 +14,7 @@ public class Ports
     {
         _memory = memory;
     }
-    
+
     /// <summary>
     /// first 3 bits unimpelemented
     /// </summary>
@@ -23,8 +23,8 @@ public class Ports
         get => GetValue(TrisARegisterAddress, PortARegisterAddress) & 0b_00011111;
         set
         {
-           value &= 0b_00011111;
-           SetExternalValue(TrisARegisterAddress, PortARegisterAddress, value);
+            value &= 0b_00011111;
+            SetExternalValue(TrisARegisterAddress, PortARegisterAddress, value);
         }
     }
 
@@ -37,7 +37,7 @@ public class Ports
     public uint BExternalValue
     {
         get => GetValue(TrisBRegisterAddress, PortBRegisterAddress);
-        set => SetExternalValue(TrisBRegisterAddress, PortBRegisterAddress ,value);
+        set => SetExternalValue(TrisBRegisterAddress, PortBRegisterAddress, value);
     }
 
     public uint BInternalValue
@@ -45,7 +45,7 @@ public class Ports
         get => BExternalValue;
         set => SetInternalValue(TrisBRegisterAddress, PortBRegisterAddress, value);
     }
-    
+
 
     public uint GetValue(uint trisAddress, uint portAddress)
     {
@@ -67,7 +67,7 @@ public class Ports
     {
         uint trisReg = _memory.Registers[trisRegisterAddress];
         uint portReg = _memory.Registers[portRegisterAddress];
-            
+
         for (int i = 0; i <= 7; i++)
         {
             if (trisReg.IsBitSet(i)) // 1: input
@@ -82,13 +82,13 @@ public class Ports
 
         _memory.Registers[portRegisterAddress] = portReg;
     }
-    
-    
+
+
     public void SetInternalValue(uint trisRegisterAddress, uint portRegisterAddress, uint value)
     {
         uint trisReg = _memory.Registers[trisRegisterAddress];
         uint portReg = _memory.Registers[portRegisterAddress];
-            
+
         for (int i = 0; i <= 7; i++)
         {
             if (trisReg.IsBitSet(i)) // 1: input
@@ -104,8 +104,6 @@ public class Ports
         _memory.Registers[portRegisterAddress] = portReg;
     }
 }
-
-
 
 public class PortABit
 {

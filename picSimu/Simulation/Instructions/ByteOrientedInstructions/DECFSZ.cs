@@ -8,24 +8,25 @@ public class DECFSZ : ByteOrientedInstruction
 
     public override int Execute()
     {
-        var val = _pic.Memory.ReadRegister(f);
+        var val = Pic.Memory.ReadRegister(f);
         val--;
         val &= 255;
 
         if (d == 0)
         {
-            _pic.WRegister = val;
+            Pic.WRegister = val;
         }
         else
         {
-            _pic.Memory.WriteRegister(f, val);
+            Pic.Memory.WriteRegister(f, val);
         }
 
         if (val == 0)
         {
-            _pic.IncreaseProgramCounter(); //NOP
+            Pic.IncreaseProgramCounter(); //NOP
         }
-        _pic.IncreaseProgramCounter();
+
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 }

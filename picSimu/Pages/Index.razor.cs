@@ -43,7 +43,7 @@ public partial class Index : ComponentBase
             _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/parser.js");
         }
 
-        uint pc = _pic.Memory.ReadRegister(2);
+        uint pc = _pic.ProgramCounter;
         if (_pic.ProgramLoaded && pc != _visualizedProgramCounter)
         {
             await UpdateProgramCounter();
@@ -164,7 +164,7 @@ public partial class Index : ComponentBase
     {
         if (_module != null)
         {
-            await _module.InvokeAsync<string>("highlightCodeLine", _pic.Memory.ReadRegister(2).ToString());
+            await _module.InvokeAsync<string>("highlightCodeLine", _pic.ProgramCounter.ToString());
         }
     }
 

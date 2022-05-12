@@ -12,7 +12,7 @@ public class SerialHandler
     {
         _serialPort = new SerialPort(port, 4800, Parity.None, 8, StopBits.One);
         _serialPort.Handshake = Handshake.None;
-        _serialPort.DataReceived +=  sp_DataReceived;
+        _serialPort.DataReceived += sp_DataReceived;
         _memory = memory;
     }
 

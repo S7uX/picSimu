@@ -8,11 +8,11 @@ public class RETLW : LiteralInstruction
 
     public override int Execute()
     {
-        _pic.IncreaseProgramCounter();
-        _pic.IncreaseProgramCounter();
+        Pic.IncreaseProgramCounter();
+        Pic.IncreaseProgramCounter();
 
-        _pic.Memory.WriteRegister(2, _pic.Stack.Pop());
-        _pic.WRegister = k;
+        Pic.Memory.WriteRegister(2, Pic.Stack.Pop());
+        Pic.WRegister = k;
         return 0;
     }
 }

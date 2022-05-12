@@ -8,8 +8,8 @@ public class RLF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        string value = Convert.ToString(_pic.Memory.ReadRegister(f), 2).PadLeft(8, '0');
-        if (_pic.Memory.GetCarryFlag())
+        string value = Convert.ToString(Pic.Memory.ReadRegister(f), 2).PadLeft(8, '0');
+        if (Pic.Memory.GetCarryFlag())
         {
             value += 1;
         }
@@ -20,25 +20,25 @@ public class RLF : ByteOrientedInstruction
 
         if (value.Substring(0, 1) == "0")
         {
-            _pic.Memory.SetCarryFlag(false);
+            Pic.Memory.SetCarryFlag(false);
         }
         else
         {
-            _pic.Memory.SetCarryFlag(true);
-        }
-        
-       
-        if (d == 0)
-        {
-            _pic.WRegister = Convert.ToUInt16(value.Substring(1, 8), 2);
-        }
-        else
-        {
-            _pic.Memory.WriteRegister(f, Convert.ToUInt16(value.Substring(1, 8), 2));
+            Pic.Memory.SetCarryFlag(true);
         }
 
-        
-        _pic.IncreaseProgramCounter();
+
+        if (d == 0)
+        {
+            Pic.WRegister = Convert.ToUInt16(value.Substring(1, 8), 2);
+        }
+        else
+        {
+            Pic.Memory.WriteRegister(f, Convert.ToUInt16(value.Substring(1, 8), 2));
+        }
+
+
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 }

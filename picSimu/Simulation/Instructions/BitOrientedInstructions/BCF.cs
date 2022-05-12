@@ -4,12 +4,12 @@ public class BCF : BitOrientedInstruction
 {
     public override int Execute()
     {
-        var val = _pic.Memory.ReadRegister(f);
+        var val = Pic.Memory.ReadRegister(f);
 
         val = val.SetBitTo0(b);
 
-        _pic.Memory.WriteRegister(f, val);
-        _pic.IncreaseProgramCounter();
+        Pic.Memory.WriteRegister(f, val);
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 

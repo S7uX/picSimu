@@ -3,14 +3,14 @@
 public class BTFSS : BitOrientedInstruction
 {
     public override int Execute()
-    {        
-        var val = _pic.Memory.ReadRegister(f);
+    {
+        var val = Pic.Memory.ReadRegister(f);
         if (Lib.IsBitSet(val, b))
         {
-            _pic.IncreaseProgramCounter(); //NOP
+            Pic.IncreaseProgramCounter(); //NOP
         }
 
-        _pic.IncreaseProgramCounter();
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 

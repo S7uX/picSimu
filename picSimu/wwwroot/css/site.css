@@ -5,12 +5,6 @@ html, body {
     height: 100vh;
 }
 
-main {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
 h1:focus {
     outline: none;
 }
@@ -81,12 +75,12 @@ a, .btn-link {
     content: "An error has occurred."
 }
 
-.btn-primary:active{
+.btn-primary:active {
     box-shadow: none !important;
 }
 
-.btn-primary{
-    transition:0s;
+.btn-primary {
+    transition: 0s;
 }
 
 /**
@@ -149,6 +143,7 @@ a, .btn-link {
         background-color: #ebe6ff;
     }
 }
+
 /**
  * ==============================================
  * Dot Flashing

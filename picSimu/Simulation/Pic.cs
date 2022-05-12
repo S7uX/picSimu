@@ -23,12 +23,20 @@ public class Pic
 
     public readonly CircularStack Stack;
 
-    public uint ProgramCounter
+    public uint ProgramCounter // 13-bits wide
     {
-        get => Memory.ReadRegister(2);
-        set => Memory.WriteRegister(2, value);
+        get
+        {
+            uint returnVal = Memory.UnmaskedReadRegister(2); // PCL register: low byte pc
+            returnVal &= 0b_1111_1111; // mask low byte 
+            uint pclath = Memory.UnmaskedReadRegister(0x0A) & 0b_0001_1111;
+            pclath <<= 8; // high byte
+            Console.WriteLine(pclath.ToTooltipString());
+            returnVal |= pclath; // PCLATH register <4:0> bits <--> high byte bits PC<12:8>
+            return returnVal;
+        }
+        set => Memory.WriteRegister(2, value); // only pcl
     }
-
 
     public Pic()
     {
@@ -52,19 +60,19 @@ public class Pic
             await Task.Delay(100, cancellationToken);
             while (true)
             {
-                if (BreakPoints[Memory.ReadRegister(2)] || cancellationToken.IsCancellationRequested)
+                if (BreakPoints[ProgramCounter] || cancellationToken.IsCancellationRequested)
                 {
                     break;
                 }
 
-                ProgramMemory[Memory.ReadRegister(2)].Execute();
+                ProgramMemory[ProgramCounter].Execute();
             }
         }, cancellationToken);
     }
 
     public void Step()
     {
-        ProgramMemory[Memory.ReadRegister(2)].Execute();
+        ProgramMemory[ProgramCounter].Execute();
         _serialHandler?.Write(GenerateSerialPayload());
     }
 
@@ -171,10 +179,8 @@ public class Pic
 
     public void IncreaseProgramCounter()
     {
-        uint pc = Memory.ReadRegister(2);
-        pc++;
-        pc &= 255;
-        Memory.WriteRegister(2, pc);
+        ProgramCounter++;
+        ProgramCounter &= 255;
 
         Cycles++;
         Scaler--;

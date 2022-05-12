@@ -8,10 +8,10 @@ public class RETURN : ControlInstruciton
 
     public override int Execute()
     {
-        _pic.IncreaseProgramCounter();
-        _pic.IncreaseProgramCounter();
-        
-        _pic.Memory.WriteRegister(2, _pic.Stack.Pop());
+        Pic.IncreaseProgramCounter();
+        Pic.IncreaseProgramCounter();
+
+        Pic.Memory.WriteRegister(2, Pic.Stack.Pop());
         return 0;
     }
 }

@@ -77,12 +77,14 @@
 }
 
 .port-label {
-    width: 2.5em;
+    margin-right: auto
 }
 
-/*#register-table table {*/
-/*    margin-right: 0.5em;*/
-/*}*/
+.port-element{
+    width: 3em;
+    min-width: fit-content;
+    text-align: right;
+}
 
 #register-table ::deep input{
     border: none;
@@ -128,6 +130,7 @@
     flex-direction: row;
     height: fit-content;
     align-items: center;
+    margin-right: 1em;
 }
 
 /* position the unit to the right of the wrapper */
@@ -153,4 +156,14 @@
 .hex-input ::deep input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+#sfr-w{
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+#lst-container{
+    min-width: 55em;
 }

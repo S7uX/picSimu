@@ -8,37 +8,39 @@ public class ADDLW : LiteralInstruction
 
     public override int Execute()
     {
-        uint WOld = _pic.WRegister;
+        uint WOld = Pic.WRegister;
         uint Wnew = WOld + k;
         if (Wnew == 0)
         {
-            _pic.Memory.SetZeroFlag(true);
+            Pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            _pic.Memory.SetZeroFlag(false);
+            Pic.Memory.SetZeroFlag(false);
         }
 
         if (Wnew > 255)
         {
-            _pic.Memory.SetCarryFlag(true);
+            Pic.Memory.SetCarryFlag(true);
         }
         else
         {
-            _pic.Memory.SetCarryFlag(false);
+            Pic.Memory.SetCarryFlag(false);
         }
+
         var val1 = WOld & 15; //Maskierung auf nur lowest 4 Bit
         var val2 = k & 15; //Maskierung auf nur lowest 4 Bit
         if (val1 + val2 > 15)
         {
-            _pic.Memory.SetDigitCarryFlag(true);
+            Pic.Memory.SetDigitCarryFlag(true);
         }
         else
         {
-            _pic.Memory.SetDigitCarryFlag(false);
+            Pic.Memory.SetDigitCarryFlag(false);
         }
-        _pic.WRegister = Wnew;
-        _pic.IncreaseProgramCounter();
+
+        Pic.WRegister = Wnew;
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 }

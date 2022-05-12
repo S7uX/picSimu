@@ -8,10 +8,10 @@ public class GOTO : JumpInstruction
 
     public override int Execute()
     {
-        _pic.IncreaseProgramCounter();
-        _pic.IncreaseProgramCounter();
-        _pic.Memory.WriteRegister(2, k);
-        
+        Pic.IncreaseProgramCounter();
+        Pic.IncreaseProgramCounter();
+        Pic.Memory.WriteRegister(2, k);
+
         return 0;
     }
 }

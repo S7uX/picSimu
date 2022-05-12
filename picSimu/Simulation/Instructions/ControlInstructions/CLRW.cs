@@ -8,9 +8,9 @@ public class CLRW : ControlInstruciton
 
     public override int Execute()
     {
-        _pic.WRegister = 0;
-        _pic.Memory.SetZeroFlag(true);
-        _pic.IncreaseProgramCounter();
+        Pic.WRegister = 0;
+        Pic.Memory.SetZeroFlag(true);
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 }

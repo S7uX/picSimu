@@ -6,7 +6,7 @@ public static class Lib
     {
         return (b & (1 << pos)) != 0;
     }
-    
+
     public static int GetBit(this uint b, int pos)
     {
         return ((b & (1 << pos)) != 0).ToNumber();
@@ -55,7 +55,7 @@ public static class Lib
     {
         return value.ToString("X2") + "h";
     }
-    
+
     public static string ToTooltipString(this uint value)
     {
         return value + "\n" + Convert.ToString(value, 2).PadLeft(8, '0');

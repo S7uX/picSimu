@@ -8,26 +8,27 @@ public class COMF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = ~_pic.Memory.ReadRegister(f);
+        uint result = ~Pic.Memory.ReadRegister(f);
         result &= 255;
         if (d == 0)
         {
-            _pic.WRegister = result;
+            Pic.WRegister = result;
         }
         else
         {
-            _pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegister(f, result);
         }
 
         if (result == 0)
         {
-            _pic.Memory.SetZeroFlag(true);
+            Pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            _pic.Memory.SetZeroFlag(false);
+            Pic.Memory.SetZeroFlag(false);
         }
-        _pic.IncreaseProgramCounter();
+
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 }

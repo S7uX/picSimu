@@ -8,16 +8,17 @@ public class XORLW : LiteralInstruction
 
     public override int Execute()
     {
-        _pic.WRegister ^= k;
-        if (_pic.WRegister == 0)
+        Pic.WRegister ^= k;
+        if (Pic.WRegister == 0)
         {
-            _pic.Memory.SetZeroFlag(true);
+            Pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            _pic.Memory.SetZeroFlag(false);
+            Pic.Memory.SetZeroFlag(false);
         }
-        _pic.IncreaseProgramCounter();
+
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 }

@@ -8,26 +8,26 @@ public class IORWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = _pic.Memory.ReadRegister(f) | _pic.WRegister;
+        uint result = Pic.Memory.ReadRegister(f) | Pic.WRegister;
         if (result == 0)
         {
-            _pic.Memory.SetZeroFlag(true);
+            Pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            _pic.Memory.SetZeroFlag(false);
+            Pic.Memory.SetZeroFlag(false);
         }
 
         if (d == 0)
         {
-            _pic.WRegister = result;
+            Pic.WRegister = result;
         }
         else
         {
-            _pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegister(f, result);
         }
 
-        _pic.IncreaseProgramCounter();
+        Pic.IncreaseProgramCounter();
         return 0;
     }
 }

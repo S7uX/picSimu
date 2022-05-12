@@ -1,4 +1,4 @@
-<input type="checkbox" class="form-check-input"
+<input type="checkbox" class="form-check-input @Class"
        @oninput="@OnInputChange" @onchange="@OnChange"
        checked="@(Value ? "checked" : null)">
 
@@ -8,6 +8,9 @@
 
     [Parameter]
     public EventCallback<bool> ValueChanged { get; set; }
+    
+    [Parameter]
+    public string Class { get; set; } = "";
 
     private async Task OnInputChange(ChangeEventArgs args)
     {

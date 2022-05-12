@@ -5,31 +5,29 @@ public class ANDWF : ByteOrientedInstruction
     public ANDWF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
-    
+
     public override int Execute()
     {
-        uint result = _pic.WRegister & _pic.Memory.ReadRegister(f);
+        uint result = Pic.WRegister & Pic.Memory.ReadRegister(f);
         if (result == 0)
         {
-            _pic.Memory.SetZeroFlag(true);
+            Pic.Memory.SetZeroFlag(true);
         }
         else
         {
-            _pic.Memory.SetZeroFlag(false);
+            Pic.Memory.SetZeroFlag(false);
         }
 
         if (d == 0)
         {
-            _pic.WRegister = result;
+            Pic.WRegister = result;
         }
         else
         {
-            _pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegister(f, result);
         }
-        
-        _pic.IncreaseProgramCounter();
+
+        Pic.IncreaseProgramCounter();
         return 0;
     }
-
-
 }

@@ -19,7 +19,7 @@ public class Memory
     {
         return Lib.IsBitSet(Registers[3], 5);
     }
-    
+
     public bool IsSleeping()
     {
         return Lib.IsBitSet(Registers[3], 5);
@@ -118,7 +118,7 @@ public class Memory
                 return Registers[0x86];
             case 0x0A: // pclath
             case 0x8A:
-                return Registers[0x0A];
+                return Registers[0x0A] & 0b_00011111;
             case 0x0B: // intcon
             case 0X8B:
                 return Registers[0x0B];
@@ -152,9 +152,10 @@ public class Memory
                     //IF Prescaler is assigned to TMR0 (PSA = 0)
                     _pic.ResetScaler();
                 }
+
                 Registers[1] = value;
                 return;
-            case 2: // pcl
+            case 2: // pcl; low byte program counter
             case 0x82:
                 Registers[2] = value;
                 Registers[0x82] = value;
@@ -183,8 +184,9 @@ public class Memory
                 return;
             case 0x0A: // pclath
             case 0x8A:
-                Registers[0x0A] = value;
-                Registers[0x8A] = value;
+                // first three unimplemented
+                Registers[0x0A] = value & 0b_00011111;
+                Registers[0x8A] = value & 0b_00011111;
                 return;
             case 0x0B: // intcon
             case 0x8B:
