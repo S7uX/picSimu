@@ -1,6 +1,8 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿using picSimu.Simulation.Instructions.ControlInstructions;
 
-public class SLEEP : ControlInstruciton
+namespace picSimu.Simulation.Instructions;
+
+public class SLEEP : ControlInstruction
 {
     public SLEEP(string binaryString, Pic pic) : base(binaryString, pic)
     {

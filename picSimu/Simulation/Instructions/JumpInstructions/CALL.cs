@@ -1,4 +1,4 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.JumpInstructions;
 
 public class CALL : JumpInstruction
 {
@@ -11,7 +11,7 @@ public class CALL : JumpInstruction
         Pic.IncreaseProgramCounter();
         Pic.Stack.Push(Pic.ProgramCounter);
         Pic.IncreaseProgramCounter();
-        Pic.Memory.WriteRegister(2, k);
+        SetProgramCounter(k);
 
         return 0;
     }

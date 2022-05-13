@@ -1,6 +1,8 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿using picSimu.Simulation.Instructions.ControlInstructions;
 
-public class CLRW : ControlInstruciton
+namespace picSimu.Simulation.Instructions;
+
+public class CLRW : ControlInstruction
 {
     public CLRW(string binaryString, Pic pic) : base(binaryString, pic)
     {

@@ -1,6 +1,6 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.ControlInstructions;
 
-public class RETURN : ControlInstruciton
+public class RETURN : ControlInstruction
 {
     public RETURN(string binaryString, Pic pic) : base(binaryString, pic)
     {
@@ -11,7 +11,7 @@ public class RETURN : ControlInstruciton
         Pic.IncreaseProgramCounter();
         Pic.IncreaseProgramCounter();
 
-        Pic.Memory.WriteRegister(2, Pic.Stack.Pop());
+        Pic.ProgramCounter = Pic.Stack.Pop();
         return 0;
     }
 }

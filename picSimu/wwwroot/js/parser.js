@@ -84,6 +84,5 @@ export function highlightCodeLine(programCounter) {
     const toHighlight = document.getElementById("instruction-" + programCounter);
     if (toHighlight !== null) {
         document.getElementById("instruction-" + programCounter).classList.add("code-line-highlight");
-        console.log("error")
     }
 }

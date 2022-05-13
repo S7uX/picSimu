@@ -67,6 +67,8 @@
             <b style="color: #268bd2">Running</b>
             <div class="dot-flashing"></div>
         </div>
+        <label style="margin-left: auto" class="sfr-label">PC: </label>
+        <label>@_pic.ProgramCounter.ToString("X3")h</label>
     </div>
     <div id="code-block" class="code-block d-flex overflow-auto flex-row @(_picRun is not null ? "code-block-disabled" : "")">
         @{
@@ -93,7 +95,9 @@
             </pre>
             </div>
         }
-        <pre id="code-pre"></pre>
+        <div style="margin-bottom: auto" id="code-div" class="d-flex" >
+            <pre id="code-pre"></pre>
+        </div>
     </div>
 </div>
 
@@ -294,7 +298,7 @@
         <div class="sfr-label port-label">Pin</div>
         @for (int i = 4; i >= 0; i--)
         {
-            var bit = new PortABit(_pic.Memory.Ports, i);
+            var bit = new PortBit(_pic.Memory.PortA, i);
             <div class="port-element">
                 <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
             </div>
@@ -326,7 +330,7 @@
         <div class="sfr-label port-label">Pin</div>
         @for (int i = 7; i >= 0; i--)
         {
-            var bit = new PortBBit(_pic.Memory.Ports, i);
+            var bit = new PortBit(_pic.Memory.PortB, i);
             <div class="port-element">
                 <BootstrapCheckbox @bind-Value="bit.Value"></BootstrapCheckbox>
             </div>

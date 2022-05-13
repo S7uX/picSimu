@@ -1,5 +1,8 @@
 using picSimu.Simulation.Instructions;
 using picSimu.Simulation.Instructions.ByteOrientedInstructions;
+using picSimu.Simulation.Instructions.ControlInstructions;
+using picSimu.Simulation.Instructions.JumpInstructions;
+using picSimu.Simulation.Instructions.LiteralInstructions;
 
 namespace picSimu.Simulation;
 

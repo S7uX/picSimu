@@ -1,6 +1,8 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿using picSimu.Simulation.Instructions.ControlInstructions;
 
-public class NOP : ControlInstruciton
+namespace picSimu.Simulation.Instructions;
+
+public class NOP : ControlInstruction
 {
     public NOP(string binaryString, Pic pic) : base(binaryString, pic)
     {

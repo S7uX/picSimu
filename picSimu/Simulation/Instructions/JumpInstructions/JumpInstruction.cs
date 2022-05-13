@@ -1,17 +1,16 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.JumpInstructions;
 
 public abstract class JumpInstruction : Instruction
 {
     public ushort k { get; set; }
 
-    protected uint CalculateProgramCounter(uint jumpAddressOpcode)
+    protected void SetProgramCounter(uint jumpAddressOpcode)
     {
-        jumpAddressOpcode &= 0b_111_1111_1111; // mask low byte
-        uint pclath = Memory.UnmaskedReadRegister(0x0A) & 0b_0001_1111;
+        jumpAddressOpcode &= 0b_111_1111_1111; // mask 11 bit opcode 
+        uint pclath = Memory.UnmaskedReadRegister(0x0A) & 0b_0001_1000; // use two pclath bits <4:3>
         pclath <<= 8; // high byte
-        pclath &= 0b_0001_1000; // mask PCLATH<4:3> bits 
-        jumpAddressOpcode |= pclath; // PCLATH register <4:0> bits <--> high byte bits PC<12:8>
-        return jumpAddressOpcode;
+        jumpAddressOpcode |= pclath;
+        Pic.ProgramCounter = jumpAddressOpcode; // PCLATH register <4:0> bits <--> high byte bits PC<12:8>
     }
 
     protected JumpInstruction(string binaryString, Pic pic) : base(binaryString, pic)

@@ -1,4 +1,4 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.LiteralInstructions;
 
 public class RETLW : LiteralInstruction
 {
@@ -11,7 +11,7 @@ public class RETLW : LiteralInstruction
         Pic.IncreaseProgramCounter();
         Pic.IncreaseProgramCounter();
 
-        Pic.Memory.WriteRegister(2, Pic.Stack.Pop());
+        Pic.ProgramCounter = Pic.Stack.Pop();
         Pic.WRegister = k;
         return 0;
     }

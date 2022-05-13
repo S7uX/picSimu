@@ -1,6 +1,8 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿using picSimu.Simulation.Instructions.ControlInstructions;
 
-public class RETFIE : ControlInstruciton
+namespace picSimu.Simulation.Instructions;
+
+public class RETFIE : ControlInstruction
 {
     public RETFIE(string binaryString, Pic pic) : base(binaryString, pic)
     {

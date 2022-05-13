@@ -5,13 +5,15 @@ namespace picSimu.Simulation;
 public class Memory
 {
     private Pic _pic;
-    public readonly uint[] Registers = new uint[256];
-    public readonly Ports Ports;
+    public readonly uint[] Registers = new uint[512];
+    public readonly Port PortA;
+    public readonly Port PortB;
 
     public Memory(Pic pic)
     {
         _pic = pic;
-        Ports = new Ports(this);
+        PortA = new Port(this,5, 0x85, 5);
+        PortB = new Port(this,6, 0x86, 8);
         PowerOnReset();
     }
 
@@ -109,11 +111,11 @@ public class Memory
             case 0x84:
                 return Registers[4];
             case 5:
-                return Ports.AInternalValue;
+                return PortA.InternalValue;
             case 0x85: // Tris a
                 return Registers[0x85] & 0b_00011111;
             case 6:
-                return Ports.BInternalValue;
+                return PortB.InternalValue;
             case 0x86: // Tris b
                 return Registers[0x86];
             case 0x0A: // pclath
@@ -171,13 +173,13 @@ public class Memory
                 Registers[0X84] = value;
                 return;
             case 5:
-                Ports.AInternalValue = value;
+                PortA.InternalValue = value;
                 return;
             case 0x85: // tris a
                 Registers[0x85] = value & 0b_00011111;
                 return;
             case 6:
-                Ports.BInternalValue = value;
+                PortB.InternalValue = value;
                 return;
             case 0x86: // tris b
                 Registers[0x86] = value;

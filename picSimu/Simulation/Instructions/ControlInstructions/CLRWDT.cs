@@ -1,6 +1,8 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿using picSimu.Simulation.Instructions.ControlInstructions;
 
-public class CLRWDT : ControlInstruciton
+namespace picSimu.Simulation.Instructions;
+
+public class CLRWDT : ControlInstruction
 {
     public CLRWDT(string binaryString, Pic pic) : base(binaryString, pic)
     {

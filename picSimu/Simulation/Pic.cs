@@ -21,27 +21,39 @@ public class Pic
 
     public readonly Memory Memory;
 
-    public readonly CircularStack Stack;
+    public readonly Stack Stack; // 13 bit wide
 
-    public uint ProgramCounter // 13-bits wide
+    private uint _programCounter = 0;
+
+    public uint ProgramCounter // 13 bit wide
     {
-        get
+        get => _programCounter;
+        set
         {
-            uint returnVal = Memory.UnmaskedReadRegister(2); // PCL register: low byte pc
-            returnVal &= 0b_1111_1111; // mask low byte 
-            uint pclath = Memory.UnmaskedReadRegister(0x0A) & 0b_0001_1111;
-            pclath <<= 8; // high byte
-            returnVal |= pclath; // PCLATH register <4:0> bits <--> high byte bits PC<12:8>
-            return returnVal;
+            value &= 0b_1_1111_1111_1111;
+            Pcl = value;
+            _programCounter = value; // clear last 8 bits
         }
-        set => Memory.WriteRegister(2, value); // only pcl
     }
+
+    public uint Pcl // 8-bits wide
+    {
+        get => Memory.UnmaskedReadRegister(2) & 0b_1111_1111;
+        set => Memory.WriteRegister(2, value & 0b_1111_1111);
+    }
+
+    // uint returnVal = Memory.UnmaskedReadRegister(2); // PCL register: low byte pc
+    // returnVal &= 0b_1111_1111; // mask low byte 
+    // uint pclath = Memory.UnmaskedReadRegister(0x0A) & 0b_0001_1111;
+    // pclath <<= 8; // high byte
+    // returnVal |= pclath; // PCLATH register <4:0> bits <--> high byte bits PC<12:8>
+    // return returnVal;
 
     public Pic()
     {
         ProgramMemory = Array.Empty<Instruction>();
         ProgramLoaded = false;
-        Stack = new CircularStack(8);
+        Stack = new Stack(8);
         Memory = new Memory(this);
         ResetScaler();
 
@@ -179,7 +191,6 @@ public class Pic
     public void IncreaseProgramCounter()
     {
         ProgramCounter++;
-        ProgramCounter &= 255;
 
         Cycles++;
         Scaler--;

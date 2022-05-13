@@ -1,13 +1,13 @@
 ﻿namespace picSimu.Simulation;
 
-public class CircularStack
+public class Stack
 {
     private readonly uint[] _elements;
     public readonly int Length;
 
     public int Pointer { get; private set; }
 
-    public CircularStack(int count)
+    public Stack(int count) // 13 bit wide
     {
         Length = count;
         Pointer = 0;
@@ -30,7 +30,7 @@ public class CircularStack
 
     public void Push(uint address)
     {
-        _elements[Pointer % 8] = address;
+        _elements[Pointer % 8] = address & 0b_1_1111_1111_1111;
         Pointer++;
     }
 

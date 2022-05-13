@@ -1,4 +1,4 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.JumpInstructions;
 
 public class GOTO : JumpInstruction
 {
@@ -10,7 +10,7 @@ public class GOTO : JumpInstruction
     {
         Pic.IncreaseProgramCounter();
         Pic.IncreaseProgramCounter();
-        Pic.Memory.WriteRegister(2, k);
+        SetProgramCounter(k);
 
         return 0;
     }
