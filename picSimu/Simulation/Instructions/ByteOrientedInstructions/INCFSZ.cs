@@ -8,7 +8,7 @@ public class INCFSZ : ByteOrientedInstruction
 
     public override int Execute()
     {
-        var val = Pic.Memory.ReadRegister(f);
+        var val = Pic.Memory.ReadRegisterForInstructions(f);
         val++;
         val &= 255;
 
@@ -18,7 +18,7 @@ public class INCFSZ : ByteOrientedInstruction
         }
         else
         {
-            Pic.Memory.WriteRegister(f, val);
+            Pic.Memory.WriteRegisterForInstructions(f, val);
         }
 
         if (val == 0)

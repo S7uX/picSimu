@@ -38,22 +38,15 @@ public class Pic
 
     public uint Pcl // 8-bits wide
     {
-        get => Memory.UnmaskedReadRegister(2) & 0b_1111_1111;
+        get => Memory.ReadRegister(2) & 0b_1111_1111;
         set => Memory.WriteRegister(2, value & 0b_1111_1111);
     }
-
-    // uint returnVal = Memory.UnmaskedReadRegister(2); // PCL register: low byte pc
-    // returnVal &= 0b_1111_1111; // mask low byte 
-    // uint pclath = Memory.UnmaskedReadRegister(0x0A) & 0b_0001_1111;
-    // pclath <<= 8; // high byte
-    // returnVal |= pclath; // PCLATH register <4:0> bits <--> high byte bits PC<12:8>
-    // return returnVal;
 
     public Pic()
     {
         ProgramMemory = Array.Empty<Instruction>();
         ProgramLoaded = false;
-        Stack = new Stack(8);
+        Stack = new Stack();
         Memory = new Memory(this);
         ResetScaler();
 
@@ -108,10 +101,10 @@ public class Pic
 
     public uint GetScaler()
     {
-        bool PS0 = Memory.UnmaskedReadRegister(0x81).IsBitSet(0);
-        bool PS1 = Memory.UnmaskedReadRegister(0x81).IsBitSet(1);
-        bool PS2 = Memory.UnmaskedReadRegister(0x81).IsBitSet(2);
-        bool PSA = Memory.UnmaskedReadRegister(0x81).IsBitSet(3);
+        bool PS0 = Memory.ReadRegister(0x81).IsBitSet(0);
+        bool PS1 = Memory.ReadRegister(0x81).IsBitSet(1);
+        bool PS2 = Memory.ReadRegister(0x81).IsBitSet(2);
+        bool PSA = Memory.ReadRegister(0x81).IsBitSet(3);
         if (PSA == true)
         {
             //assigned to WDT
@@ -268,10 +261,10 @@ public class Pic
 
     private void IncreaseTimer()
     {
-        var value = Memory.ReadRegister(1);
+        uint value = Memory.ReadRegister(1);
         value++;
         value &= 255;
-        Memory.UnmaskedWriteRegister(0x01, value);
+        Memory.WriteRegister(0x01, value);
     }
 
     public double CalculateRuntime()

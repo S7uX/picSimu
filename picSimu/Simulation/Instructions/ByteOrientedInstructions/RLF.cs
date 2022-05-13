@@ -8,7 +8,7 @@ public class RLF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        string value = Convert.ToString(Pic.Memory.ReadRegister(f), 2).PadLeft(8, '0');
+        string value = Convert.ToString(Pic.Memory.ReadRegisterForInstructions(f), 2).PadLeft(8, '0');
         if (Pic.Memory.GetCarryFlag())
         {
             value += 1;
@@ -34,7 +34,7 @@ public class RLF : ByteOrientedInstruction
         }
         else
         {
-            Pic.Memory.WriteRegister(f, Convert.ToUInt16(value.Substring(1, 8), 2));
+            Pic.Memory.WriteRegisterForInstructions(f, Convert.ToUInt16(value.Substring(1, 8), 2));
         }
 
 

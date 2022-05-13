@@ -11,8 +11,8 @@ public class RegisterBit
 
     public bool Value
     {
-        get => _memory.UnmaskedReadRegister(Address).IsBitSet(Bit);
-        set => _memory.UnmaskedWriteRegister(Address, _memory.UnmaskedReadRegister(Address).SetBit(value, Bit));
+        get => _memory.ReadRegister(Address).IsBitSet(Bit);
+        set => _memory.WriteRegister(Address, _memory.ReadRegister(Address).SetBit(value, Bit));
     }
 
     public RegisterBit(Memory memory, uint address, int bit)
@@ -36,7 +36,7 @@ public class Register
         {
             if (regex.IsMatch(value))
             {
-                _memory.UnmaskedWriteRegister(Address, Convert.ToUInt32(value, 16));
+                _memory.WriteRegister(Address, Convert.ToUInt32(value, 16));
             }
         }
     }

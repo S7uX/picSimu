@@ -8,7 +8,7 @@ public class MOVF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        if (Pic.Memory.ReadRegister(f) == 0)
+        if (Pic.Memory.ReadRegisterForInstructions(f) == 0)
         {
             Pic.Memory.SetZeroFlag(true);
         }
@@ -19,11 +19,11 @@ public class MOVF : ByteOrientedInstruction
 
         if (d == 0)
         {
-            Pic.WRegister = Pic.Memory.ReadRegister(f);
+            Pic.WRegister = Pic.Memory.ReadRegisterForInstructions(f);
         }
         else
         {
-            Pic.Memory.WriteRegister(f, Pic.Memory.ReadRegister(f));
+            Pic.Memory.WriteRegisterForInstructions(f, Pic.Memory.ReadRegisterForInstructions(f));
         }
 
         Pic.IncreaseProgramCounter();

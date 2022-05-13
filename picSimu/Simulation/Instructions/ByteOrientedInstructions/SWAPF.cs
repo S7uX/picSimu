@@ -8,7 +8,7 @@ public class SWAPF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        string binarysString = Convert.ToString(Pic.Memory.ReadRegister(f), 2);
+        string binarysString = Convert.ToString(Pic.Memory.ReadRegisterForInstructions(f), 2);
         binarysString = binarysString.PadLeft(8, '0');
         string lowerNipple = binarysString.Substring(4, 4);
         string upperNipple = binarysString.Substring(0, 4);
@@ -21,7 +21,7 @@ public class SWAPF : ByteOrientedInstruction
         }
         else
         {
-            Pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegisterForInstructions(f, result);
         }
 
         Pic.IncreaseProgramCounter();

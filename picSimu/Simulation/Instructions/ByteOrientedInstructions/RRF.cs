@@ -18,7 +18,7 @@ public class RRF : ByteOrientedInstruction
             value += 0;
         }
 
-        value += Convert.ToString(Pic.Memory.ReadRegister(f), 2).PadLeft(8, '0');
+        value += Convert.ToString(Pic.Memory.ReadRegisterForInstructions(f), 2).PadLeft(8, '0');
 
         if (value.Substring(8, 1) == "0")
         {
@@ -35,7 +35,7 @@ public class RRF : ByteOrientedInstruction
         }
         else
         {
-            Pic.Memory.WriteRegister(f, Convert.ToUInt16(value.Substring(0, 8), 2));
+            Pic.Memory.WriteRegisterForInstructions(f, Convert.ToUInt16(value.Substring(0, 8), 2));
         }
 
         Pic.IncreaseProgramCounter();

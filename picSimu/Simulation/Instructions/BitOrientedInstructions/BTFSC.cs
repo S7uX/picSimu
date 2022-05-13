@@ -4,7 +4,7 @@ public class BTFSC : BitOrientedInstruction
 {
     public override int Execute()
     {
-        var val = Pic.Memory.ReadRegister(f);
+        var val = Pic.Memory.ReadRegisterForInstructions(f);
         if (!Lib.IsBitSet(val, b))
         {
             Pic.IncreaseProgramCounter(); //NOP

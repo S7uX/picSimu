@@ -8,7 +8,7 @@ public class SUBWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = Pic.Memory.ReadRegister(f) - Pic.WRegister;
+        uint result = Pic.Memory.ReadRegisterForInstructions(f) - Pic.WRegister;
         if (result == 0)
         {
             Pic.Memory.SetZeroFlag(true);
@@ -29,7 +29,7 @@ public class SUBWF : ByteOrientedInstruction
         }
 
         var val1 = Pic.WRegister & 15; //Maskierung auf nur lowest 4 Bit
-        var val2 = Pic.Memory.ReadRegister(f) & 15; //Maskierung auf nur lowest 4 Bit
+        var val2 = Pic.Memory.ReadRegisterForInstructions(f) & 15; //Maskierung auf nur lowest 4 Bit
 
         if (val1 - val2 > 128 || val1 - val2 == 0) //inklusive 0 weil 2er komplement? also vielleicht :D
         {
@@ -46,7 +46,7 @@ public class SUBWF : ByteOrientedInstruction
         }
         else
         {
-            Pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegisterForInstructions(f, result);
         }
 
         Pic.IncreaseProgramCounter();

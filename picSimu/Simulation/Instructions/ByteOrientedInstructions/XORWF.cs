@@ -8,7 +8,7 @@ public class XORWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = Pic.WRegister ^ Pic.Memory.ReadRegister(f);
+        uint result = Pic.WRegister ^ Pic.Memory.ReadRegisterForInstructions(f);
 
         if (result == 0)
         {
@@ -25,7 +25,7 @@ public class XORWF : ByteOrientedInstruction
         }
         else
         {
-            Pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegisterForInstructions(f, result);
         }
 
         Pic.IncreaseProgramCounter();

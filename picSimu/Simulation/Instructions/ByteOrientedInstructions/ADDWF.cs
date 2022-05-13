@@ -8,7 +8,7 @@ public class ADDWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = Pic.WRegister + Pic.Memory.ReadRegister(f);
+        uint result = Pic.WRegister + Pic.Memory.ReadRegisterForInstructions(f);
         if (result == 0)
         {
             Pic.Memory.SetZeroFlag(true);
@@ -43,7 +43,7 @@ public class ADDWF : ByteOrientedInstruction
         }
         else
         {
-            if (Pic.Memory.ReadRegister(f) < 15 && result > 15)
+            if (Pic.Memory.ReadRegisterForInstructions(f) < 15 && result > 15)
             {
                 Pic.Memory.SetDigitCarryFlag(true);
             }
@@ -52,7 +52,7 @@ public class ADDWF : ByteOrientedInstruction
                 Pic.Memory.SetDigitCarryFlag(false);
             }
 
-            Pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegisterForInstructions(f, result);
         }
 
         Pic.IncreaseProgramCounter();

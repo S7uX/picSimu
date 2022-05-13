@@ -8,7 +8,7 @@ public class MOVWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        Pic.Memory.WriteRegister(f, Pic.WRegister);
+        Pic.Memory.WriteRegisterForInstructions(f, Pic.WRegister);
         Pic.IncreaseProgramCounter();
         return 0;
     }

@@ -8,7 +8,7 @@ public class COMF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = ~Pic.Memory.ReadRegister(f);
+        uint result = ~Pic.Memory.ReadRegisterForInstructions(f);
         result &= 255;
         if (d == 0)
         {
@@ -16,7 +16,7 @@ public class COMF : ByteOrientedInstruction
         }
         else
         {
-            Pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegisterForInstructions(f, result);
         }
 
         if (result == 0)

@@ -3,13 +3,12 @@
 public class Stack
 {
     private readonly uint[] _elements;
-    public readonly int Length;
+    public const int Length = 8;
 
     public int Pointer { get; private set; }
 
-    public Stack(int count) // 13 bit wide
+    public Stack() // 13 bit wide
     {
-        Length = count;
         Pointer = 0;
         _elements = new uint[Length];
     }
@@ -18,19 +17,19 @@ public class Stack
     {
         if (Pointer == 0)
         {
-            Pointer = 7;
+            Pointer = Length - 1;
         }
         else
         {
             Pointer--;
         }
 
-        return _elements[Pointer % 8];
+        return _elements[Pointer % Length];
     }
 
     public void Push(uint address)
     {
-        _elements[Pointer % 8] = address & 0b_1_1111_1111_1111;
+        _elements[Pointer % Length] = address & 0b_1_1111_1111_1111;
         Pointer++;
     }
 

@@ -68,7 +68,7 @@
             <div class="dot-flashing"></div>
         </div>
         <label style="margin-left: auto" class="sfr-label">PC: </label>
-        <label>@_pic.ProgramCounter.ToString("X3")h</label>
+        <label style="width: 2.6em">@_pic.ProgramCounter.ToString("X3")h</label>
     </div>
     <div id="code-block" class="code-block d-flex overflow-auto flex-row @(_picRun is not null ? "code-block-disabled" : "")">
         @{
@@ -95,7 +95,7 @@
             </pre>
             </div>
         }
-        <div style="margin-bottom: auto" id="code-div" class="d-flex" >
+        <div style="margin-bottom: auto" id="code-div" class="d-flex">
             <pre id="code-pre"></pre>
         </div>
     </div>
@@ -184,9 +184,9 @@
                 </thead>
                 <tbody>
                 @{
-                    @for (int i = 0; i < _pic.Stack.Length; i++)
+                    @for (int i = 0; i < Stack.Length; i++)
                     {
-                        <tr class='@(_pic.Stack.Pointer == i ? "stack-highlight" : "")'>
+                        <tr class='@(_pic.Stack.Pointer % Stack.Length == i ? "stack-highlight" : "")'>
                             <td>@i</td>
                             <td>@_pic.Stack.Get(i).ToHexString()</td>
                         </tr>
@@ -238,7 +238,7 @@
             <tr>
                 <th></th>
                 @{
-                    uint optionReg = _pic.Memory.UnmaskedReadRegister(0x81);
+                    uint optionReg = _pic.Memory.ReadRegister(0x81);
                     @for (int i = 7; i >= 0; i--)
                     {
                         <td>@optionReg.GetBit(i)</td>
@@ -259,7 +259,7 @@
             <tr>
                 <th></th>
                 @{
-                    uint intconReg = _pic.Memory.UnmaskedReadRegister(0xb);
+                    uint intconReg = _pic.Memory.ReadRegister(0xb);
                     @for (int i = 7; i >= 0; i--)
                     {
                         <td>@intconReg.GetBit(i)</td>

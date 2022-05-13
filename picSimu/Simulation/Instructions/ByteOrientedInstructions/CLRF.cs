@@ -8,7 +8,7 @@ public class CLRF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        Pic.Memory.WriteRegister(f, 0);
+        Pic.Memory.WriteRegisterForInstructions(f, 0);
         Pic.Memory.SetZeroFlag(true);
         Pic.IncreaseProgramCounter();
         return 0;

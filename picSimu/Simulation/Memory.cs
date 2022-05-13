@@ -12,8 +12,8 @@ public class Memory
     public Memory(Pic pic)
     {
         _pic = pic;
-        PortA = new Port(this,5, 0x85, 5);
-        PortB = new Port(this,6, 0x86, 8);
+        PortA = new Port(this, 5, 0x85, 5);
+        PortB = new Port(this, 6, 0x86, 8);
         PowerOnReset();
     }
 
@@ -29,11 +29,11 @@ public class Memory
 
     public void PowerOnReset()
     {
-        UnmaskedWriteRegister(0x03, 0b_00011000);
-        UnmaskedWriteRegister(0x81, 0b_11111111);
-        UnmaskedWriteRegister(0x83, 0b_00011000);
-        UnmaskedWriteRegister(0x85, 0b_00011111); // tris a
-        UnmaskedWriteRegister(0x86, 0b_11111111); // tris b
+        WriteRegister(0x03, 0b_00011000);
+        WriteRegister(0x81, 0b_11111111);
+        WriteRegister(0x83, 0b_00011000);
+        WriteRegister(0x85, 0b_00011111); // trisa
+        WriteRegister(0x86, 0b_11111111); // trisb
     }
 
     public uint FSR => Registers[4];
@@ -68,9 +68,9 @@ public class Memory
         return Lib.IsBitSet(ReadRegister(3), 2);
     }
 
-    public uint MaskAddress(uint address)
+    private uint _calculateAddressWithRp0(uint address)
     {
-        if (!BankSelect())
+        if (!BankSelect()) // rp0 bit
         {
             // bank 0
             return address.SetBitTo0(7);
@@ -83,12 +83,12 @@ public class Memory
     }
 
 
-    public uint ReadRegister(uint address)
+    public uint ReadRegisterForInstructions(uint address)
     {
-        return UnmaskedReadRegister(MaskAddress(address));
+        return ReadRegister(_calculateAddressWithRp0(address));
     }
 
-    public uint UnmaskedReadRegister(uint address)
+    public uint ReadRegister(uint address)
     {
         if ((0x30 <= address && 0x7F >= address) || (0xD0 <= address && 0xFF >= address) || address == 7) // Unimplemented data memory location; read as ’0’.
         {
@@ -100,7 +100,7 @@ public class Memory
             case 0: // Indirect addr
             case 0x80:
                 if (FSR == 0) return 0; // prevent infinite loop
-                return UnmaskedReadRegister(Registers[4]);
+                return ReadRegister(Registers[4]);
             case 2: // pcl
             case 0x82:
                 return Registers[2];
@@ -129,12 +129,24 @@ public class Memory
         return Registers[address];
     }
 
-    public void WriteRegister(uint address, uint value)
+    public void WriteRegisterForInstructions(uint address, uint value)
     {
-        UnmaskedWriteRegister(MaskAddress(address), value);
+        address = _calculateAddressWithRp0(address);
+        if (address is 2 or 0x82) // PCL reg.
+        {
+            value &= 0b_1111_1111; // mask low byte 
+            uint pclath = ReadRegister(0x0A) & 0b_0001_1111; // PC high byte (bits <12:8>) from PCLATH 
+            pclath <<= 8; // high byte
+            value |= pclath; // PCLATH register <4:0> bits <--> high byte bits PC<12:8>
+            _pic.ProgramCounter = value;
+        }
+        else
+        {
+            WriteRegister(_calculateAddressWithRp0(address), value);
+        }
     }
 
-    public void UnmaskedWriteRegister(uint address, uint value)
+    public void WriteRegister(uint address, uint value)
     {
         if ((0x30 <= address && 0x7F >= address) || (0xD0 <= address && 0xFF >= address) || address == 7) // Unimplemented data memory location; do nothing
         {
@@ -145,13 +157,13 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
-                if (FSR == 0) return; // prevent infinite loop
-                UnmaskedWriteRegister(Registers[4], value);
+                if (FSR == 0) return; // prevent infinite recursion 
+                WriteRegister(Registers[4], value);
                 return;
-            case 1: //TIMER0
+            case 1: // TIMER0
                 if (!Lib.IsBitSet(ReadRegister(0x81), 3))
                 {
-                    //IF Prescaler is assigned to TMR0 (PSA = 0)
+                    // IF Prescaler is assigned to TMR0 (PSA = 0)
                     _pic.ResetScaler();
                 }
 

@@ -4,11 +4,11 @@ public class BSF : BitOrientedInstruction
 {
     public override int Execute()
     {
-        var val = Pic.Memory.ReadRegister(f);
+        var val = Pic.Memory.ReadRegisterForInstructions(f);
 
         val = val.SetBitTo1(b);
 
-        Pic.Memory.WriteRegister(f, val);
+        Pic.Memory.WriteRegisterForInstructions(f, val);
         Pic.IncreaseProgramCounter();
         return 0;
     }

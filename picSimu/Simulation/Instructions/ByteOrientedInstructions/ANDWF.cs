@@ -8,7 +8,7 @@ public class ANDWF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = Pic.WRegister & Pic.Memory.ReadRegister(f);
+        uint result = Pic.WRegister & Pic.Memory.ReadRegisterForInstructions(f);
         if (result == 0)
         {
             Pic.Memory.SetZeroFlag(true);
@@ -24,7 +24,7 @@ public class ANDWF : ByteOrientedInstruction
         }
         else
         {
-            Pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegisterForInstructions(f, result);
         }
 
         Pic.IncreaseProgramCounter();

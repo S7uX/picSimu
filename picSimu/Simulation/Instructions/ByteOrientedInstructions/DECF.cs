@@ -8,7 +8,7 @@ public class DECF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        uint result = Pic.Memory.ReadRegister(f) - 1;
+        uint result = Pic.Memory.ReadRegisterForInstructions(f) - 1;
         if (result > 255)
         {
             result &= 255; //Maskierung auf nur lowest 8 Bit
@@ -20,7 +20,7 @@ public class DECF : ByteOrientedInstruction
         }
         else
         {
-            Pic.Memory.WriteRegister(f, result);
+            Pic.Memory.WriteRegisterForInstructions(f, result);
         }
 
         if (result == 0)
