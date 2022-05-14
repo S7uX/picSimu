@@ -12,31 +12,8 @@ public class SerialHandler : IDisposable
     {
         _serialPort = new SerialPort(port, 4800, Parity.None, 8, StopBits.One);
         _serialPort.Handshake = Handshake.None;
-        _serialPort.DataReceived += sp_DataReceived;
-        //_serialPort.Open();
 
         _memory = memory;
-    }
-
-    private void sp_DataReceived(object sender, SerialDataReceivedEventArgs e)
-    {
-        //Thread.Sleep(100);
-        //string data = _serialPort.ReadLine();  
-        //TODO
-        /*var data = new byte[5];
-        Console.WriteLine("Start Read");
-        _serialPort.Read(data, 0, data.Length);
-        _serialPort.DiscardInBuffer();
-        Console.WriteLine("Done Read");
-        var sb = new StringBuilder();
-        sb.Append("0000");
-        sb.Append(Convert.ToString(data[1], 2).PadLeft(8, '0').Substring(4, 4));
-        _memory.WriteRegister(0x05, Convert.ToUInt32(sb.ToString(), 2));
-        sb.Clear();
-        sb.Append(Convert.ToString(data[2], 2).PadLeft(8, '0').Substring(4, 4));
-        sb.Append(Convert.ToString(data[3], 2).PadLeft(8, '0').Substring(4, 4));
-        _memory.WriteRegister(0x06, Convert.ToUInt32(sb.ToString(), 2));
-        sb.Clear();*/
     }
 
     public void Write()
@@ -51,29 +28,16 @@ public class SerialHandler : IDisposable
             }
 
             _serialPort.Write(payload, 0, payload.Length);
-            /*while (_serialPort.BytesToRead < 5)
-            {
-                Thread.Sleep(10);
-            }
-            var data = new byte[5];
-            _serialPort.Read(data, 0, 5);
-            _serialPort.DiscardInBuffer();
-            _serialPort.DiscardOutBuffer();*/
             
-            //if (_serialPort.BytesToRead < 4)
-            //{
-            //    var data = new byte[5];
-            //_serialPort.Read(data, 0, 5);
-            //var text = _serialPort.ReadExisting();
-            //}
-            /*if (text.StartsWith("2"))
+            if (_serialPort.BytesToRead > 4)
             {
-                _memory.WriteRegister(0x05, _memory.ReadRegister(0x05).SetBitTo0(4));
+                var data = new byte[5];
+                _serialPort.Read(data, 0, 5); // Get Bytes
+                uint valueToSet = 0;
+                valueToSet = (data[0] & (uint)0b_00001111) << 4; //Get Highbyte of PortA
+                valueToSet |= (data[1] & (uint)0b_00001111); //Get Lowbyte of PortA
+                _memory.PortA.ExternalValue = valueToSet; //Write PortA
             }
-            else if (text.StartsWith("3"))
-            {
-                _memory.WriteRegister(0x05, _memory.ReadRegister(0x05).SetBitTo1(4));
-            }*/
         }
         catch (Exception ex)
         {
