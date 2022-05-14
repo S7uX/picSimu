@@ -60,8 +60,6 @@ public class SerialHandler : IDisposable
             _serialPort.DiscardInBuffer();
             _serialPort.DiscardOutBuffer();*/
             
-            _serialPort.Close();
-            
             //if (_serialPort.BytesToRead < 4)
             //{
             //    var data = new byte[5];
@@ -153,9 +151,9 @@ public class SerialHandler : IDisposable
         sb.Append(portB.ExternalValue.IsBitSet(2).ToNumber());
         sb.Append(portB.ExternalValue.IsBitSet(1).ToNumber());
         sb.Append(portB.ExternalValue.IsBitSet(0).ToNumber());
-
         payload[7] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
+        
         sb.Append("00001101");
         payload[0] = Convert.ToByte(sb.ToString(), 2);
         return payload;
