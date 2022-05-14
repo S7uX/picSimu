@@ -63,7 +63,6 @@ public partial class Index : ComponentBase
         }
     }
 
-
     private void _initializePic()
     {
         _pic = new Pic();
@@ -95,9 +94,11 @@ public partial class Index : ComponentBase
     private async ValueTask<string?> GetInstructionCodes(string sourceCode)
     {
         if (_module is not null)
+        {
             return await _module.InvokeAsync<string>("getInstructionCodes", sourceCode);
-        else
-            return null;
+        }
+
+        return null;
     }
 
     private void RunSimulation()
@@ -175,9 +176,9 @@ public partial class Index : ComponentBase
     public async ValueTask DisposeAsync()
     {
         _pic.Dispose();
-        // if (module is not null)
-        // {
-        //     await module.DisposeAsync();
-        // }
+        if (_module is not null)
+        {
+            await _module.DisposeAsync();
+        }
     }
 }

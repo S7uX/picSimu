@@ -5,10 +5,6 @@ html, body {
     height: 100vh;
 }
 
-h1:focus {
-    outline: none;
-}
-
 hr {
     clear: both;
     margin-top: 1ex;

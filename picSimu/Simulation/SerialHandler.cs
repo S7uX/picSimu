@@ -14,7 +14,7 @@ public class SerialHandler : IDisposable
         _serialPort.Handshake = Handshake.None;
         _serialPort.DataReceived += sp_DataReceived;
         //_serialPort.Open();
-        
+
         _memory = memory;
     }
 
@@ -89,64 +89,69 @@ public class SerialHandler : IDisposable
         Port portB = _memory.PortB;
         uint trisaReg = _memory.ReadRegister(5);
         uint trisbReg = _memory.ReadRegister(6);
-        
-        sb.Append("0011");
-        // port a
-        sb.Append(portA.ExternalValue.IsBitSet(7).ToNumber());
-        sb.Append(portA.ExternalValue.IsBitSet( 6).ToNumber());
-        sb.Append(portA.ExternalValue.IsBitSet( 5).ToNumber());
-        sb.Append(portA.ExternalValue.IsBitSet( 4).ToNumber());
-        payload[0] = Convert.ToByte(sb.ToString(), 2);
-        sb.Clear();
-        sb.Append("0011");
-        sb.Append(portA.ExternalValue.IsBitSet( 3).ToNumber());
-        sb.Append(portA.ExternalValue.IsBitSet( 2).ToNumber());
-        sb.Append(portA.ExternalValue.IsBitSet( 1).ToNumber());
-        sb.Append(portA.ExternalValue.IsBitSet( 0).ToNumber());
-        payload[1] = Convert.ToByte(sb.ToString(), 2);
-        sb.Clear();
+
+        // TRISA
         sb.Append("0011");
         sb.Append(trisaReg.IsBitSet(7).ToNumber());
         sb.Append(trisaReg.IsBitSet(6).ToNumber());
         sb.Append(trisaReg.IsBitSet(5).ToNumber());
         sb.Append(trisaReg.IsBitSet(4).ToNumber());
-        payload[2] = Convert.ToByte(sb.ToString(), 2);
+        payload[0] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
         sb.Append(trisaReg.IsBitSet(3).ToNumber());
         sb.Append(trisaReg.IsBitSet(2).ToNumber());
         sb.Append(trisaReg.IsBitSet(1).ToNumber());
         sb.Append(trisaReg.IsBitSet(0).ToNumber());
+        payload[1] = Convert.ToByte(sb.ToString(), 2);
+        sb.Clear();
+
+        // port a
+        sb.Append("0011");
+        sb.Append(portA.ExternalValue.IsBitSet(7).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet(6).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet(5).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet(4).ToNumber());
+        payload[2] = Convert.ToByte(sb.ToString(), 2);
+        sb.Clear();
+        sb.Append("0011");
+        sb.Append(portA.ExternalValue.IsBitSet(3).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet(2).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet(1).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet(0).ToNumber());
         payload[3] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
-        // port b
-        sb.Append("0011");
-        sb.Append(portB.ExternalValue.IsBitSet( 7).ToNumber());
-        sb.Append(portB.ExternalValue.IsBitSet( 6).ToNumber());
-        sb.Append(portB.ExternalValue.IsBitSet( 5).ToNumber());
-        sb.Append(portB.ExternalValue.IsBitSet( 4).ToNumber());
-        payload[4] = Convert.ToByte(sb.ToString(), 2);
-        sb.Clear();
-        sb.Append("0011");
-        sb.Append(portB.ExternalValue.IsBitSet( 3).ToNumber());
-        sb.Append(portB.ExternalValue.IsBitSet( 2).ToNumber());
-        sb.Append(portB.ExternalValue.IsBitSet( 1).ToNumber());
-        sb.Append(portB.ExternalValue.IsBitSet( 0).ToNumber());
-        payload[5] = Convert.ToByte(sb.ToString(), 2);
-        sb.Clear();
-        sb.Append("0011");
+
         // TRISB
+        sb.Append("0011");
         sb.Append(trisbReg.IsBitSet(7).ToNumber());
         sb.Append(trisbReg.IsBitSet(6).ToNumber());
         sb.Append(trisbReg.IsBitSet(5).ToNumber());
         sb.Append(trisbReg.IsBitSet(4).ToNumber());
-        payload[6] = Convert.ToByte(sb.ToString(), 2);
+        payload[4] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
         sb.Append(trisbReg.IsBitSet(3).ToNumber());
         sb.Append(trisbReg.IsBitSet(2).ToNumber());
         sb.Append(trisbReg.IsBitSet(1).ToNumber());
         sb.Append(trisbReg.IsBitSet(0).ToNumber());
+        payload[5] = Convert.ToByte(sb.ToString(), 2);
+        sb.Clear();
+
+        // port b
+        sb.Append("0011");
+        sb.Append(portB.ExternalValue.IsBitSet(7).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet(6).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet(5).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet(4).ToNumber());
+        payload[6] = Convert.ToByte(sb.ToString(), 2);
+        sb.Clear();
+        sb.Append("0011");
+        sb.Append(portB.ExternalValue.IsBitSet(3).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet(2).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet(1).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet(0).ToNumber());
+
         payload[7] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("00001101");
