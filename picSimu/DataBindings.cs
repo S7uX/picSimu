@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
 namespace picSimu.Simulation.Registers;
@@ -66,5 +65,23 @@ public class Breakpoint
     {
         BreakPoints = breakPoints;
         this.i = i;
+    }
+}
+
+public class PortBit
+{
+    private readonly Port _port;
+    public readonly int Bit;
+
+    public bool Value
+    {
+        get => _port.ExternalValue.IsBitSet(Bit);
+        set => _port.ExternalValue = _port.ExternalValue.SetBit(value, Bit);
+    }
+
+    public PortBit(Port port, int bit)
+    {
+        _port = port;
+        Bit = bit;
     }
 }

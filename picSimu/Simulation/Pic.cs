@@ -1,11 +1,10 @@
 using System.Runtime.InteropServices;
-using System.Text;
 using picSimu.Simulation.Instructions;
 using picSimu.Simulation.Registers;
 
 namespace picSimu.Simulation;
 
-public class Pic
+public class Pic : IDisposable
 {
     public uint WRegister = 0;
     public static readonly int ProgramMemoryLength = 1024;
@@ -16,6 +15,7 @@ public class Pic
     public readonly Memory Memory;
     public readonly Stack Stack = new Stack(); // 13 bit wide
     private uint _programCounter = 0;
+    public bool ReleaseWatchdog { get; set; }
 
     public uint ProgramCounter // 13 bit wide
     {
@@ -171,4 +171,9 @@ public class Pic
     }
 
     #endregion blazor data binding
+
+    public void Dispose()
+    {
+        _serialHandler?.Dispose();
+    }
 }

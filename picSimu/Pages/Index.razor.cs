@@ -172,13 +172,12 @@ public partial class Index : ComponentBase
         }
     }
 
-    public Timing Timing { get; set; } = new Timing() {QuartzFrequency = 32, ReleaseWatchdog = false};
-
-    // public async ValueTask DisposeAsync()
-    // {
-    //     if (module is not null)
-    //     {
-    //         await module.DisposeAsync();
-    //     }
-    // }
+    public async ValueTask DisposeAsync()
+    {
+        _pic.Dispose();
+        // if (module is not null)
+        // {
+        //     await module.DisposeAsync();
+        // }
+    }
 }

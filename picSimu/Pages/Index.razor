@@ -2,7 +2,7 @@
 @using picSimu.Simulation
 @using picSimu.Simulation.Registers
 @using System.Text.RegularExpressions
-@* @implements IAsyncDisposable *@
+@implements IAsyncDisposable
 @inject IJSRuntime Js
 
 
@@ -164,7 +164,7 @@
             </div>
             <div>
                 <label class="sfr-label">Release Watchdog: </label>
-                <BootstrapCheckbox @bind-Value="Timing.ReleaseWatchdog"></BootstrapCheckbox>
+                <BootstrapCheckbox @bind-Value="_pic.ReleaseWatchdog"></BootstrapCheckbox>
             </div>
             <div>
                 <label class="sfr-label">Watchdog: </label> <label>00h</label>
