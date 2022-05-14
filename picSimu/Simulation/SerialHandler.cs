@@ -48,7 +48,6 @@ public class SerialHandler : IDisposable
             _serialPort.Write(payload, 0, payload.Length);
             _serialPort.DiscardInBuffer();
             _serialPort.DiscardOutBuffer();
-            _serialPort.Close();
             //if (_serialPort.BytesToRead < 4)
             //{
             //    var data = new byte[5];
