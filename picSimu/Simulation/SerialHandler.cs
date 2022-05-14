@@ -13,7 +13,7 @@ public class SerialHandler : IDisposable
         _serialPort = new SerialPort(port, 4800, Parity.None, 8, StopBits.One);
         _serialPort.Handshake = Handshake.None;
         _serialPort.DataReceived += sp_DataReceived;
-        _serialPort.Open();
+        //_serialPort.Open();
         
         _memory = memory;
     }
@@ -41,13 +41,25 @@ public class SerialHandler : IDisposable
 
     public void Write()
     {
-        byte[] payload = GenerateSerialPayload();
+        var payload = GenerateSerialPayload();
         // Makes sure serial port is open before trying to write  
         try
         {
+            if (!_serialPort.IsOpen)
+            {
+                _serialPort.Open();
+            }
+
             _serialPort.Write(payload, 0, payload.Length);
+            /*while (_serialPort.BytesToRead < 5)
+            {
+                Thread.Sleep(10);
+            }
+            var data = new byte[5];
+            _serialPort.Read(data, 0, 5);
             _serialPort.DiscardInBuffer();
-            _serialPort.DiscardOutBuffer();
+            _serialPort.DiscardOutBuffer();*/
+            _serialPort.Close();
             //if (_serialPort.BytesToRead < 4)
             //{
             //    var data = new byte[5];
