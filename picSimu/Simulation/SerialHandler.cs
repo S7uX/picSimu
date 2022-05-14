@@ -3,7 +3,7 @@ using System.Text;
 
 namespace picSimu.Simulation;
 
-public class SerialHandler
+public class SerialHandler : IDisposable
 {
     private SerialPort _serialPort;
     private Memory _memory;
@@ -13,6 +13,8 @@ public class SerialHandler
         _serialPort = new SerialPort(port, 4800, Parity.None, 8, StopBits.One);
         _serialPort.Handshake = Handshake.None;
         _serialPort.DataReceived += sp_DataReceived;
+        _serialPort.Open();
+        
         _memory = memory;
     }
 
@@ -43,11 +45,6 @@ public class SerialHandler
         // Makes sure serial port is open before trying to write  
         try
         {
-            if (!_serialPort.IsOpen)
-            {
-                _serialPort.Open();
-            }
-
             _serialPort.Write(payload, 0, payload.Length);
             _serialPort.DiscardInBuffer();
             _serialPort.DiscardOutBuffer();
@@ -75,66 +72,80 @@ public class SerialHandler
 
     private byte[] GenerateSerialPayload()
     {
-        byte[] payload = new byte[9];
+        var payload = new byte[9];
         StringBuilder sb = new StringBuilder();
+        Port portA = _memory.PortA;
+        Port portB = _memory.PortB;
+        uint trisaReg = _memory.ReadRegister(5);
+        uint trisbReg = _memory.ReadRegister(6);
+        
         sb.Append("0011");
-        sb.Append(_memory.GetRegisterBit(0x85, 7).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x85, 6).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x85, 5).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x85, 4).Value.ToNumber());
+        // port a
+        sb.Append(portA.ExternalValue.IsBitSet(7).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet( 6).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet( 5).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet( 4).ToNumber());
         payload[0] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
-        sb.Append(_memory.GetRegisterBit(0x85, 3).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x85, 2).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x85, 1).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x85, 0).Value.ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet( 3).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet( 2).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet( 1).ToNumber());
+        sb.Append(portA.ExternalValue.IsBitSet( 0).ToNumber());
         payload[1] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
-        sb.Append(_memory.GetRegisterBit(0x05, 7).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x05, 6).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x05, 5).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x05, 4).Value.ToNumber());
+        sb.Append(trisaReg.IsBitSet(7).ToNumber());
+        sb.Append(trisaReg.IsBitSet(6).ToNumber());
+        sb.Append(trisaReg.IsBitSet(5).ToNumber());
+        sb.Append(trisaReg.IsBitSet(4).ToNumber());
         payload[2] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
-        sb.Append(_memory.GetRegisterBit(0x05, 3).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x05, 2).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x05, 1).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x05, 0).Value.ToNumber());
+        sb.Append(trisaReg.IsBitSet(3).ToNumber());
+        sb.Append(trisaReg.IsBitSet(2).ToNumber());
+        sb.Append(trisaReg.IsBitSet(1).ToNumber());
+        sb.Append(trisaReg.IsBitSet(0).ToNumber());
         payload[3] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
+        // port b
         sb.Append("0011");
-        sb.Append(_memory.GetRegisterBit(0x86, 7).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x86, 6).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x86, 5).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x86, 4).Value.ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet( 7).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet( 6).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet( 5).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet( 4).ToNumber());
         payload[4] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
-        sb.Append(_memory.GetRegisterBit(0x86, 3).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x86, 2).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x86, 1).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x86, 0).Value.ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet( 3).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet( 2).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet( 1).ToNumber());
+        sb.Append(portB.ExternalValue.IsBitSet( 0).ToNumber());
         payload[5] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
-        sb.Append(_memory.GetRegisterBit(0x06, 7).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x06, 6).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x06, 5).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x06, 4).Value.ToNumber());
+        // TRISB
+        sb.Append(trisbReg.IsBitSet(7).ToNumber());
+        sb.Append(trisbReg.IsBitSet(6).ToNumber());
+        sb.Append(trisbReg.IsBitSet(5).ToNumber());
+        sb.Append(trisbReg.IsBitSet(4).ToNumber());
         payload[6] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("0011");
-        sb.Append(_memory.GetRegisterBit(0x06, 3).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x06, 2).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x06, 1).Value.ToNumber());
-        sb.Append(_memory.GetRegisterBit(0x06, 0).Value.ToNumber());
+        sb.Append(trisbReg.IsBitSet(3).ToNumber());
+        sb.Append(trisbReg.IsBitSet(2).ToNumber());
+        sb.Append(trisbReg.IsBitSet(1).ToNumber());
+        sb.Append(trisbReg.IsBitSet(0).ToNumber());
         payload[7] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
         sb.Append("00001101");
         payload[0] = Convert.ToByte(sb.ToString(), 2);
         return payload;
+    }
+
+    public void Dispose()
+    {
+        _serialPort.Close();
+        _serialPort.Dispose();
     }
 }
