@@ -59,7 +59,9 @@ public class SerialHandler : IDisposable
             _serialPort.Read(data, 0, 5);
             _serialPort.DiscardInBuffer();
             _serialPort.DiscardOutBuffer();*/
+            
             _serialPort.Close();
+            
             //if (_serialPort.BytesToRead < 4)
             //{
             //    var data = new byte[5];
@@ -87,8 +89,8 @@ public class SerialHandler : IDisposable
         StringBuilder sb = new StringBuilder();
         Port portA = _memory.PortA;
         Port portB = _memory.PortB;
-        uint trisaReg = _memory.ReadRegister(5);
-        uint trisbReg = _memory.ReadRegister(6);
+        uint trisaReg = _memory.ReadRegister(0x85);
+        uint trisbReg = _memory.ReadRegister(0x86);
 
         // TRISA
         sb.Append("0011");
