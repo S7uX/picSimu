@@ -40,7 +40,7 @@ public partial class Index : ComponentBase
     {
         if (firstRender)
         {
-            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/parser.js");
+            _module = await Js.InvokeAsync<IJSObjectReference>("import", "./js/parser.js");
         }
 
         uint pc = _pic.ProgramCounter;
@@ -106,7 +106,11 @@ public partial class Index : ComponentBase
         {
             _picRun = new CancellationTokenSource();
             Task picSimulationBackgroundTask = _pic.Run(_picRun.Token);
-            picSimulationBackgroundTask.ContinueWith(_ => InvokeAsync(StateHasChanged), TaskContinuationOptions.NotOnCanceled);
+            picSimulationBackgroundTask.ContinueWith(_ =>
+            {
+                _picRun = null;
+                return InvokeAsync(StateHasChanged);
+            }, TaskContinuationOptions.NotOnCanceled);
         }
     }
 

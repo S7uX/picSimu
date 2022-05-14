@@ -3,7 +3,7 @@
 @using picSimu.Simulation.Registers
 @using System.Text.RegularExpressions
 @* @implements IAsyncDisposable *@
-@inject IJSRuntime JS
+@inject IJSRuntime Js
 
 
 <PageTitle>Index</PageTitle>
@@ -14,7 +14,7 @@
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _autoStep || _picRun is not null)" @onclick="StepSimulation">Step</button>
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _autoStep || _picRun is not null)" @onclick="AutoStepSimulation">Auto Step</button>
     <button class="btn btn-primary btn-sm" disabled="@(!(_autoStep || _picRun is not null))" @onclick="StopSimulation">Stop</button>
-    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _autoStep || _picRun is not null)" @onclick="ResetSimulation">Reset</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _autoStep || _picRun is not null)" @onclick="ResetSimulation">Reset Simulation</button>
     <b style="margin-left: auto">picSimu</b>
 </div>
 
