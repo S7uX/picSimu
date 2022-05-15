@@ -69,15 +69,54 @@ public class Pic : IDisposable
                     break;
                 }
 
-                ProgramMemory[ProgramCounter].Execute();
+                if (Memory.ReadRegister(0x83).IsBitSet(0x83))
+                {
+                    //PD = 1 --> Not sleeping
+                    ProgramMemory[ProgramCounter].Execute();
+                    _serialHandler?.Write();
+                }
+                else
+                {
+                    //PD = 0 --> Sleeping
+                    bool PSA = Memory.ReadRegister(0x81).IsBitSet(3);
+                    if (PSA)
+                    {
+                        Cycles++;
+                        Scaler--;
+                        if (Scaler == 0)
+                        {
+                            ResetScaler();
+                            IncreaseTimer();
+                        }
+                    }
+                }
             }
         }, cancellationToken);
     }
 
     public void Step()
     {
-        ProgramMemory[ProgramCounter].Execute();
-        _serialHandler?.Write();
+        if (Memory.ReadRegister(0x83).IsBitSet(0x83))
+        {
+            //PD = 1 --> Not sleeping
+            ProgramMemory[ProgramCounter].Execute();
+            _serialHandler?.Write();
+        }
+        else
+        {
+            //PD = 0 --> Sleeping
+            bool PSA = Memory.ReadRegister(0x81).IsBitSet(3);
+            if (PSA)
+            {
+                Cycles++;
+                Scaler--;
+                if (Scaler == 0)
+                {
+                    ResetScaler();
+                    IncreaseTimer();
+                }
+            }
+        }
     }
 
     #endregion execution
@@ -113,6 +152,7 @@ public class Pic : IDisposable
 
         if (PSA)
         {
+            //assigned to WTD
             if (PS2 && PS1 && PS0) return 128;
             if (PS2 && PS1 && !PS0) return 64;
             if (PS2 && !PS1 && PS0) return 32;
@@ -142,7 +182,37 @@ public class Pic : IDisposable
     {
         uint value = Memory.ReadRegister(1);
         value++;
-        value &= 255;
+        if (value > 255)
+        {
+            //Overflow
+            value &= 255;
+            bool PSA = Memory.ReadRegister(0x81).IsBitSet(3);
+            if (PSA)
+            {
+                if (Memory.ReadRegister(0x83).IsBitSet(0x83))
+                {
+                    //PD = 1 --> Not sleeping
+                    //TODO RESET
+                }
+                else
+                {
+                    //PD = 0 --> Sleeping
+                    Memory.WriteRegister(0x83, Memory.ReadRegister(0x83).SetBitTo1(3)); //Wake UP
+                }
+                //Prescaler is for Watchdog, so Watchdog must have overflown
+                
+            }
+            else
+            {
+                //Prescaler is for TMR0, so TMR0 must have overflown
+                if (Memory.ReadRegister(0x0B).IsBitSet(5))
+                {
+                    //Interrupt is NOT masked
+                    Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(2));
+                }
+            }
+        }
+
         Memory.WriteRegister(0x01, value);
     }
 
