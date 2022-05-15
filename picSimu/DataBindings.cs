@@ -1,6 +1,47 @@
 using System.Text.RegularExpressions;
+using picSimu.Simulation;
 
-namespace picSimu.Simulation.Registers;
+namespace picSimu;
+
+public class Register
+{
+    private Memory _memory;
+    public readonly uint Address;
+    private static Regex regex = new Regex("^[a-fA-F0-9]{2}$", RegexOptions.Compiled);
+    
+    public Register(Memory memory, uint address)
+    {
+        _memory = memory;
+        Address = address;
+    }
+
+    public string Value
+    {
+        get => _memory.Registers[Address].ToString("X2");
+        set
+        {
+            if (regex.IsMatch(value))
+            {
+                _memory.WriteRegister(Address, Convert.ToUInt32(value, 16));
+            }
+        }
+    }    
+    
+    public string ToolTip => _memory.Registers[Address].ToTooltipString();
+}
+
+public class RegisterPair
+{
+    public Register register0;
+    public Register register1;
+
+    public RegisterPair(Register register0, Register register1)
+    {
+        this.register0 = register0;
+        this.register1 = register1;
+    }
+}
+
 
 public class RegisterBit
 {
@@ -19,33 +60,6 @@ public class RegisterBit
         _memory = memory;
         Address = address;
         Bit = bit;
-    }
-}
-
-public class Register
-{
-    private Memory _memory;
-    public readonly uint Address;
-    private static Regex regex = new Regex("^[a-fA-F0-9]{2}$", RegexOptions.Compiled);
-
-    public string Value
-    {
-        get => _memory.Registers[Address].ToString("X2");
-        set
-        {
-            if (regex.IsMatch(value))
-            {
-                _memory.WriteRegister(Address, Convert.ToUInt32(value, 16));
-            }
-        }
-    }
-
-    public string ToolTip => _memory.Registers[Address].ToTooltipString();
-
-    public Register(Memory memory, uint address)
-    {
-        _memory = memory;
-        Address = address;
     }
 }
 

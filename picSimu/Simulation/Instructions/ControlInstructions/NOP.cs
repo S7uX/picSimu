@@ -1,6 +1,4 @@
-﻿using picSimu.Simulation.Instructions.ControlInstructions;
-
-namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.ControlInstructions;
 
 public class NOP : ControlInstruction
 {

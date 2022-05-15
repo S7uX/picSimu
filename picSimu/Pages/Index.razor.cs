@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using picSimu.Simulation;
-using picSimu.Simulation.Registers;
 
 namespace picSimu.Pages;
 
@@ -18,13 +17,14 @@ public partial class Index : ComponentBase
     private CancellationTokenSource? _picRun;
 
     private Pic _pic;
-    private Register[] _registerBindings;
+    private RegisterPair[] _registerBindings;
 
     public Index()
     {
         _pic = new Pic();
         _visualizedProgramCounter = -1;
-        _registerBindings = new Register[Pic.ProgramMemoryLength];
+
+        _registerBindings = new RegisterPair[Memory.MemoryLength / 2];
         _createRegisterBindings();
     }
 
@@ -32,7 +32,8 @@ public partial class Index : ComponentBase
     {
         for (uint i = 0; i < _registerBindings.Length; i++)
         {
-            _registerBindings[i] = _pic.Memory.GetRegister(i);
+            uint y = 0x80 + i;
+            _registerBindings[i] = new RegisterPair(_pic.Memory.GetRegister(i), _pic.Memory.GetRegister(y));
         }
     }
 

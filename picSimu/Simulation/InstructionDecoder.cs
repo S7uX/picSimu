@@ -1,4 +1,5 @@
 using picSimu.Simulation.Instructions;
+using picSimu.Simulation.Instructions.BitOrientedInstructions;
 using picSimu.Simulation.Instructions.ByteOrientedInstructions;
 using picSimu.Simulation.Instructions.ControlInstructions;
 using picSimu.Simulation.Instructions.JumpInstructions;

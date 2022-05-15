@@ -1,8 +1,12 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.LiteralInstructions;
 
 public class MOVLW : LiteralInstruction
 {
     public MOVLW(string binaryString, Pic pic) : base(binaryString, pic)
+    {
+    }
+
+    public MOVLW(ushort k) : base(k)
     {
     }
 

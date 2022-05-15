@@ -5,6 +5,12 @@ public class MOVWF : ByteOrientedInstruction
     public MOVWF(string binaryString, Pic pic) : base(binaryString, pic)
     {
     }
+    
+    public MOVWF(ushort f, ushort d)
+    {
+        this.f = f;
+        this.d = d;
+    }
 
     public override int Execute()
     {

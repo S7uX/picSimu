@@ -1,4 +1,4 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.BitOrientedInstructions;
 
 public class BSF : BitOrientedInstruction
 {
@@ -14,6 +14,10 @@ public class BSF : BitOrientedInstruction
     }
 
     public BSF(string binaryString, Pic pic) : base(binaryString, pic)
+    {
+    }
+
+    public BSF(ushort f, ushort b) : base(f, b)
     {
     }
 }

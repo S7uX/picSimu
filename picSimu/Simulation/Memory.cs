@@ -5,7 +5,8 @@ namespace picSimu.Simulation;
 public class Memory
 {
     private Pic _pic;
-    public readonly uint[] Registers = new uint[512];
+    public const uint MemoryLength = 256;
+    public readonly uint[] Registers = new uint[MemoryLength];
     public readonly Port PortA;
     public readonly Port PortB;
 
@@ -97,33 +98,35 @@ public class Memory
 
         switch (address)
         {
-            case 0: // Indirect addr
+            case 0: // Indirect addr.
             case 0x80:
                 if (FSR == 0) return 0; // prevent infinite loop
                 return ReadRegister(Registers[4]);
-            case 2: // pcl
+            case 2: // PCL
             case 0x82:
                 return Registers[2];
-            case 3: // status
+            case 3: // STATUS
             case 0x83:
                 return Registers[3];
-            case 4: // fsr
+            case 4: // FSR
             case 0x84:
                 return Registers[4];
             case 5:
                 return PortA.InternalValue;
-            case 0x85: // Tris a
+            case 0x85: // TRISA
                 return Registers[0x85] & 0b_00011111;
             case 6:
                 return PortB.InternalValue;
-            case 0x86: // Tris b
+            case 0x86: // TRISB
                 return Registers[0x86];
-            case 0x0A: // pclath
+            case 0x0A: // PCLATH
             case 0x8A:
                 return Registers[0x0A] & 0b_00011111;
-            case 0x0B: // intcon
+            case 0x0B: // INTCON
             case 0X8B:
                 return Registers[0x0B];
+            case 0x89: //
+                return _pic.EEPROM.EECON2;
         }
 
         return Registers[address];
@@ -157,9 +160,9 @@ public class Memory
         {
             case 0: // Indirect addr
             case 0x80:
-                if (FSR == 0) return; // prevent infinite recursion 
+                if (FSR == 0) break; // prevent infinite recursion 
                 WriteRegister(Registers[4], value);
-                return;
+                break;
             case 1: // TIMER0
                 if (!Lib.IsBitSet(ReadRegister(0x81), 3))
                 {
@@ -168,48 +171,61 @@ public class Memory
                 }
 
                 Registers[1] = value;
-                return;
-            case 2: // pcl; low byte program counter
+                break;
+            case 2: // PCL; low byte program counter
             case 0x82:
                 Registers[2] = value;
                 Registers[0x82] = value;
-                return;
-            case 3: // status
+                break;
+            case 3: // STATUS
             case 0x83:
                 Registers[3] = value;
                 Registers[0x83] = value;
-                return;
-            case 4: // fsr
+                break;
+            case 4: // FSR
             case 0x84:
                 Registers[4] = value;
                 Registers[0X84] = value;
-                return;
+                break;
             case 5:
                 PortA.InternalValue = value;
-                return;
-            case 0x85: // tris a
+                break;
+            case 0x85: // TRISA
                 Registers[0x85] = value & 0b_00011111;
-                return;
+                break;
             case 6:
                 PortB.InternalValue = value;
-                return;
-            case 0x86: // tris b
+                break;
+            case 0x86: // TRISB
                 Registers[0x86] = value;
-                return;
-            case 0x0A: // pclath
+                break;
+            case 0x0A: // PCLATH
             case 0x8A:
                 // first three unimplemented
                 Registers[0x0A] = value & 0b_00011111;
                 Registers[0x8A] = value & 0b_00011111;
-                return;
-            case 0x0B: // intcon
+                break;
+            case 0x0B: // INTCON
             case 0x8B:
                 Registers[0x0B] = value;
                 Registers[0x8B] = value;
-                return;
+                break;
+            case 0x08:
+                _pic.EEPROM.EEDATA = value;
+                break;
+            case 0x88:
+                _pic.EEPROM.EECON1 = value;
+                break;
+            case 0x09:
+                _pic.EEPROM.EEADR = value;
+                break;
+            case 0x89:
+                _pic.EEPROM.EECON2 = value;
+                break;
+            default:
+                Registers[address] = value;
+                break;
         }
-
-        Registers[address] = value;
     }
 
     public RegisterBit GetRegisterBit(uint address, int bit)

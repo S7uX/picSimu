@@ -1,4 +1,4 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.BitOrientedInstructions;
 
 public class BTFSS : BitOrientedInstruction
 {

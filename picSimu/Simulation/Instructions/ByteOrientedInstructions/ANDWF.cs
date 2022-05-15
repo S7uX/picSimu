@@ -1,4 +1,4 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.ByteOrientedInstructions;
 
 public class ANDWF : ByteOrientedInstruction
 {

@@ -1,13 +1,12 @@
 using System.Runtime.InteropServices;
 using picSimu.Simulation.Instructions;
-using picSimu.Simulation.Registers;
 
 namespace picSimu.Simulation;
 
 public class Pic : IDisposable
 {
     public uint WRegister = 0;
-    public static readonly int ProgramMemoryLength = 1024;
+    public static readonly int ProgramMemoryLength = 512;
     public Instruction[] ProgramMemory { get; private set; } = Array.Empty<Instruction>();
     public bool[] BreakPoints = Array.Empty<bool>();
 
@@ -34,15 +33,19 @@ public class Pic : IDisposable
         set => Memory.WriteRegister(2, value & 0b_1111_1111);
     }
 
-    public uint Cycles = 0;
+    public double Cycles = 0;
     public uint Scaler = 0;
-    public double FrequencyInMhz = 4;
+    public double FrequencyInKhz = 4000;
     private SerialHandler? _serialHandler;
 
+    public bool MCLR; // low active
+    public EEPROM EEPROM;
 
     public Pic()
     {
         Memory = new Memory(this);
+        EEPROM = new EEPROM(this);
+
         ResetScaler();
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -145,7 +148,8 @@ public class Pic : IDisposable
 
     public double CalculateRuntime()
     {
-        return 4 / FrequencyInMhz * Cycles; // µs
+        // return 4 / FrequencyInMhz * Cycles; // µs
+        return ((Cycles * 4) / FrequencyInKhz) * 1000; // µs
     }
 
     #endregion timer

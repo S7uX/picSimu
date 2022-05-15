@@ -28,23 +28,23 @@
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCL: </label>
-        <HexInput class="form-control" @bind-Value="_registerBindings[2]"></HexInput>
+        <HexInput class="form-control" @bind-Value="_registerBindings[2].register0"></HexInput>
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCLATH: </label>
-        <HexInput class="form-control" @bind-Value="_registerBindings[0xA]"></HexInput>
+        <HexInput class="form-control" @bind-Value="_registerBindings[0xA].register0"></HexInput>
     </div>
     <div class="hex-input">
         <label class="sfr-label">Status: </label>
-        <HexInput class="form-control" @bind-Value="_registerBindings[3]"></HexInput>
+        <HexInput class="form-control" @bind-Value="_registerBindings[3].register0"></HexInput>
     </div>
     <div class="hex-input">
         <label class="sfr-label">FSR: </label>
-        <HexInput class="form-control" @bind-Value="_registerBindings[4]"></HexInput>
+        <HexInput class="form-control" @bind-Value="_registerBindings[4].register0"></HexInput>
     </div>
     <div class="hex-input">
         <label class="sfr-label">Option: </label>
-        <HexInput class="form-control" @bind-Value="_registerBindings[0x81]"></HexInput>
+        <HexInput class="form-control" @bind-Value="_registerBindings[1].register1"></HexInput>
     </div>
     <div>
         <label class="sfr-label">Prescaler: </label>
@@ -52,7 +52,7 @@
     </div>
     <div style="margin-right: 0" class="hex-input">
         <label class="sfr-label">Timer0: </label>
-        <HexInput class="form-control" @bind-Value="_registerBindings[1]"></HexInput>
+        <HexInput class="form-control" @bind-Value="_registerBindings[1].register0"></HexInput>
     </div>
 </div>
 
@@ -121,21 +121,18 @@
             </tr>
             </thead>
             <tbody>
-            @for (uint i = 0; i < _pic.Memory.Registers.Length / 2; i++)
-            {
-                uint il = i;
-                uint y = i + 0x80;
+            <Virtualize Items="@_registerBindings" Context="registerPair">
                 <tr>
-                    <td title="@i">@i.ToHexString()</td>
-                    <td class="hex-input" title="@_pic.Memory.ReadRegister(i).ToTooltipString()">
-                        <HexInput class="" @bind-Value="_registerBindings[il]"></HexInput>
+                    <td title="@registerPair.register0.Address">@registerPair.register0.Address.ToHexString()</td>
+                    <td class="hex-input">
+                        <HexInput @bind-Value="@registerPair.register0"></HexInput>
                     </td>
-                    <td title="@y">@y.ToHexString()</td>
-                    <td class="hex-input" title="@_pic.Memory.ReadRegister(y).ToTooltipString()">
-                        <HexInput class="" @bind-Value="_registerBindings[y]"></HexInput>
+                    <td title="@registerPair.register1.Address">@registerPair.register1.Address.ToHexString()</td>
+                    <td class="hex-input">
+                        <HexInput @bind-Value="@registerPair.register1"></HexInput>
                     </td>
                 </tr>
-            }
+            </Virtualize>
             </tbody>
         </table>
     </div>
@@ -148,18 +145,20 @@
     <div class="d-flex flex-row justify-content-around">
         <div id="timing-control" class="d-flex flex-column smaller-text justify-content-center">
             <label class="h5">Timing</label>
+            <label class="sfr-label">Cyles: </label>
+            <label>@_pic.Cycles</label>
             <label class="sfr-label">Runtime: </label>
             <label>@_pic.CalculateRuntime() µs</label>
             <div>
                 <label class="sfr-label">Quartz: </label>
-                <select class="form-select-sm" @bind="_pic.FrequencyInMhz">
-                    <option value="0.032">32 KHz</option>
-                    <option value="0.1">100 KHz</option>
-                    <option value="4">4 MHz</option>
-                    <option value="8">8 MHz</option>
-                    <option value="16">16 MHz</option>
-                    <option value="32">32 MHz</option>
-                    <option value="64">64 MHz</option>
+                <select type="number" class="form-select-sm" @bind="_pic.FrequencyInKhz">
+                    <option value="32">32 KHz</option>
+                    <option value="100">100 KHz</option>
+                    <option value="4000">4 MHz</option>
+                    <option value="8000">8 MHz</option>
+                    <option value="16000">16 MHz</option>
+                    <option value="32000">32 MHz</option>
+                    <option value="64000">64 MHz</option>
                 </select>
             </div>
             <div>

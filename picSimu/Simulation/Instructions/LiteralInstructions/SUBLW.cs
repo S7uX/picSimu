@@ -1,4 +1,4 @@
-﻿namespace picSimu.Simulation.Instructions;
+﻿namespace picSimu.Simulation.Instructions.LiteralInstructions;
 
 public class SUBLW : LiteralInstruction
 {

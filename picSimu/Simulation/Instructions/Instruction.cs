@@ -1,16 +1,21 @@
 namespace picSimu.Simulation.Instructions;
 
-public abstract class Instruction
+public abstract class Instruction : Object
 {
     protected readonly Pic Pic;
     protected readonly Memory Memory;
-    protected string _opcode = "";
+    public readonly string Opcode = "";
     public abstract int Execute();
 
     public Instruction(string binaryString, Pic pic)
     {
-        _opcode = binaryString;
+        Opcode = binaryString;
         Pic = pic;
         Memory = pic.Memory;
+    }
+
+    protected Instruction()
+    {
+        throw new NotImplementedException();
     }
 }
