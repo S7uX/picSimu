@@ -15,7 +15,6 @@ public class Pic : IDisposable
     public readonly Stack Stack = new Stack(); // 13 bit wide
     private uint _programCounter = 0;
     public bool ReleaseWatchdog { get; set; }
-    
 
     public uint ProgramCounter // 13 bit wide
     {
@@ -52,29 +51,53 @@ public class Pic : IDisposable
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             _serialHandler = new SerialHandler("COM5", Memory);
-            // _serialHandler = new SerialHandler("/dev/ttyUSB0 ", Memory);
+            // _serialHandler = new SerialHandler("/dev/ttyUSB0 ", Memory); // Linux
         }
     }
+
+    public CancellationTokenSource? PicRun;
+    public bool IsRunning => PicRun is not null;
 
 
     #region execution
 
-    public async Task Run(CancellationToken cancellationToken)
+    public Task Run()
     {
-        await Task.Run(async () =>
+        if (ProgramMemory.Length != 0 && PicRun == null)
         {
-            await Task.Delay(100, cancellationToken);
-            while (true)
-            {
-                if (BreakPoints[ProgramCounter] || cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
+            PicRun = new CancellationTokenSource();
+            CancellationToken cT = PicRun.Token;
 
-                Step();
-            }
-        }, cancellationToken);
+            return Task.Run(async () =>
+            {
+                await Task.Delay(100, cT);
+                bool first = true;
+                while (true)
+                {
+                    if ((BreakPoints[ProgramCounter] || cT.IsCancellationRequested) && !first)
+                    {
+                        break;
+                    }
+
+                    first = false;
+
+                    Step();
+                }
+            }, cT);
+        }
+
+        return Task.FromResult<Task?>(null);
     }
+
+    public void StopRun()
+    {
+        if (PicRun != null)
+        {
+            PicRun.Cancel();
+            PicRun = null;
+        }
+    }
+
 
     public void Step()
     {
@@ -164,10 +187,10 @@ public class Pic : IDisposable
 
     public void ResetScaler()
     {
-        Scaler = GetScaler();
+        Scaler = GetScalerRate();
     }
 
-    public uint GetScaler()
+    public uint GetScalerRate()
     {
         bool PS0 = Memory.ReadRegister(0x81).IsBitSet(0);
         bool PS1 = Memory.ReadRegister(0x81).IsBitSet(1);
@@ -202,7 +225,7 @@ public class Pic : IDisposable
         throw new IndexOutOfRangeException();
     }
 
-    public void TimerCycle()
+    public void TimerStep()
     {
         if (!Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3> If Prescaler is assgined to TMR0
         {
@@ -257,21 +280,7 @@ public class Pic : IDisposable
         Cycles++;
         if (!Memory.ReadRegister(0x81).IsBitSet(5)) // OPTION_REG<5> - Timer mode is selected by clearing the T0CS bit
         {
-            // Timer0 Source is internal clock.
-
-            if (!Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3>: If Prescaler is assgined to TMR0
-            {
-                Scaler--;
-                if (Scaler == 0)
-                {
-                    ResetScaler();
-                    IncreaseTimer();
-                }
-            }
-            else
-            {
-                IncreaseTimer();
-            }
+            TimerStep();
         }
     }
 
@@ -287,5 +296,6 @@ public class Pic : IDisposable
     public void Dispose()
     {
         _serialHandler?.Dispose();
+        StopRun();
     }
 }

@@ -134,6 +134,14 @@
     content: "h";
 }
 
+#register-table td:nth-child(even){
+    width: 3.75em;
+}
+
+#register-table td:nth-child(odd){
+    width: 2.6em;
+}
+
 .hex-input ::deep input {
     width: 2.55em;
     padding: 0;
@@ -174,4 +182,17 @@
     border-style: solid;
     border-width: 1px;
     border-color: #93a1a1;
+}
+
+#timing-control .h6{
+    margin-top: 1ex;
+    margin-bottom: 0;
+}
+
+.register-table-top {
+    display: flex;
+    flex-direction: row;
+    height: 7.8ex;
+    align-items: center;
+    justify-content: space-around;
 }

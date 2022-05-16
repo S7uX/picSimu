@@ -31,11 +31,11 @@ public class PortA : Port
                     {
                         if (!newValue && edgeMode) // T0SE := 1 --> increment on falling edge.
                         {
-                            Pic.TimerCycle();
+                            Pic.TimerStep();
                         }
                         else if (newValue && !edgeMode) // T0SE := 0 --> increment on rising edge.
                         {
-                            Pic.TimerCycle();
+                            Pic.TimerStep();
                         }
                     }
                 }

@@ -1,5 +1,3 @@
-using picSimu.Simulation.Registers;
-
 namespace picSimu.Simulation;
 
 public class Memory
@@ -21,7 +19,7 @@ public class Memory
         PowerOnReset();
     }
 
-    public bool BankSelect => Lib.IsBitSet(Registers[3], 5);
+    public bool BankSelect => Registers[3].IsBitSet(5);
 
     public void PowerOnReset()
     {
@@ -40,7 +38,7 @@ public class Memory
 
     public bool GetCarryFlag()
     {
-        return Lib.IsBitSet(ReadRegister(3), 0);
+        return ReadRegister(3).IsBitSet(0);
     }
 
     public void SetDigitCarryFlag(bool zeroFlag)
@@ -50,7 +48,7 @@ public class Memory
 
     public bool GetDigitCarryFlag()
     {
-        return Lib.IsBitSet(ReadRegister(3), 1);
+        return ReadRegister(3).IsBitSet(1);
     }
 
     public void SetZeroFlag(bool zeroFlag)
@@ -60,7 +58,7 @@ public class Memory
 
     public bool GetZeroFlag()
     {
-        return Lib.IsBitSet(ReadRegister(3), 2);
+        return ReadRegister(3).IsBitSet(2);
     }
 
     private uint _calculateAddressWithRp0(uint address)

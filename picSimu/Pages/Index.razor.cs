@@ -14,8 +14,8 @@ public partial class Index : ComponentBase
     private string[]? _instructionCodes;
     private int _visualizedProgramCounter;
     private bool _autoStep = false;
-    private CancellationTokenSource? _picRun;
-    private bool isRunning => _autoStep || _picRun is not null;
+    private bool isRunning => _autoStep || _pic.PicRun is not null;
+    private bool showEEPROM = false;
 
     private Pic _pic;
     private RegisterPair[] _registerBindings;
@@ -105,16 +105,12 @@ public partial class Index : ComponentBase
 
     private void RunSimulation()
     {
-        if (_instructionCodes != null && _picRun == null)
+        Task simulationTask = _pic.Run();
+        simulationTask.ContinueWith(_ =>
         {
-            _picRun = new CancellationTokenSource();
-            Task picSimulationBackgroundTask = _pic.Run(_picRun.Token);
-            picSimulationBackgroundTask.ContinueWith(_ =>
-            {
-                _picRun = null;
-                return InvokeAsync(StateHasChanged);
-            }, TaskContinuationOptions.NotOnCanceled);
-        }
+            _pic.PicRun = null;
+            return InvokeAsync(StateHasChanged);
+        }, TaskContinuationOptions.NotOnCanceled);
     }
 
     private void StopSimulation()
@@ -123,15 +119,14 @@ public partial class Index : ComponentBase
         {
             _autoStep = false;
         }
-        else if (_picRun != null)
+        else if (_pic.PicRun != null)
         {
-            _picRun.Cancel();
-            _picRun = null;
+            _pic.StopRun();
             ShouldRender();
         }
     }
 
-    private void StepSimulation()
+    private void SimulationStep()
     {
         if (_instructionCodes != null)
         {
@@ -144,14 +139,17 @@ public partial class Index : ComponentBase
         if (!_autoStep)
         {
             _autoStep = true;
+            bool first = true;
             while (_autoStep)
             {
-                if (_pic.BreakPoints[_pic.ProgramCounter])
+                if (_pic.BreakPoints[_pic.ProgramCounter] && !first)
                 {
                     break;
                 }
 
-                StepSimulation();
+                first = false;
+
+                SimulationStep();
                 StateHasChanged();
                 await Task.Delay(100);
             }
@@ -177,6 +175,7 @@ public partial class Index : ComponentBase
 
     public async ValueTask DisposeAsync()
     {
+        StopSimulation();
         _pic.Dispose();
         if (_module is not null)
         {
