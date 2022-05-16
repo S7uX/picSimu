@@ -119,7 +119,7 @@ public class SerialHandler : IDisposable
         sb.Clear();
         
         sb.Append("00001101");
-        payload[0] = Convert.ToByte(sb.ToString(), 2);
+        payload[8] = Convert.ToByte(sb.ToString(), 2);
         return payload;
     }
 

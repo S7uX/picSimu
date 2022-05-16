@@ -50,7 +50,7 @@ public class Pic : IDisposable
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            _serialHandler = new SerialHandler("COM2", Memory);
+            _serialHandler = new SerialHandler("COM5", Memory);
         }
     }
 
@@ -218,8 +218,8 @@ public class Pic : IDisposable
 
     public double CalculateRuntime()
     {
-        // return 4 / FrequencyInMhz * Cycles; // µs
-        return ((Cycles * 4) / FrequencyInKhz) * 1000; // µs
+         return 4000 / FrequencyInKhz * Cycles; // µs
+        //return ((Cycles * 4) / FrequencyInKhz) * 1000; // µs
     }
 
     #endregion timer
