@@ -37,6 +37,14 @@ public class SerialHandler : IDisposable
                 valueToSet = (data[0] & (uint)0b_00001111) << 4; //Get Highbyte of PortA
                 valueToSet |= (data[1] & (uint)0b_00001111); //Get Lowbyte of PortA
                 _memory.PortA.ExternalValue = valueToSet; //Write PortA
+                if (valueToSet.IsBitSet(5))
+                {
+                    _memory.MCLRPIN = true;
+                }
+                else
+                {
+                    _memory.MCLRPIN = false;
+                }
             }
         }
         catch (Exception ex)

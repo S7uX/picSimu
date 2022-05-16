@@ -16,6 +16,7 @@ public class Pic : IDisposable
     private uint _programCounter = 0;
     public bool ReleaseWatchdog { get; set; }
 
+
     public uint ProgramCounter // 13 bit wide
     {
         get => _programCounter;
@@ -38,7 +39,6 @@ public class Pic : IDisposable
     public double FrequencyInKhz = 4000;
     private SerialHandler? _serialHandler;
 
-    public bool MCLR; // low active
     public EEPROM EEPROM;
 
     public Pic()
@@ -96,6 +96,10 @@ public class Pic : IDisposable
 
     public void Step()
     {
+        if (!Memory.MCLRPIN)
+        {
+            MCLR();
+        }
         if (Memory.ReadRegister(0x83).IsBitSet(0x83))
         {
             //PD = 1 --> Not sleeping
@@ -117,6 +121,35 @@ public class Pic : IDisposable
                 }
             }
         }
+    }
+
+    private void MCLR()
+    {
+        ProgramCounter = 0;
+        Memory.WriteRegister(0x02, 0b_00000000); //PCL
+        var status = Memory.ReadRegister(0x03);
+        status.SetBitTo0(7);
+        status.SetBitTo0(6);
+        status.SetBitTo0(5);
+        Memory.WriteRegister(0x03, status); //STATUS
+        Memory.WriteRegister(0x0A, 0b_00000000); //PCLATH
+        var intcon = Memory.ReadRegister(0x0B);
+        intcon.SetBitTo0(7);
+        intcon.SetBitTo0(6);
+        intcon.SetBitTo0(5);
+        intcon.SetBitTo0(4);
+        intcon.SetBitTo0(3);
+        intcon.SetBitTo0(2);
+        intcon.SetBitTo0(1);
+        Memory.WriteRegister(0x02, intcon); //INTCON
+        Memory.WriteRegister(0x85, 0b_00011111); //TRISA
+        Memory.WriteRegister(0x85, 0b_11111111); //TRISB
+        var eecon_1 = Memory.ReadRegister(0x0B);
+        eecon_1.SetBitTo0(0);
+        eecon_1.SetBitTo0(1);
+        eecon_1.SetBitTo0(2);
+        eecon_1.SetBitTo0(4);
+        Memory.WriteRegister(0x0B, eecon_1); //EECON_1
     }
 
     #endregion execution

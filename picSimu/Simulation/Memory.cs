@@ -9,6 +9,8 @@ public class Memory
     public readonly uint[] Registers = new uint[MemoryLength];
     public readonly Port PortA;
     public readonly Port PortB;
+    
+    public bool MCLRPIN = true;
 
     public Memory(Pic pic)
     {
@@ -33,7 +35,7 @@ public class Memory
         WriteRegister(0x03, 0b_00011000);
         WriteRegister(0x81, 0b_11111111);
         WriteRegister(0x83, 0b_00011000);
-        WriteRegister(0x85, 0b_00011111); // trisa
+        WriteRegister(0x85, 0b_00001111); // trisa
         WriteRegister(0x86, 0b_11111111); // trisb
     }
 
