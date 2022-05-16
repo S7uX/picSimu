@@ -8,6 +8,11 @@ public class RETFIE : ControlInstruction
 
     public override int Execute()
     {
-        throw new NotImplementedException();
+        Pic.IncreaseProgramCounter();
+        Pic.IncreaseProgramCounter();
+
+        Pic.ProgramCounter = Pic.Stack.Pop();
+        Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(7));
+        return 0;
     }
 }

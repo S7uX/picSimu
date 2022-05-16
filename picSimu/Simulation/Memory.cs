@@ -25,17 +25,12 @@ public class Memory
         return Lib.IsBitSet(Registers[3], 5);
     }
 
-    public bool IsSleeping()
-    {
-        return Lib.IsBitSet(Registers[3], 5);
-    }
-
     public void PowerOnReset()
     {
         WriteRegister(0x03, 0b_00011000);
         WriteRegister(0x81, 0b_11111111);
         WriteRegister(0x83, 0b_00011000);
-        WriteRegister(0x85, 0b_00001111); // trisa
+        WriteRegister(0x85, 0b_00011111); // trisa
         WriteRegister(0x86, 0b_11111111); // trisb
     }
 
@@ -173,6 +168,17 @@ public class Memory
                 }
 
                 Registers[1] = value;
+                break;
+            case 0x81:
+                var currentOptionRegister = ReadRegister(0x81);
+                Registers[0x81] = value;
+                if ((currentOptionRegister.IsBitSet(0) ^ value.IsBitSet(0)) || (currentOptionRegister.IsBitSet(1) ^ value.IsBitSet(1)) || (currentOptionRegister.IsBitSet(2) ^ value.IsBitSet(2)))
+                {
+                    if (_pic.Memory != null)
+                    {
+                        _pic.ResetScaler();
+                    }
+                }
                 break;
             case 2: // PCL; low byte program counter
             case 0x82:

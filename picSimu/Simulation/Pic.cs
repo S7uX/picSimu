@@ -38,9 +38,9 @@ public class Pic : IDisposable
     public uint Scaler = 0;
     public double FrequencyInKhz = 4000;
     private SerialHandler? _serialHandler;
+    private uint WatchDogCounter = 0;
 
     public EEPROM EEPROM;
-
 
     public Pic()
     {
@@ -70,7 +70,6 @@ public class Pic : IDisposable
                 {
                     break;
                 }
-
                 Step();
             }
         }, cancellationToken);
@@ -78,12 +77,13 @@ public class Pic : IDisposable
 
     public void Step()
     {
-        if (!Memory.MCLRPIN)
+        if (!Memory.MCLRPIN) //Check for MCLEAR
         {
             MCLR();
         }
 
-        if (Memory.ReadRegister(0x83).IsBitSet(0x83))
+        WatchDogCounter++; //Increase Watchdog Counter
+        if (Memory.ReadRegister(0x83).IsBitSet(0x3)) //PD (Check if Pic is Sleeping
         {
             EEPROM.CheckInstruction(ProgramMemory[ProgramCounter]);
             EEPROM.CompleteWrite();
@@ -94,15 +94,18 @@ public class Pic : IDisposable
         else
         {
             //PD = 0 --> Sleeping
-            bool PSA = Memory.ReadRegister(0x81).IsBitSet(3);
-            if (PSA)
+            Cycles++;
+            var DurationOfSingleCycle = 4000 / FrequencyInKhz;
+            var CyclesToGet18MS = 18000 / DurationOfSingleCycle;
+            if (WatchDogCounter > CyclesToGet18MS)
             {
-                Cycles++;
+                WatchDogCounter = 0;
                 Scaler--;
                 if (Scaler == 0)
                 {
                     ResetScaler();
                     IncreaseTimer();
+                    Memory.WriteRegister(0x83, Memory.ReadRegister(0x83).SetBitTo1(3)); //Wake UP
                 }
             }
         }
@@ -128,7 +131,7 @@ public class Pic : IDisposable
         intcon.SetBitTo0(1);
         Memory.WriteRegister(0x02, intcon); //INTCON
         Memory.WriteRegister(0x85, 0b_00011111); //TRISA
-        Memory.WriteRegister(0x85, 0b_11111111); //TRISB
+        Memory.WriteRegister(0x86, 0b_11111111); //TRISB
         var eecon_1 = Memory.ReadRegister(0x0B);
         eecon_1.SetBitTo0(0);
         eecon_1.SetBitTo0(1);
@@ -198,35 +201,22 @@ public class Pic : IDisposable
 
     private void IncreaseTimer()
     {
-        uint value = Memory.ReadRegister(1);
-        value++;
-        if (value > 255)
+        uint value = Memory.ReadRegister(1); //Get Current Timer value
+        value++; //increase it
+        if (value > 255) //Check if it overflows
         {
             //Overflow
-            value &= 255;
-            bool PSA = Memory.ReadRegister(0x81).IsBitSet(3);
-            if (PSA)
+            value &= 255; //Mask to 8 bits
+
+            //Check if Timer0Interupt is enabled
+            if (Memory.ReadRegister(0x0B).IsBitSet(5)) //T01E
             {
-                if (Memory.ReadRegister(0x83).IsBitSet(0x83))
-                {
-                    //PD = 1 --> Not sleeping
-                    //TODO RESET
-                }
-                else
-                {
-                    //PD = 0 --> Sleeping
-                    Memory.WriteRegister(0x83, Memory.ReadRegister(0x83).SetBitTo1(3)); //Wake UP
-                }
-                //Prescaler is for Watchdog, so Watchdog must have overflown
-            }
-            else
-            {
-                //Prescaler is for TMR0, so TMR0 must have overflown
-                if (Memory.ReadRegister(0x0B).IsBitSet(5))
-                {
-                    //Interrupt is NOT masked
-                    Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(2));
-                }
+                //Interrupt is NOT masked
+                Stack.Push(ProgramCounter);
+                ProgramCounter = 4;
+                Memory.WriteRegister(0x02, 0b_00000100); //PCL
+                Memory.WriteRegister(0x0A, 0b_00000000); //PCLatch
+                Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(2)); //Set Flag that Interrupt occured
             }
         }
 
@@ -236,7 +226,6 @@ public class Pic : IDisposable
     public double CalculateRuntime()
     {
         return 4000 / FrequencyInKhz * Cycles; // µs
-        //return ((Cycles * 4) / FrequencyInKhz) * 1000; // µs
     }
 
     #endregion timer
@@ -246,11 +235,21 @@ public class Pic : IDisposable
         ProgramCounter++;
 
         Cycles++;
-        Scaler--;
-        if (Scaler == 0)
+        if (!Memory.ReadRegister(0x81).IsBitSet(5)) // IF Timer0 Source is internal clock
         {
-            ResetScaler();
-            IncreaseTimer();
+            if (!Memory.ReadRegister(0x81).IsBitSet(3)) //If Prescaler is assgined to TMR0
+            {
+                Scaler--;
+                if (Scaler == 0)
+                {
+                    ResetScaler();
+                    IncreaseTimer();
+                }
+            }
+            else
+            {
+                IncreaseTimer();
+            }
         }
     }
 
