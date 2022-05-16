@@ -8,7 +8,7 @@
 <PageTitle>Index</PageTitle>
 
 <div class="top-row px-4">
-    <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple disabled="@(is)"/>
+    <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple disabled="@(isRunning)"/>
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="RunSimulation">Run</button>
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="SimulationStep">Step</button>
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="AutoStepSimulation">Auto Step</button>
