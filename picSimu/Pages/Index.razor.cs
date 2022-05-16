@@ -15,6 +15,7 @@ public partial class Index : ComponentBase
     private int _visualizedProgramCounter;
     private bool _autoStep = false;
     private CancellationTokenSource? _picRun;
+    private bool isRunning => _autoStep || _picRun is not null;
 
     private Pic _pic;
     private RegisterPair[] _registerBindings;

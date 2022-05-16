@@ -41,11 +41,6 @@
         top: 0;
         z-index: 1;
     }
-
-    .top-row, fieldset {
-        padding-left: 1.1rem !important;
-        padding-right: 1.1rem !important;
-    }
 }
 
 .sfr-value {
@@ -80,13 +75,13 @@
     margin-right: auto
 }
 
-.port-element{
+.port-element {
     width: 3em;
     min-width: fit-content;
     text-align: right;
 }
 
-#register-table ::deep input{
+#register-table ::deep input {
     border: none;
 }
 
@@ -105,18 +100,18 @@
     margin: 0 1em;
 }
 
-#sfr-bits-table th {
+#sfr-table th {
     border-right-width: 1.5px;
     border-color: black;
     padding-right: 0.6em;
 }
 
-#sfr-bits-table td:nth-child(2) {
+#sfr-table td:nth-child(2) {
     padding-left: 0.6em;
 }
 
-#sfr-bits-table tr:nth-child(2), #sfr-bits-table tr:nth-child(4) {
-    border-style: groove;
+#sfr-table tr:nth-child(2n):not(:last-child) {
+    border-style: solid;
     border-bottom-width: 1px;
     border-color: rgb(0, 0, 0, .25);
 }
@@ -157,24 +152,24 @@
     margin: 0;
 }
 
-#sfr-w{
+#sfr-w {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
 }
 
-#lst-container{
+#lst-container {
     min-width: 55em;
 }
 
-#code-div{
+#code-div {
     flex: 1;
     height: fit-content;
     overflow-x: auto;
     margin-bottom: auto;
 }
 
-.code-block{
+.code-block {
     background-color: #fdf6e3;
     border-style: solid;
     border-width: 1px;

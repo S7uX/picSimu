@@ -18,9 +18,8 @@
     <b style="margin-left: auto">picSimu</b>
 </div>
 
-
-<fieldset class="content" disabled="@(_autoStep || _picRun is not null)">
-<div id="sfr-w" class="d-flex flex-row justify-content-between">
+<div class="content">
+<fieldset id="sfr-w" class="d-flex flex-row justify-content-between" disabled="@isRunning">
     <label class="h5 pe-5">SFR + W:</label>
     <div>
         <label class="sfr-label">W: </label>
@@ -54,7 +53,7 @@
         <label class="sfr-label">Timer0: </label>
         <HexInput class="form-control" @bind-Value="_registerBindings[1].register0"></HexInput>
     </div>
-</div>
+</fieldset>
 
 <hr class="my-1">
 
@@ -103,7 +102,7 @@
 
 <div style="margin-left: 0.5em" class="vr"></div>
 
-<div id="register-table" class="d-flex flex-column">
+<fieldset id="register-table" class="d-flex flex-column" disabled="@isRunning">
     <label class="h5">File Register</label>
     <label class="h5">(SFR & GPR)</label>
     <div style="overflow-x: hidden;" class="d-flex">
@@ -136,7 +135,7 @@
             </tbody>
         </table>
     </div>
-</div>
+</fieldset>
 
 <div style="margin-left: 0.5em" class="vr"></div>
 
@@ -154,6 +153,7 @@
             <select type="number" class="form-select-sm" @bind="_pic.FrequencyInKhz">
                 <option value="32">32 KHz</option>
                 <option value="100">100 KHz</option>
+                <option value="500">0.5 MHz</option>
                 <option value="4000">4 MHz</option>
                 <option value="8000">8 MHz</option>
                 <option value="16000">16 MHz</option>
@@ -167,6 +167,9 @@
         </div>
         <div>
             <label class="sfr-label">Watchdog: </label> <label>00h</label>
+        </div>
+        <div>
+            <label class="sfr-label">Scaler: </label> <label>@_pic.Scaler</label>
         </div>
     </div>
 
@@ -198,7 +201,7 @@
 
 <hr>
 
-<div id="sfr-bits-table" class="d-flex flex-column">
+<div id="sfr-table" class="d-flex flex-column">
     <label class="h5">SFR (Bits)</label>
     <table style="height: 100%" class="table-sm">
         <tbody>
@@ -364,7 +367,8 @@
     }
 </div>
 @* Port B *@
+
 </div>
 </div>
-</fieldset>
+</div>
 <hr class="mt-1">

@@ -11,11 +11,11 @@ public class Pic : IDisposable
     public bool[] BreakPoints = Array.Empty<bool>();
 
     public bool ProgramLoaded { get; private set; } = false;
-    public readonly Memory Memory;
+    public Memory Memory;
     public readonly Stack Stack = new Stack(); // 13 bit wide
     private uint _programCounter = 0;
     public bool ReleaseWatchdog { get; set; }
-
+    
 
     public uint ProgramCounter // 13 bit wide
     {
@@ -23,7 +23,7 @@ public class Pic : IDisposable
         set
         {
             value &= 0b_1_1111_1111_1111;
-            Pcl = value;
+            Pcl = value % (uint) ProgramMemoryLength;
             _programCounter = value; // clear last 8 bits
         }
     }
@@ -38,13 +38,13 @@ public class Pic : IDisposable
     public uint Scaler = 0;
     public double FrequencyInKhz = 4000;
     private SerialHandler? _serialHandler;
-    private uint WatchDogCounter = 0;
+    private uint WatchdogCycleCounter = 0;
 
     public EEPROM EEPROM;
 
     public Pic()
     {
-        Memory = new Memory(this);
+        new Memory(this);
         EEPROM = new EEPROM(this);
 
         ResetScaler();
@@ -70,6 +70,7 @@ public class Pic : IDisposable
                 {
                     break;
                 }
+
                 Step();
             }
         }, cancellationToken);
@@ -77,38 +78,40 @@ public class Pic : IDisposable
 
     public void Step()
     {
-        if (!Memory.MCLRPIN) //Check for MCLEAR
+        if (!Memory.MCLRPIN) // Check for MCLEAR
         {
             MCLR();
         }
 
-        WatchDogCounter++; //Increase Watchdog Counter
-        if (Memory.ReadRegister(0x83).IsBitSet(0x3)) //PD (Check if Pic is Sleeping
+        WatchdogCycleCounter++; // Increase Watchdog Counter
+
+        if (Memory.ReadRegister(0x83).IsBitSet(0x3)) // STATUS<3>: PD (Check if Pic is sleeping)
         {
+            // PD = 1 --> Not sleeping
+
             EEPROM.CheckInstruction(ProgramMemory[ProgramCounter]);
-            EEPROM.CompleteWrite();
-            //PD = 1 --> Not sleeping
             ProgramMemory[ProgramCounter].Execute();
             _serialHandler?.Write();
         }
-        else
+        else // PD = 0 --> Sleeping
         {
-            //PD = 0 --> Sleeping
             Cycles++;
-            var DurationOfSingleCycle = 4000 / FrequencyInKhz;
+            var DurationOfSingleCycle = 4000 / FrequencyInKhz; // vier Quatztakte; *1000 --> µs
             var CyclesToGet18MS = 18000 / DurationOfSingleCycle;
-            if (WatchDogCounter > CyclesToGet18MS)
+            if (WatchdogCycleCounter > CyclesToGet18MS)
             {
-                WatchDogCounter = 0;
+                WatchdogCycleCounter = 0;
                 Scaler--;
                 if (Scaler == 0)
                 {
                     ResetScaler();
                     IncreaseTimer();
-                    Memory.WriteRegister(0x83, Memory.ReadRegister(0x83).SetBitTo1(3)); //Wake UP
+                    Memory.WriteRegister(0x83, Memory.ReadRegister(0x83).SetBitTo1(3)); // Wake UP --> PD (STATUS<3>) = 1
                 }
             }
         }
+
+        EEPROM.CompleteWrite();
     }
 
     private void MCLR()
@@ -199,24 +202,41 @@ public class Pic : IDisposable
         throw new IndexOutOfRangeException();
     }
 
+    public void TimerCycle()
+    {
+        if (!Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3> If Prescaler is assgined to TMR0
+        {
+            Scaler--;
+            if (Scaler == 0)
+            {
+                ResetScaler();
+                IncreaseTimer();
+            }
+        }
+        else
+        {
+            IncreaseTimer();
+        }
+    }
+
     private void IncreaseTimer()
     {
-        uint value = Memory.ReadRegister(1); //Get Current Timer value
-        value++; //increase it
-        if (value > 255) //Check if it overflows
+        uint value = Memory.ReadRegister(1); // Get Current Timer value
+        value++; // increase it
+        if (value > 255) // Check if it overflows
         {
-            //Overflow
-            value &= 255; //Mask to 8 bits
+            // Overflow
+            value &= 255; // Mask to 8 bits
 
-            //Check if Timer0Interupt is enabled
-            if (Memory.ReadRegister(0x0B).IsBitSet(5)) //T01E
+            // Check if Timer0Interupt is enabled
+            if (Memory.ReadRegister(0x0B).IsBitSet(5)) // T01E
             {
-                //Interrupt is NOT masked
+                // Interrupt is NOT masked
                 Stack.Push(ProgramCounter);
-                ProgramCounter = 4;
-                Memory.WriteRegister(0x02, 0b_00000100); //PCL
-                Memory.WriteRegister(0x0A, 0b_00000000); //PCLatch
-                Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(2)); //Set Flag that Interrupt occured
+                ProgramCounter = 4; // interrupt vector
+                Memory.WriteRegister(0x02, 0b_00000100); // PCL
+                Memory.WriteRegister(0x0A, 0b_00000000); // PCLatch
+                Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(2)); // Set Flag that Interrupt occured
             }
         }
 
@@ -235,9 +255,11 @@ public class Pic : IDisposable
         ProgramCounter++;
 
         Cycles++;
-        if (!Memory.ReadRegister(0x81).IsBitSet(5)) // IF Timer0 Source is internal clock
+        if (!Memory.ReadRegister(0x81).IsBitSet(5)) // OPTION_REG<5> - Timer mode is selected by clearing the T0CS bit
         {
-            if (!Memory.ReadRegister(0x81).IsBitSet(3)) //If Prescaler is assgined to TMR0
+            // Timer0 Source is internal clock.
+
+            if (!Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3>: If Prescaler is assgined to TMR0
             {
                 Scaler--;
                 if (Scaler == 0)

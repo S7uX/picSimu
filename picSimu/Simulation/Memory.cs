@@ -9,29 +9,26 @@ public class Memory
     public readonly uint[] Registers = new uint[MemoryLength];
     public readonly Port PortA;
     public readonly Port PortB;
-    
+
     public bool MCLRPIN = true;
 
     public Memory(Pic pic)
     {
+        pic.Memory = this;
         _pic = pic;
-        PortA = new Port(this, 5, 0x85, 5);
-        PortB = new Port(this, 6, 0x86, 8);
+        PortA = new PortA(_pic, 5, 0x85);
+        PortB = new Port(_pic, 6, 0x86, 8);
         PowerOnReset();
     }
 
-    public bool BankSelect()
-    {
-        return Lib.IsBitSet(Registers[3], 5);
-    }
+    public bool BankSelect => Lib.IsBitSet(Registers[3], 5);
 
     public void PowerOnReset()
     {
-        WriteRegister(0x03, 0b_00011000);
-        WriteRegister(0x81, 0b_11111111);
-        WriteRegister(0x83, 0b_00011000);
-        WriteRegister(0x85, 0b_00011111); // trisa
-        WriteRegister(0x86, 0b_11111111); // trisb
+        WriteRegister(0x03, 0b_00011000); // STATUS
+        WriteRegister(0x81, 0b_11111111); // OPTION_REG
+        WriteRegister(0x85, 0b_00011111); // TRISA
+        WriteRegister(0x86, 0b_11111111); // TRISB
     }
 
     public uint FSR => Registers[4];
@@ -68,7 +65,7 @@ public class Memory
 
     private uint _calculateAddressWithRp0(uint address)
     {
-        if (!BankSelect()) // rp0 bit
+        if (!BankSelect) // rp0 bit
         {
             // bank 0
             return address.SetBitTo0(7);
@@ -99,20 +96,20 @@ public class Memory
             case 0x80:
                 if (FSR == 0) return 0; // prevent infinite loop
                 return ReadRegister(Registers[4]);
-            case 2: // PCL
+            case 0x02: // PCL
             case 0x82:
                 return Registers[2];
-            case 3: // STATUS
+            case 0x03: // STATUS
             case 0x83:
                 return Registers[3];
-            case 4: // FSR
+            case 0x04: // FSR
             case 0x84:
                 return Registers[4];
-            case 5:
+            case 0x05: // PORTA
                 return PortA.InternalValue;
             case 0x85: // TRISA
                 return Registers[0x85] & 0b_00011111;
-            case 6:
+            case 0x06: // PORTB
                 return PortB.InternalValue;
             case 0x86: // TRISB
                 return Registers[0x86];
@@ -122,7 +119,7 @@ public class Memory
             case 0x0B: // INTCON
             case 0X8B:
                 return Registers[0x0B];
-            case 0x89: //
+            case 0x89: // EEPROM
                 return _pic.EEPROM.EECON2;
         }
 
@@ -148,7 +145,8 @@ public class Memory
 
     public void WriteRegister(uint address, uint value)
     {
-        if ((0x30 <= address && 0x7F >= address) || (0xD0 <= address && 0xFF >= address) || address == 7) // Unimplemented data memory location; do nothing
+        // Unimplemented data memory location; do nothing
+        if ((0x30 <= address && 0x7F >= address) || (0xD0 <= address && 0xFF >= address) || address == 7)
         {
             return;
         }
@@ -169,39 +167,44 @@ public class Memory
 
                 Registers[1] = value;
                 break;
-            case 0x81:
-                var currentOptionRegister = ReadRegister(0x81);
+            case 0x81: // OPTION 
+                uint currentOptionRegister = ReadRegister(0x81);
                 Registers[0x81] = value;
-                if ((currentOptionRegister.IsBitSet(0) ^ value.IsBitSet(0)) || (currentOptionRegister.IsBitSet(1) ^ value.IsBitSet(1)) || (currentOptionRegister.IsBitSet(2) ^ value.IsBitSet(2)))
+                if (
+                    (currentOptionRegister.IsBitSet(0) ^ value.IsBitSet(0))
+                    || (currentOptionRegister.IsBitSet(1) ^ value.IsBitSet(1))
+                    || (currentOptionRegister.IsBitSet(2) ^ value.IsBitSet(2))
+                )
                 {
                     if (_pic.Memory != null)
                     {
                         _pic.ResetScaler();
                     }
                 }
+
                 break;
-            case 2: // PCL; low byte program counter
+            case 0x02: // PCL; low byte program counter
             case 0x82:
                 Registers[2] = value;
                 Registers[0x82] = value;
                 break;
-            case 3: // STATUS
+            case 0x03: // STATUS
             case 0x83:
                 Registers[3] = value;
                 Registers[0x83] = value;
                 break;
-            case 4: // FSR
+            case 0x04: // FSR
             case 0x84:
                 Registers[4] = value;
                 Registers[0X84] = value;
                 break;
-            case 5:
+            case 0x05: // PORTA
                 PortA.InternalValue = value;
                 break;
             case 0x85: // TRISA
                 Registers[0x85] = value & 0b_00011111;
                 break;
-            case 6:
+            case 0x06:
                 PortB.InternalValue = value;
                 break;
             case 0x86: // TRISB
@@ -236,6 +239,8 @@ public class Memory
         }
     }
 
+    #region blazor data bindings
+
     public RegisterBit GetRegisterBit(uint address, int bit)
     {
         return new RegisterBit(this, address, bit);
@@ -245,4 +250,6 @@ public class Memory
     {
         return new Register(this, address);
     }
+
+    #endregion blazor data bindings
 }

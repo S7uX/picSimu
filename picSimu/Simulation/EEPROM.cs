@@ -12,6 +12,7 @@ public class EEPROM
     private Pic _pic;
     private Memory _memory;
     private bool _isWriting = false;
+    private double _writeStartingValue = 0;
 
     public static readonly Instruction[] RequiredInstructionSequenceForWrite =
     {
@@ -104,7 +105,7 @@ public class EEPROM
         }
 
         Instruction expected = RequiredInstructionSequenceForWrite[_nextRequiredInstructionForWrite];
-        var old = _nextRequiredInstructionForWrite;
+        int old = _nextRequiredInstructionForWrite;
         for (int i = 0; i < RequiredInstructionSequenceForWrite.Length; i++)
         {
             if (_nextRequiredInstructionForWrite == i && instruction.Equals(expected))
@@ -147,6 +148,7 @@ public class EEPROM
     {
         if (EECON1.IsBitSet(2) /* WREN bit */ && _sequenceOccurred)
         {
+            Console.WriteLine("EEPROM WRITE");
             _isWriting = true;
         }
     }
@@ -155,11 +157,20 @@ public class EEPROM
     {
         if (_isWriting)
         {
-            Cells[EEADR] = EEDATA;
-            EEDATA = Cells[EEADR];
-            _memory.Registers[0x88] = EECON1.SetBit(false, 1) // clear WR bit
-                .SetBit(true, 4); // set EEIF bit 
-            _isWriting = false;
+            if (_writeStartingValue == 0)
+            {
+                _writeStartingValue = _pic.CalculateRuntime();
+            }
+            else if (_pic.CalculateRuntime() - _writeStartingValue > 1000) // 1 ms write time
+            {
+                Cells[EEADR] = EEDATA;
+                EEDATA = Cells[EEADR];
+                _memory.Registers[0x88] = EECON1.SetBit(false, 1) // clear WR bit
+                    .SetBit(true, 4); // set EEIF bit 
+                _isWriting = false;
+                _writeStartingValue = 0;
+                Console.WriteLine("EEPROM WRITE FINISHED");
+            }
         }
     }
 }
