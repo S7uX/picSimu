@@ -17,7 +17,6 @@ public abstract class ByteOrientedInstruction : Instruction
 
     protected ByteOrientedInstruction()
     {
-        throw new NotImplementedException();
     }
 
     public override bool Equals(object? obj)

@@ -16,6 +16,5 @@ public abstract class Instruction : Object
 
     protected Instruction()
     {
-        throw new NotImplementedException();
     }
 }

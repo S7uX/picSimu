@@ -41,6 +41,7 @@ public class Pic : IDisposable
 
     public EEPROM EEPROM;
 
+
     public Pic()
     {
         Memory = new Memory(this);
@@ -51,6 +52,7 @@ public class Pic : IDisposable
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             _serialHandler = new SerialHandler("COM5", Memory);
+            // _serialHandler = new SerialHandler("/dev/ttyUSB0 ", Memory);
         }
     }
 
@@ -69,27 +71,7 @@ public class Pic : IDisposable
                     break;
                 }
 
-                if (Memory.ReadRegister(0x83).IsBitSet(0x83))
-                {
-                    //PD = 1 --> Not sleeping
-                    ProgramMemory[ProgramCounter].Execute();
-                    _serialHandler?.Write();
-                }
-                else
-                {
-                    //PD = 0 --> Sleeping
-                    bool PSA = Memory.ReadRegister(0x81).IsBitSet(3);
-                    if (PSA)
-                    {
-                        Cycles++;
-                        Scaler--;
-                        if (Scaler == 0)
-                        {
-                            ResetScaler();
-                            IncreaseTimer();
-                        }
-                    }
-                }
+                Step();
             }
         }, cancellationToken);
     }
@@ -100,8 +82,11 @@ public class Pic : IDisposable
         {
             MCLR();
         }
+
         if (Memory.ReadRegister(0x83).IsBitSet(0x83))
         {
+            EEPROM.CheckInstruction(ProgramMemory[ProgramCounter]);
+            EEPROM.CompleteWrite();
             //PD = 1 --> Not sleeping
             ProgramMemory[ProgramCounter].Execute();
             _serialHandler?.Write();
@@ -233,7 +218,6 @@ public class Pic : IDisposable
                     Memory.WriteRegister(0x83, Memory.ReadRegister(0x83).SetBitTo1(3)); //Wake UP
                 }
                 //Prescaler is for Watchdog, so Watchdog must have overflown
-                
             }
             else
             {
@@ -251,7 +235,7 @@ public class Pic : IDisposable
 
     public double CalculateRuntime()
     {
-         return 4000 / FrequencyInKhz * Cycles; // µs
+        return 4000 / FrequencyInKhz * Cycles; // µs
         //return ((Cycles * 4) / FrequencyInKhz) * 1000; // µs
     }
 

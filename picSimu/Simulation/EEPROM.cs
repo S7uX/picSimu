@@ -15,15 +15,15 @@ public class EEPROM
 
     public static readonly Instruction[] RequiredInstructionSequenceForWrite =
     {
-        new MOVWF(1, 0x89), // EECON2
+        new MOVWF(9, 1), // EECON2
         new MOVLW(0xAA),
-        new MOVWF(1, 0x55), // EECON2
-        new MOVWF(1, 0x55), // EECON2
-        new BSF(0x88, 1), // Set WR bit --> begin write
+        new MOVWF(9, 1), // EECON2
+        new BSF(8, 1), // Set WR bit --> begin write
     };
 
     private int _nextRequiredInstructionForWrite = 0;
     private bool _sequenceOccurred => _nextRequiredInstructionForWrite == RequiredInstructionSequenceForWrite.Length;
+
 
     public EEPROM(Pic pic)
     {
@@ -45,22 +45,32 @@ public class EEPROM
         get => _memory.Registers[0x88];
         set
         {
-            value &= 0001_1111; // bit <7:5> unimplemented
+            value &= 0b_0001_1111; // bit <7:5> unimplemented
             if (
-                EECON1.IsBitSet(2) // The WR bit will be inhibited from being set unless the WREN bit is set.
+                !EECON1.IsBitSet(2) // The WR bit will be inhibited from being set unless the WREN bit is set.
                 ||
                 !value.IsBitSet(1) // WR bit can only be set (not cleared) in software.
             )
             {
-                value = value.SetBit(_memory.Registers[0x88].IsBitSet(1), 2);
+                value = value.SetBit(_memory.Registers[0x88].IsBitSet(1), 1);
             }
 
             if (!value.IsBitSet(0)) // The RD bit can only be set (not cleared) in software).
             {
-                value = value.SetBit(_memory.Registers[0x88].IsBitSet(1), 2);
+                value = value.SetBit(_memory.Registers[0x88].IsBitSet(0), 0);
             }
 
             _memory.Registers[0x88] = value;
+
+            if (value.IsBitSet(1) && _sequenceOccurred) // WR a write cycle.
+            {
+                _write();
+            }
+
+            if (value.IsBitSet(0)) // RD Initiates an EEPROM read
+            {
+                _read();
+            }
         }
     }
 
@@ -88,25 +98,33 @@ public class EEPROM
 
     public void CheckInstruction(Instruction instruction)
     {
+        if (_nextRequiredInstructionForWrite == RequiredInstructionSequenceForWrite.Length)
+        {
+            _nextRequiredInstructionForWrite = 0;
+        }
+
         Instruction expected = RequiredInstructionSequenceForWrite[_nextRequiredInstructionForWrite];
+        var old = _nextRequiredInstructionForWrite;
         for (int i = 0; i < RequiredInstructionSequenceForWrite.Length; i++)
         {
             if (_nextRequiredInstructionForWrite == i && instruction.Equals(expected))
             {
                 _nextRequiredInstructionForWrite++;
+                break;
             }
+        }
 
+        if (old == _nextRequiredInstructionForWrite)
+        {
             _nextRequiredInstructionForWrite = 0;
         }
     }
 
-    public void Read()
+    private void _read()
     {
-        if (EECON1.IsBitSet(0)) // RD bit
-        {
-            EEDATA = Cells[EEADR];
-            _memory.Registers[0x88] = EECON1.SetBit(false, 0); // clear RD bit
-        }
+        Console.WriteLine("EEPROM READ");
+        EEDATA = Cells[EEADR];
+        _memory.Registers[0x88] = EECON1.SetBit(false, 0); // clear RD bit
     }
 
     /// <summary>
@@ -125,7 +143,7 @@ public class EEPROM
     /// ; ---------------------------------- ; required sequence
     /// (write 55h to EECON2, write AAh to EECON2, then set WR bit)
     /// </summary>
-    public void Write()
+    private void _write()
     {
         if (EECON1.IsBitSet(2) /* WREN bit */ && _sequenceOccurred)
         {
@@ -133,12 +151,15 @@ public class EEPROM
         }
     }
 
-    private void _completeWrite()
+    public void CompleteWrite()
     {
-        Cells[EEADR] = EEDATA;
-        EEDATA = Cells[EEADR];
-        _memory.Registers[0x88] = EECON1.SetBit(false, 1) // clear WR bit
-            .SetBit(true, 6); // set EEIF bit 
-        _isWriting = false;
+        if (_isWriting)
+        {
+            Cells[EEADR] = EEDATA;
+            EEDATA = Cells[EEADR];
+            _memory.Registers[0x88] = EECON1.SetBit(false, 1) // clear WR bit
+                .SetBit(true, 4); // set EEIF bit 
+            _isWriting = false;
+        }
     }
 }

@@ -11,6 +11,8 @@ public class SerialHandler : IDisposable
     public SerialHandler(string port, Memory memory)
     {
         _serialPort = new SerialPort(port, 4800, Parity.None, 8, StopBits.One);
+        // string[] ports = SerialPort.GetPortNames();
+        // _serialPort = new SerialPort(ports[0], 4800, Parity.None, 8, StopBits.One);
         _serialPort.Handshake = Handshake.None;
 
         _memory = memory;
@@ -28,14 +30,14 @@ public class SerialHandler : IDisposable
             }
 
             _serialPort.Write(payload, 0, payload.Length);
-            
+
             if (_serialPort.BytesToRead > 4)
             {
                 var data = new byte[5];
                 _serialPort.Read(data, 0, 5); // Get Bytes
                 uint valueToSet = 0;
-                valueToSet = (data[0] & (uint)0b_00001111) << 4; //Get Highbyte of PortA
-                valueToSet |= (data[1] & (uint)0b_00001111); //Get Lowbyte of PortA
+                valueToSet = (data[0] & (uint) 0b_00001111) << 4; //Get Highbyte of PortA
+                valueToSet |= (data[1] & (uint) 0b_00001111); //Get Lowbyte of PortA
                 _memory.PortA.ExternalValue = valueToSet; //Write PortA
                 if (valueToSet.IsBitSet(5))
                 {
@@ -45,14 +47,15 @@ public class SerialHandler : IDisposable
                 {
                     _memory.MCLRPIN = false;
                 }
-                valueToSet = (data[2] & (uint)0b_00001111) << 4; //Get Highbyte of PortA
-                valueToSet |= (data[3] & (uint)0b_00001111); //Get Lowbyte of PortA
+
+                valueToSet = (data[2] & (uint) 0b_00001111) << 4; //Get Highbyte of PortA
+                valueToSet |= (data[3] & (uint) 0b_00001111); //Get Lowbyte of PortA
                 _memory.PortB.ExternalValue = valueToSet; //Write PortA
             }
         }
         catch (Exception ex)
         {
-            //("Error opening/writing to serial port :: " + ex.Message, "Error!");
+            Console.WriteLine("Error opening/writing to serial port :: " + ex.Message, "Error!");
         }
     }
 
@@ -128,7 +131,7 @@ public class SerialHandler : IDisposable
         sb.Append(portB.ExternalValue.IsBitSet(0).ToNumber());
         payload[7] = Convert.ToByte(sb.ToString(), 2);
         sb.Clear();
-        
+
         sb.Append("00001101");
         payload[8] = Convert.ToByte(sb.ToString(), 2);
         return payload;
