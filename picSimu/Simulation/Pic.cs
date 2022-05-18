@@ -255,15 +255,20 @@ public class Pic : IDisposable
             if (Memory.ReadRegister(0x0B).IsBitSet(5)) // T01E
             {
                 // Interrupt is NOT masked
-                Stack.Push(ProgramCounter);
-                ProgramCounter = 4; // interrupt vector
-                Memory.WriteRegister(0x02, 0b_00000100); // PCL
-                Memory.WriteRegister(0x0A, 0b_00000000); // PCLatch
-                Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(2)); // Set Flag that Interrupt occured
+                Interrupt();
+                Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(2)); // Set Flag that TMR 0 Interrupt occured
             }
         }
 
         Memory.WriteRegister(0x01, value);
+    }
+
+    public void Interrupt()
+    {
+        Stack.Push(ProgramCounter);
+        ProgramCounter = 4; // interrupt vector
+        Memory.WriteRegister(0x02, 0b_00000100); // PCL
+        Memory.WriteRegister(0x0A, 0b_00000000); // PCLatch
     }
 
     public double CalculateRuntime()

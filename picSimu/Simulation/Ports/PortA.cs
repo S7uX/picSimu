@@ -40,7 +40,6 @@ public class PortA : Port
                     }
                 }
             }
-
             base.ExternalValue = value;
         }
     }

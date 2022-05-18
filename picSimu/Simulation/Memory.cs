@@ -15,7 +15,7 @@ public class Memory
         pic.Memory = this;
         _pic = pic;
         PortA = new PortA(_pic, 5, 0x85);
-        PortB = new Port(_pic, 6, 0x86, 8);
+        PortB = new PortB(_pic, 6, 0x86);
         PowerOnReset();
     }
 
