@@ -51,60 +51,22 @@ public class PortB : Port
             if (Memory.ReadRegister(0x0B)
                 .IsBitSet(3)) //INTCON_REG<3> - Interrupt RBIE is selected by setting the RBIE bit
             {
-                if (trisReg.IsBitSet(4)) // input mode
+                for (int i = 4; i <= 7; i++)
                 {
-                    // Check for edge on Pin 4 (RB0/INT)
-                    bool newValue = value.IsBitSet(4);
-                    bool currentValue = GetValue().IsBitSet(4);
-
-                    if (currentValue != newValue) // check change
+                    if (trisReg.IsBitSet(i)) // input mode
                     {
-                        // Interrupt is NOT masked
-                        Pic.Interrupt();
-                        Memory.WriteRegister(0x0B,
-                            Memory.ReadRegister(0x0B).SetBitTo1(0)); //(RBIF) Set Flag that RB Port change Interrupt occured
-                    }
-                }
-                if (trisReg.IsBitSet(5)) // input mode
-                {
-                    // Check for edge on Pin 5 (RB0/INT)
-                    bool newValue = value.IsBitSet(5);
-                    bool currentValue = GetValue().IsBitSet(5);
+                        // Check for edge on Pin i (RB0/INT)
+                        bool newValue = value.IsBitSet(i);
+                        bool currentValue = GetValue().IsBitSet(i);
 
-                    if (currentValue != newValue) // check change
-                    {
-                        // Interrupt is NOT masked
-                        Pic.Interrupt();
-                        Memory.WriteRegister(0x0B,
-                            Memory.ReadRegister(0x0B).SetBitTo1(0)); //(RBIF) Set Flag that RB Port change Interrupt occured
-                    }
-                }
-                if (trisReg.IsBitSet(6)) // input mode
-                {
-                    // Check for edge on Pin 6 (RB0/INT)
-                    bool newValue = value.IsBitSet(6);
-                    bool currentValue = GetValue().IsBitSet(6);
-
-                    if (currentValue != newValue) // check change
-                    {
-                        // Interrupt is NOT masked
-                        Pic.Interrupt();
-                        Memory.WriteRegister(0x0B,
-                            Memory.ReadRegister(0x0B).SetBitTo1(0)); //(RBIF) Set Flag that RB Port change Interrupt occured
-                    }
-                }
-                if (trisReg.IsBitSet(7)) // input mode
-                {
-                    // Check for edge on Pin 7 (RB0/INT)
-                    bool newValue = value.IsBitSet(7);
-                    bool currentValue = GetValue().IsBitSet(7);
-
-                    if (currentValue != newValue) // check change
-                    {
-                        // Interrupt is NOT masked
-                        Pic.Interrupt();
-                        Memory.WriteRegister(0x0B,
-                            Memory.ReadRegister(0x0B).SetBitTo1(0)); //(RBIF) Set Flag that RB Port change Interrupt occured
+                        if (currentValue != newValue) // check change
+                        {
+                            // Interrupt is NOT masked
+                            Pic.Interrupt();
+                            Memory.WriteRegister(0x0B,
+                                Memory.ReadRegister(0x0B)
+                                    .SetBitTo1(0)); //(RBIF) Set Flag that RB Port change Interrupt occured
+                        }
                     }
                 }
             }
