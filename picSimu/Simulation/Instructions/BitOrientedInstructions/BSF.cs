@@ -2,6 +2,14 @@
 
 public class BSF : BitOrientedInstruction
 {
+    public BSF(string binaryString, Pic pic) : base(binaryString, pic)
+    {
+    }
+
+    public BSF(ushort f, ushort b) : base(f, b)
+    {
+    }
+
     public override int Execute()
     {
         uint val = Pic.Memory.ReadRegisterForInstructions(f);
@@ -11,13 +19,5 @@ public class BSF : BitOrientedInstruction
         Pic.Memory.WriteRegisterForInstructions(f, val);
         Pic.IncreaseProgramCounter();
         return 0;
-    }
-
-    public BSF(string binaryString, Pic pic) : base(binaryString, pic)
-    {
-    }
-
-    public BSF(ushort f, ushort b) : base(f, b)
-    {
     }
 }
