@@ -20,7 +20,7 @@ public class SerialHandler : IDisposable
 
     public void Write()
     {
-        var payload = GenerateSerialPayload();
+        byte[] payload = GenerateSerialPayload();
         // Makes sure serial port is open before trying to write  
         try
         {

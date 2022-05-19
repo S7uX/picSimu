@@ -9,7 +9,7 @@ public class CLRWDT : ControlInstruction
     public override int Execute()
     {
         Pic.IncreaseProgramCounter();
-        var value = Pic.Memory.ReadRegister(0x83);
+        uint value = Pic.Memory.ReadRegister(0x83);
         value.SetBitTo1(3); // 1 → PD
         value.SetBitTo1(4); // 1 → TO
         Pic.Memory.WriteRegister(0x83, value);

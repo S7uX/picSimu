@@ -8,7 +8,7 @@ public class DECFSZ : ByteOrientedInstruction
 
     public override int Execute()
     {
-        var val = Pic.Memory.ReadRegisterForInstructions(f);
+        uint val = Pic.Memory.ReadRegisterForInstructions(f);
         val--;
         val &= 255;
 

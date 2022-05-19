@@ -8,7 +8,7 @@ public class BTFSS : BitOrientedInstruction
 
     public override int Execute()
     {
-        var val = Pic.Memory.ReadRegisterForInstructions(f);
+        uint val = Pic.Memory.ReadRegisterForInstructions(f);
         if (val.IsBitSet(b))
         {
             Pic.IncreaseProgramCounter(); //NOP

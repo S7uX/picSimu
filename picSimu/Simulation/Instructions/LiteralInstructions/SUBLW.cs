@@ -30,8 +30,8 @@ public class SUBLW : LiteralInstruction
             Pic.Memory.SetCarryFlag(false);
         }
 
-        var val1 = WOld & 15; //Maskierung auf nur lowest 4 Bit
-        var val2 = k & 15; //Maskierung auf nur lowest 4 Bit
+        uint val1 = WOld & 15; //Maskierung auf nur lowest 4 Bit
+        int val2 = k & 15; //Maskierung auf nur lowest 4 Bit
 
         if (val1 - val2 <= 0) //inklusive 0 weil 2er komplement? also vielleicht :D
         {

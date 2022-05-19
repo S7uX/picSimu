@@ -157,7 +157,7 @@ public class Memory
                 WriteRegister(Registers[4], value);
                 break;
             case 1: // TIMER0
-                if (!Lib.IsBitSet(ReadRegister(0x81), 3))
+                if (!ReadRegister(0x81).IsBitSet(3))
                 {
                     // IF Prescaler is assigned to TMR0 (PSA = 0)
                     _pic.ResetScaler();
