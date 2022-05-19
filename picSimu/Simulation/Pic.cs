@@ -51,7 +51,7 @@ public class Pic : IDisposable
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            _serialHandler = new SerialHandler("COM5", Memory);
+            //_serialHandler = new SerialHandler("COM5", Memory);
             // _serialHandler = new SerialHandler("/dev/ttyUSB0 ", Memory); // Linux
         }
     }

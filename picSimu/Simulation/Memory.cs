@@ -39,16 +39,16 @@ public class Memory
 
     public void WatchDogReset()
     {
-        AllOtherResets();
         uint status = ReadRegister(0x03);
         if (_pic.IsSleeping)
         {
             status |= 0b_00001000;
-            _pic.ProgramCounter++;
+            //_pic.ProgramCounter++;
         }
         else
         {
-            status |= 0b_00011000;
+            AllOtherResets();
+            status |= 0b_00001000;
         }
         WriteRegister(0x03, status); // STATUS
     }
