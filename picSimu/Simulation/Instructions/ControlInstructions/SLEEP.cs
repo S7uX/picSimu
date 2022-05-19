@@ -8,7 +8,7 @@ public class SLEEP : ControlInstruction
 
     public override int Execute()
     {
-        Pic.IncreaseProgramCounter();
+        //Pic.IncreaseProgramCounter();
         uint value = Pic.Memory.ReadRegister(0x83); // STATUS
         value = value.SetBitTo0(3); // 0 → PD
         value = value.SetBitTo1(4); // 1 → TO

@@ -43,7 +43,7 @@ public class Memory
         if (_pic.IsSleeping)
         {
             status |= 0b_00001000;
-            //_pic.ProgramCounter++;
+            _pic.ProgramCounter++;
         }
         else
         {
