@@ -119,9 +119,9 @@ public class Pic : IDisposable
         else // PD = 0 --> Sleeping
         {
             Cycles++;
-            var DurationOfSingleCycle = 4000 / FrequencyInKhz; // vier Quatztakte; *1000 --> µs
-            var CyclesToGet18MS = 18000 / DurationOfSingleCycle;
-            if (WatchdogCycleCounter > CyclesToGet18MS)
+            double durationOfSingleCycle = 4000 / FrequencyInKhz; // vier Quatztakte; *1000 --> µs
+            double cyclesToGet18Ms = 18000 / durationOfSingleCycle;
+            if (WatchdogCycleCounter > cyclesToGet18Ms)
             {
                 WatchdogCycleCounter = 0;
                 Scaler--;
@@ -137,33 +137,36 @@ public class Pic : IDisposable
         EEPROM.CompleteWrite();
     }
 
+    /// <summary>
+    /// Master Clear
+    /// </summary>
     private void MCLR()
     {
         ProgramCounter = 0;
         Memory.WriteRegister(0x02, 0b_00000000); //PCL
-        var status = Memory.ReadRegister(0x03);
-        status.SetBitTo0(7);
-        status.SetBitTo0(6);
-        status.SetBitTo0(5);
-        Memory.WriteRegister(0x03, status); //STATUS
-        Memory.WriteRegister(0x0A, 0b_00000000); //PCLATH
-        var intcon = Memory.ReadRegister(0x0B);
-        intcon.SetBitTo0(7);
-        intcon.SetBitTo0(6);
-        intcon.SetBitTo0(5);
-        intcon.SetBitTo0(4);
-        intcon.SetBitTo0(3);
-        intcon.SetBitTo0(2);
-        intcon.SetBitTo0(1);
-        Memory.WriteRegister(0x02, intcon); //INTCON
-        Memory.WriteRegister(0x85, 0b_00011111); //TRISA
-        Memory.WriteRegister(0x86, 0b_11111111); //TRISB
-        var eecon_1 = Memory.ReadRegister(0x0B);
-        eecon_1.SetBitTo0(0);
-        eecon_1.SetBitTo0(1);
-        eecon_1.SetBitTo0(2);
-        eecon_1.SetBitTo0(4);
-        Memory.WriteRegister(0x0B, eecon_1); //EECON_1
+        uint status = Memory.ReadRegister(0x03) & 0b_0001_1111;
+        // status.SetBitTo0(7);
+        // status.SetBitTo0(6);
+        // status.SetBitTo0(5);
+        Memory.WriteRegister(0x03, status); // STATUS
+        Memory.WriteRegister(0x0A, 0b_00000000); // PCLATH
+        uint intcon = Memory.ReadRegister(0x0B) & 0b_00000001;
+        // intcon.SetBitTo0(7);
+        // intcon.SetBitTo0(6);
+        // intcon.SetBitTo0(5);
+        // intcon.SetBitTo0(4);
+        // intcon.SetBitTo0(3);
+        // intcon.SetBitTo0(2);
+        // intcon.SetBitTo0(1);
+        Memory.WriteRegister(0x02, intcon); // INTCON
+        Memory.WriteRegister(0x85, 0b_00011111); // TRISA
+        Memory.WriteRegister(0x86, 0b_11111111); // TRISB
+        uint eecon_1 = Memory.ReadRegister(0x0B) & 0b_1111_0000;
+        // eecon_1.SetBitTo0(0);
+        // eecon_1.SetBitTo0(1);
+        // eecon_1.SetBitTo0(2);
+        // eecon_1.SetBitTo0(4);
+        Memory.WriteRegister(0x0B, eecon_1); // EECON_1
     }
 
     #endregion execution

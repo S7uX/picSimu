@@ -14,7 +14,7 @@ public class EEPROM
     private bool _isWriting = false;
     private double _writeStartingValue = 0;
 
-    public static readonly Instruction[] RequiredInstructionSequenceForWrite =
+    private static readonly Instruction[] RequiredInstructionSequenceForWrite =
     {
         new MOVWF(9, 1), // EECON2
         new MOVLW(0xAA),
@@ -105,17 +105,11 @@ public class EEPROM
         }
 
         Instruction expected = RequiredInstructionSequenceForWrite[_nextRequiredInstructionForWrite];
-        int old = _nextRequiredInstructionForWrite;
-        for (int i = 0; i < RequiredInstructionSequenceForWrite.Length; i++)
+        if (instruction.Equals(expected))
         {
-            if (_nextRequiredInstructionForWrite == i && instruction.Equals(expected))
-            {
-                _nextRequiredInstructionForWrite++;
-                break;
-            }
+            _nextRequiredInstructionForWrite++;
         }
-
-        if (old == _nextRequiredInstructionForWrite)
+        else
         {
             _nextRequiredInstructionForWrite = 0;
         }
@@ -161,7 +155,7 @@ public class EEPROM
             {
                 _writeStartingValue = _pic.CalculateRuntime();
             }
-            else if (_pic.CalculateRuntime() - _writeStartingValue > 1000) // 1 ms write time
+            else if (_pic.CalculateRuntime() - _writeStartingValue >= 1000) // 1 ms write time
             {
                 Cells[EEADR] = EEDATA;
                 EEDATA = Cells[EEADR];

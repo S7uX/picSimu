@@ -28,16 +28,7 @@ public partial class Index : ComponentBase
         _registerBindings = new RegisterPair[Memory.MemoryLength / 2];
         _createRegisterBindings();
     }
-
-    private void _createRegisterBindings()
-    {
-        for (uint i = 0; i < _registerBindings.Length; i++)
-        {
-            uint y = 0x80 + i;
-            _registerBindings[i] = new RegisterPair(_pic.Memory.GetRegister(i), _pic.Memory.GetRegister(y));
-        }
-    }
-
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -50,6 +41,15 @@ public partial class Index : ComponentBase
         {
             await UpdateProgramCounter();
             _visualizedProgramCounter = (int) pc;
+        }
+    }
+
+    private void _createRegisterBindings()
+    {
+        for (uint i = 0; i < _registerBindings.Length; i++)
+        {
+            uint y = 0x80 + i;
+            _registerBindings[i] = new RegisterPair(_pic.Memory.GetRegister(i), _pic.Memory.GetRegister(y));
         }
     }
 
