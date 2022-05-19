@@ -8,14 +8,19 @@ public class GOTO : JumpInstruction
 
     public override int Execute()
     {
-        bool alreadyInterrupted = Memory.ReadRegister(0x0B).IsBitSet(2);
-        Pic.IncreaseProgramCounter();
-        if (alreadyInterrupted == false && Memory.ReadRegister(0x0B).IsBitSet(2))
+        if (CycleTwo)
         {
-            return 0;
+            SetProgramCounter(k);
+            return 1;
         }
-        Pic.IncreaseProgramCounter();
-        SetProgramCounter(k);
+
+        CycleTwo = true;
+
+        // bool alreadyInterrupted = Memory.ReadRegister(0x0B).IsBitSet(2);
+        // if (alreadyInterrupted == false && Memory.ReadRegister(0x0B).IsBitSet(2))
+        // {
+        //     return 0;
+        // }
 
         return 0;
     }

@@ -22,22 +22,23 @@ public class Pic : IDisposable
         set
         {
             value &= 0b_1_1111_1111_1111;
-            Pcl = value % (uint) ProgramMemoryLength;
+            Memory.Pcl = value % (uint) ProgramMemoryLength;
             _programCounter = value; // clear last 8 bits
         }
-    }
-
-    public uint Pcl // 8-bits wide
-    {
-        get => Memory.ReadRegister(2) & 0b_1111_1111;
-        set => Memory.WriteRegister(2, value & 0b_1111_1111);
     }
 
     public double Cycles = 0;
     public uint Scaler = 0;
     public double FrequencyInKhz = 4000;
     private SerialHandler? _serialHandler;
-    private uint WatchdogCycleCounter = 0;
+    private uint _watchdogCycleCounter = 0;
+
+    public bool IsSleeping => !Memory.ReadRegister(0x83).IsBitSet(0x3); // STATUS<3> PD: low active --> 0 = sleep
+    private Instruction? currentInstruction;  
+
+
+    private double _durationOfSingleCycle => 4000 / FrequencyInKhz;
+    public int WatchdogTime => (int) (_watchdogCycleCounter * _durationOfSingleCycle);
 
     public EEPROM EEPROM;
 
@@ -103,70 +104,52 @@ public class Pic : IDisposable
     {
         if (!Memory.MCLRPIN) // Check for MCLEAR
         {
-            MCLR();
+            Memory.MCLR();
         }
 
-        WatchdogCycleCounter++; // Increase Watchdog Counter
-
-        if (Memory.ReadRegister(0x83).IsBitSet(0x3)) // STATUS<3>: PD (Check if Pic is sleeping)
+        double cyclesToGet18Ms = 18000 / _durationOfSingleCycle;
+        if (!IsSleeping) // STATUS<3>: PD (Check if Pic is sleeping)
         {
             // PD = 1 --> Not sleeping
 
-            EEPROM.CheckInstruction(ProgramMemory[ProgramCounter]);
-            ProgramMemory[ProgramCounter].Execute();
-            _serialHandler?.Write();
-        }
-        else // PD = 0 --> Sleeping
-        {
-            Cycles++;
-            double durationOfSingleCycle = 4000 / FrequencyInKhz; // vier Quatztakte; *1000 --> µs
-            double cyclesToGet18Ms = 18000 / durationOfSingleCycle;
-            if (WatchdogCycleCounter > cyclesToGet18Ms)
+            currentInstruction = ProgramMemory[ProgramCounter];
+            EEPROM.CheckInstruction(currentInstruction);
+            if (currentInstruction.Execute() == 1)
             {
-                WatchdogCycleCounter = 0;
+                currentInstruction.CycleTwo = false;
+            }
+
+            _serialHandler?.Write();
+
+            if (_watchdogCycleCounter > cyclesToGet18Ms)
+            {
+                _watchdogCycleCounter = 0;
                 Scaler--;
                 if (Scaler == 0)
                 {
                     ResetScaler();
-                    IncreaseTimer();
-                    Memory.WriteRegister(0x83, Memory.ReadRegister(0x83).SetBitTo1(3)); // Wake UP --> PD (STATUS<3>) = 1
+                    Memory.WatchDogReset();
+                }
+            }
+        }
+        else // PD = 0 --> Sleeping
+        {
+            if (_watchdogCycleCounter > cyclesToGet18Ms)
+            {
+                _watchdogCycleCounter = 0;
+                Scaler--; // Postscaler
+                if (Scaler == 0)
+                {
+                    ResetScaler();
+                    Memory.WatchDogReset();
                 }
             }
         }
 
         EEPROM.CompleteWrite();
-    }
 
-    /// <summary>
-    /// Master Clear
-    /// </summary>
-    private void MCLR()
-    {
-        ProgramCounter = 0;
-        Memory.WriteRegister(0x02, 0b_00000000); //PCL
-        uint status = Memory.ReadRegister(0x03) & 0b_0001_1111;
-        // status.SetBitTo0(7);
-        // status.SetBitTo0(6);
-        // status.SetBitTo0(5);
-        Memory.WriteRegister(0x03, status); // STATUS
-        Memory.WriteRegister(0x0A, 0b_00000000); // PCLATH
-        uint intcon = Memory.ReadRegister(0x0B) & 0b_00000001;
-        // intcon.SetBitTo0(7);
-        // intcon.SetBitTo0(6);
-        // intcon.SetBitTo0(5);
-        // intcon.SetBitTo0(4);
-        // intcon.SetBitTo0(3);
-        // intcon.SetBitTo0(2);
-        // intcon.SetBitTo0(1);
-        Memory.WriteRegister(0x02, intcon); // INTCON
-        Memory.WriteRegister(0x85, 0b_00011111); // TRISA
-        Memory.WriteRegister(0x86, 0b_11111111); // TRISB
-        uint eecon_1 = Memory.ReadRegister(0x0B) & 0b_1111_0000;
-        // eecon_1.SetBitTo0(0);
-        // eecon_1.SetBitTo0(1);
-        // eecon_1.SetBitTo0(2);
-        // eecon_1.SetBitTo0(4);
-        Memory.WriteRegister(0x0B, eecon_1); // EECON_1
+        Cycle();
+        _watchdogCycleCounter++; // Increase Watchdog Counter
     }
 
     #endregion execution
@@ -268,6 +251,11 @@ public class Pic : IDisposable
 
     public void Interrupt()
     {
+        if (currentInstruction != null && currentInstruction.CycleTwo)
+        {
+            currentInstruction.CycleTwo = false;
+        }
+        
         Stack.Push(ProgramCounter);
         ProgramCounter = 4; // interrupt vector
         Memory.WriteRegister(0x02, 0b_00000100); // PCL
@@ -284,7 +272,10 @@ public class Pic : IDisposable
     public void IncreaseProgramCounter()
     {
         ProgramCounter++;
+    }
 
+    public void Cycle()
+    {
         Cycles++;
         if (!Memory.ReadRegister(0x81).IsBitSet(5)) // OPTION_REG<5> - Timer mode is selected by clearing the T0CS bit
         {

@@ -5,6 +5,8 @@ public abstract class Instruction : Object
     protected readonly Pic Pic;
     protected readonly Memory Memory;
     public readonly string Opcode = "";
+    public bool CycleTwo = false;
+    
     public abstract int Execute();
 
     public Instruction(string binaryString, Pic pic)

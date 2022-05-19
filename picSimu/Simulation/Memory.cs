@@ -19,7 +19,15 @@ public class Memory
         PowerOnReset();
     }
 
+    public uint Pcl // 8-bits wide
+    {
+        get => ReadRegister(2) & 0b_1111_1111;
+        set => WriteRegister(2, value & 0b_1111_1111);
+    }
+
     public bool BankSelect => Registers[3].IsBitSet(5);
+
+    #region Reset
 
     public void PowerOnReset()
     {
@@ -28,6 +36,58 @@ public class Memory
         WriteRegister(0x85, 0b_00011111); // TRISA
         WriteRegister(0x86, 0b_11111111); // TRISB
     }
+
+    public void WatchDogReset()
+    {
+        AllOtherResets();
+        uint status = ReadRegister(0x03);
+        if (_pic.IsSleeping)
+        {
+            status |= 0b_00001000;
+            _pic.ProgramCounter++;
+        }
+        else
+        {
+            status |= 0b_00011000;
+        }
+        WriteRegister(0x03, status); // STATUS
+    }
+
+    /// <summary>
+    /// Master Clear
+    /// </summary>
+    public void MCLR()
+    {
+        AllOtherResets();
+        if (_pic.IsSleeping)
+        {
+            uint status = ReadRegister(0x03)
+                .SetBitTo1(4) // TO
+                .SetBitTo0(3); // PD
+            WriteRegister(0x03, status); // STATUS
+        }
+    }
+
+    public void AllOtherResets()
+    {
+        _pic.ProgramCounter = 0;
+        uint status = ReadRegister(0x03) & 0b_0001_1111;
+        WriteRegister(0x03, status); // STATUS
+        WriteRegister(0x0A, 0); // PCLATH
+        uint intcon = ReadRegister(0x0B) & 0b_0000_0001;
+        WriteRegister(0x02, intcon); // INTCON
+        WriteRegister(0x81, 0b_1111_1111); // OPTION
+        WriteRegister(0x85, 0b_00011111); // TRISA
+        WriteRegister(0x86, 0b_11111111); // TRISB
+        uint eecon_1 = ReadRegister(0x0B);
+        eecon_1.SetBitTo0(0);
+        eecon_1.SetBitTo0(1);
+        eecon_1.SetBitTo0(2);
+        eecon_1.SetBitTo0(4);
+        WriteRegister(0x0B, eecon_1); // EECON_1
+    }
+
+    #endregion Reset
 
     public uint FSR => Registers[4];
 

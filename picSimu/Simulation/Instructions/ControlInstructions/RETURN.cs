@@ -8,10 +8,14 @@ public class RETURN : ControlInstruction
 
     public override int Execute()
     {
-        Pic.IncreaseProgramCounter();
-        Pic.IncreaseProgramCounter();
+        if (CycleTwo)
+        {
+            Pic.ProgramCounter = Pic.Stack.Pop();
+            return 1;
+        }
 
-        Pic.ProgramCounter = Pic.Stack.Pop();
+        CycleTwo = true;
+
         return 0;
     }
 }

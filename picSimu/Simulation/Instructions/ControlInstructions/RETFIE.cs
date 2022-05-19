@@ -8,11 +8,15 @@ public class RETFIE : ControlInstruction
 
     public override int Execute()
     {
-        Pic.IncreaseProgramCounter();
-        Pic.IncreaseProgramCounter();
+        if (CycleTwo)
+        {
+            Pic.ProgramCounter = Pic.Stack.Pop();
+            Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(7));
+            return 1;
+        }
 
-        Pic.ProgramCounter = Pic.Stack.Pop();
-        Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(7));
+        CycleTwo = true;
+
         return 0;
     }
 }
