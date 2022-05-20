@@ -61,13 +61,13 @@ public static class Lib
         return value + "\n" + Convert.ToString(value, 2).PadLeft(8, '0');
     }
 
-    public static bool SameType(object obj, object? comparsionObject)
+    public static bool SameType(object obj, object? comparisonObject)
     {
-        if (comparsionObject == null)
+        if (comparisonObject == null)
         {
             return false;
         }
         
-        return obj.GetType() == comparsionObject.GetType();
+        return obj.GetType() == comparisonObject.GetType();
     }
 }

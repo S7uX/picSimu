@@ -1,4 +1,4 @@
-namespace picSimu.Simulation;
+namespace picSimu.Simulation.Ports;
 
 public class PortA : Port
 {

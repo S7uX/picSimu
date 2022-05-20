@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices;
 using picSimu.Simulation.Instructions;
-using picSimu.Simulation.Instructions.ControlInstructions;
 
 namespace picSimu.Simulation;
 
@@ -15,7 +14,7 @@ public class Pic : IDisposable
     public Memory Memory;
     public readonly Stack Stack = new Stack(); // 13 bit wide
     private uint _programCounter = 0;
-    public bool WDTE { get; set; } = true;
+    public bool WDTE = false; // CONFIGURATION WORD: Watchdog Timer Enable bit
 
     public uint ProgramCounter // 13 bit wide
     {
@@ -41,7 +40,7 @@ public class Pic : IDisposable
     private double _durationOfSingleCycle => 4000 / FrequencyInKhz;
     public int WatchdogTime => (int) (WatchdogCycles * _durationOfSingleCycle);
 
-    public EEPROM EEPROM;
+    public readonly EEPROM EEPROM;
 
     public Pic()
     {
@@ -103,7 +102,7 @@ public class Pic : IDisposable
 
     public void Step()
     {
-        if (!Memory.MCLRPIN) // Check for MCLEAR
+        if (!Memory.MclrPin) // Check for MCLEAR
         {
             Memory.MCLR();
         }
@@ -124,7 +123,7 @@ public class Pic : IDisposable
                 if (_currentInstruction.CycleTwo)
                 {
                     _currentInstruction.Execute();
-                    Cycle();
+                    _cycle();
 
                     _currentInstruction.CycleTwo = false;
                 }
@@ -140,7 +139,7 @@ public class Pic : IDisposable
 
         EEPROM.CompleteWrite();
 
-        Cycle();
+        _cycle();
         _wdtCheck();
     }
 
@@ -169,7 +168,7 @@ public class Pic : IDisposable
             if (WatchdogCycles > cyclesToGet18Ms)
             {
                 WatchdogCycles = 0;
-                if (Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3> prescaler assgined to WDT?
+                if (Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3> prescaler assigned to WDT?
                 {
                     Scaler--;
                     if (Scaler == 0)
@@ -230,7 +229,7 @@ public class Pic : IDisposable
 
     public void TimerStep()
     {
-        if (!Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3> If Prescaler is assgined to TMR0
+        if (!Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3> if prescaler is assigned to TMR0
         {
             Scaler--;
             if (Scaler == 0)
@@ -254,7 +253,7 @@ public class Pic : IDisposable
             // Overflow
             value &= 255; // Mask to 8 bits
 
-            // Check if Timer0Interupt is enabled
+            // Check if Timer0 interrupt is enabled
             if (Memory.ReadRegister(0x0B).IsBitSet(5)) // T01E
             {
                 // Interrupt is NOT masked
@@ -305,7 +304,7 @@ public class Pic : IDisposable
         ProgramCounter++;
     }
 
-    public void Cycle()
+    private void _cycle()
     {
         Cycles++;
         if (!Memory.ReadRegister(0x81).IsBitSet(5)) // OPTION_REG<5> - Timer mode is selected by clearing the T0CS bit

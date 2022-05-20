@@ -8,10 +8,10 @@ public class SWAPF : ByteOrientedInstruction
 
     public override int Execute()
     {
-        string binarysString = Convert.ToString(Pic.Memory.ReadRegisterForInstructions(f), 2);
-        binarysString = binarysString.PadLeft(8, '0');
-        string lowerNipple = binarysString.Substring(4, 4);
-        string upperNipple = binarysString.Substring(0, 4);
+        string binaryString = Convert.ToString(Pic.Memory.ReadRegisterForInstructions(f), 2);
+        binaryString = binaryString.PadLeft(8, '0');
+        string lowerNipple = binaryString.Substring(4, 4);
+        string upperNipple = binaryString.Substring(0, 4);
         string resultString = lowerNipple + upperNipple;
         uint result = Convert.ToUInt32(resultString, 2);
 

@@ -1,4 +1,4 @@
-namespace picSimu.Simulation;
+namespace picSimu.Simulation.Ports;
 
 public class Port
 {
@@ -22,7 +22,7 @@ public class Port
     }
 
     /// <summary>
-    /// first 3 bits unimpelemented
+    /// first 3 bits unimplemented
     /// </summary>
     public virtual uint ExternalValue
     {

@@ -16,26 +16,12 @@ a, .btn-link {
     color: #0071c1;
 }
 
+
 caption{
     caption-side: top;
     color: black;
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.content {
-    padding-top: 7px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    overflow: hidden;
-    padding-left: 1.1rem !important;
-    padding-right: 1.1rem !important;
-}
 
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
@@ -48,6 +34,7 @@ caption{
 .validation-message {
     color: red;
 }
+
 
 #blazor-error-ui {
     background: lightyellow;
@@ -78,13 +65,18 @@ caption{
     content: "An error has occurred."
 }
 
+
 .btn-primary:active {
     box-shadow: none !important;
 }
 
 .btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
     transition: 0s;
 }
+
 
 /**
  * ==============================================

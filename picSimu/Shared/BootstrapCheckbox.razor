@@ -3,24 +3,31 @@
        checked="@(Value ? "checked" : null)">
 
 @code {
+
     [Parameter]
     public bool Value { get; set; }
 
     [Parameter]
     public EventCallback<bool> ValueChanged { get; set; }
-    
+
     [Parameter]
     public string Class { get; set; } = "";
 
     private Task OnInputChange(ChangeEventArgs args)
     {
-        Value = (bool) args.Value;
+        if (args.Value != null)
+        {
+            Value = (bool) args.Value;
+        }
         return Task.CompletedTask;
     }
 
     private async Task OnChange(ChangeEventArgs args)
     {
-        Value = (bool) args.Value;
+        if (args.Value != null)
+        {
+            Value = (bool) args.Value;
+        }
         await ValueChanged.InvokeAsync(Value);
     }
 

@@ -8,9 +8,9 @@ public class SUBLW : LiteralInstruction
 
     public override int Execute()
     {
-        uint WOld = Pic.WRegister;
-        uint Wnew = WOld - k;
-        if (Wnew == 0)
+        uint wOld = Pic.WRegister;
+        uint wnew = wOld - k;
+        if (wnew == 0)
         {
             Pic.Memory.SetZeroFlag(true);
         }
@@ -19,10 +19,10 @@ public class SUBLW : LiteralInstruction
             Pic.Memory.SetZeroFlag(false);
         }
 
-        if (Wnew > 255)
+        if (wnew > 255)
         {
-            Wnew &= 255; //Maskierung auf nur lowest 8 Bit
-            Wnew = 256 - Wnew; //Magic
+            wnew &= 255; // mask first byte
+            wnew = 256 - wnew; //Magic
             Pic.Memory.SetCarryFlag(true);
         }
         else
@@ -30,8 +30,8 @@ public class SUBLW : LiteralInstruction
             Pic.Memory.SetCarryFlag(false);
         }
 
-        uint val1 = WOld & 15; //Maskierung auf nur lowest 4 Bit
-        int val2 = k & 15; //Maskierung auf nur lowest 4 Bit
+        uint val1 = wOld & 15; // mask lowest 4 bits
+        int val2 = k & 15; // mask lowest 4 bits
 
         if (val1 - val2 <= 0) //inklusive 0 weil 2er komplement? also vielleicht :D
         {
@@ -42,7 +42,7 @@ public class SUBLW : LiteralInstruction
             Pic.Memory.SetDigitCarryFlag(false);
         }
 
-        Pic.WRegister = Wnew;
+        Pic.WRegister = wnew;
         Pic.IncreaseProgramCounter();
         return 0;
     }

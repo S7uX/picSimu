@@ -1,6 +1,6 @@
 namespace picSimu.Simulation.Instructions;
 
-public abstract class Instruction : Object
+public abstract class Instruction
 {
     protected readonly Pic Pic;
     protected readonly Memory Memory;

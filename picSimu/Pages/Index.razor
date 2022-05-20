@@ -8,19 +8,19 @@
 <PageTitle>Index</PageTitle>
 
 <div class="top-row px-4">
-    <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple disabled="@(isRunning)"/>
-    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="RunSimulation">Run</button>
-    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="SimulationStep">Step</button>
-    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="AutoStepSimulation">Auto Step</button>
-    <button class="btn btn-primary btn-sm" disabled="@(!isRunning)" @onclick="StopSimulation">Stop</button>
-    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="ResetSimulation">Reset Simulation</button>
-    <button class="btn btn-secondary btn-sm" @onclick="() => _pic.Memory.MCLR()">MCLR</button>
+    <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple disabled="@(_isRunning)"/>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="RunSimulation">Run</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="SimulationStep">Step</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="AutoStepSimulation">Auto Step</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_isRunning)" @onclick="StopSimulation">Stop</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="ResetSimulation">Reset Simulation</button>
+    <button class="btn btn-secondary btn-sm" @onclick="() => _pic.Memory.MCLR()" disabled="@(!_pic.ProgramLoaded)">MCLR</button>
     <b style="margin-left: auto">picSimu</b>
 </div>
 
 <div class="content">
 
-<fieldset id="sfr-w" class="d-flex flex-row justify-content-between" disabled="@isRunning">
+<fieldset id="sfr-w" class="d-flex flex-row justify-content-between" disabled="@_isRunning">
     <label class="h5 pe-5">SFR + W:</label>
     <div>
         <label class="sfr-label">W: </label>
@@ -52,9 +52,9 @@
     </div>
 </fieldset>
 
-<hr class="my-1">
+<hr style="margin-top: 0; margin-bottom: .25rem">
 
-<div style="flex: 1; overflow-x: auto" class="d-flex flex-row pt-2">
+<div class="main-area">
 
 <div id="lst-container" style="flex-grow: 2" class="d-flex flex-column overflow-hidden">
     <div class="d-flex flex-row align-items-baseline">
@@ -103,13 +103,13 @@
 
 <div id="register-table" class="d-flex flex-column">
     @{
-        if (showEEPROM)
+        if (_showEeprom)
         {
             <div class="register-table-top">
                 <div class="d-flex flex-column">
                     <label class="h5">EEPROM</label>
                 </div>
-                <button class="btn btn-secondary btn-sm" @onclick="() => showEEPROM = !showEEPROM">GPR</button>
+                <button class="btn btn-secondary btn-sm" @onclick="() => _showEeprom = !_showEeprom">GPR</button>
             </div>
 
             <div style="overflow-x: hidden;" class="d-flex">
@@ -123,11 +123,11 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @for (uint i = 0; i < EEPROM.Length / 2; i++)
+                    @for (uint i = 0; i < EEPROM.LENGTH / 2; i++)
                     {
-                        uint y = i + EEPROM.Length / 2;
-                        uint value1 = @_pic.EEPROM.Cells[i];
-                        uint value2 = @_pic.EEPROM.Cells[y];
+                        uint y = i + EEPROM.LENGTH / 2;
+                        uint value1 = _pic.EEPROM.Cells[i];
+                        uint value2 = _pic.EEPROM.Cells[y];
                         <tr>
                             <td title="@i.ToTooltipString()">@i.ToHexString()</td>
                             <td title="@value1.ToTooltipString()">
@@ -150,10 +150,10 @@
                     <label class="h5">File Register</label>
                     <label class="h5">(SFR & GPR)</label>
                 </div>
-                <button class="btn btn-secondary btn-sm" @onclick="() => showEEPROM = !showEEPROM">EEPROM</button>
+                <button class="btn btn-secondary btn-sm" @onclick="() => _showEeprom = !_showEeprom">EEPROM</button>
             </div>
 
-            <fieldset style="overflow-x: hidden;" class="d-flex" disabled="@isRunning">
+            <fieldset style="overflow-x: hidden;" class="d-flex" disabled="@_isRunning">
                 <table class="table-sm">
                     <thead>
                     <tr>
@@ -194,67 +194,61 @@
 <div class="d-flex flex-row justify-content-around">
     <div id="timing-control" class="d-flex flex-column">
         <label style="align-self: center;" class="h5">Timing</label>
-        <div class="d-flex flex-row flex-grow-1">
+        <div class="d-flex flex-row flex-grow-1 section">
+
             <div class="d-flex flex-column smaller-text justify-content-between">
 
-                <div id="frequency-control">
-                    <label class="sfr-label">Quartz: </label>
-                    <select type="number" class="form-select-sm" @bind="_pic.FrequencyInKhz">
-                        <option value="32">32 KHz</option>
-                        <option value="100">100 KHz</option>
-                        <option value="500">0.5 MHz</option>
-                        <option value="4000">4 MHz</option>
-                        <option value="8000">8 MHz</option>
-                        <option value="16000">16 MHz</option>
-                        <option value="32000">32 MHz</option>
-                        <option value="64000">64 MHz</option>
-                    </select>
+                <div class="section">
+                    <div id="frequency-control">
+                        <label class="sfr-label">Quartz: </label>
+                        <select type="number" class="form-select-sm" @bind="_pic.FrequencyInKhz">
+                            <option value="32">32 KHz</option>
+                            <option value="100">100 KHz</option>
+                            <option value="500">0.5 MHz</option>
+                            <option value="4000">4 MHz</option>
+                            <option value="8000">8 MHz</option>
+                            <option value="16000">16 MHz</option>
+                            <option value="32000">32 MHz</option>
+                            <option value="64000">64 MHz</option>
+                        </select>
+                    </div>
+
+                    <table id="timing-info">
+                        <tr>
+                            <th>Cycles: </th>
+                            <td>@_pic.Cycles</td>
+                        </tr>
+                        <tr>
+                            <th>Runtime: </th>
+                            <td>@_pic.CalculateRuntime() µs</td>
+                        </tr>
+                    </table>
                 </div>
 
-                <table id="timing-info">
-                    <tbody>
-                    <tr>
-                        <th>Cycles: </th>
-                        <td>@_pic.Cycles</td>
-                    </tr>
-                    <tr>
-                        <th>Runtime: </th>
-                        <td>@_pic.CalculateRuntime() µs</td>
-                    </tr>
-                    </tbody>
-                </table>
-
                 <hr>
 
-                <table>
-                    <caption class="h6">Timer0</caption>
-                    <tbody>
-                    <tr>
-                        <td class="hex-input">
-                            <label class="sfr-label">TMR0: </label>
-                            <fieldset disabled="@isRunning">
-                                <HexInput class="form-control" @bind-Value="_registerBindings[1].register0"></HexInput>
-                            </fieldset>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <hr>
-
-                <table>
-                    <caption class="h6">Watchdog</caption>
-                    <tbody>
-                    <tr>
-                        <td>
-                            <label class="sfr-label">WDT: </label> @_pic.WatchdogTime µs
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
                 <div>
-                    <label class="sfr-label">WDTE conf. bit </label>
-                    <BootstrapCheckbox @bind-Value="_pic.WDTE"></BootstrapCheckbox>
+                    <div class="h6">Timer0</div>
+                    <div class="hex-input">
+                        <div class="sfr-label">TMR0: </div>
+                        <fieldset disabled="@_isRunning">
+                            <HexInput class="form-control" @bind-Value="_registerBindings[1].register0"></HexInput>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="section">
+                    <div class="h6">Watchdog</div>
+                    <div>
+                        <label class="sfr-label">WDT: </label> @_pic.WatchdogTime µs
+                    </div>
+                    <div>
+                        <label class="sfr-label">WDTE conf.</label>
+                        <BootstrapCheckbox @bind-Value="_pic.WDTE"></BootstrapCheckbox>
+                        <div class="small">Watchdog enable bit</div>
+                    </div>
                 </div>
             </div>
 

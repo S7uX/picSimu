@@ -9,23 +9,23 @@ public partial class Index : ComponentBase
 {
     private IJSObjectReference? _module;
     private string _sourceCode = "";
-    private HashSet<int> _instructionRows = new HashSet<int>();
+    private HashSet<int> _instructionRows = new();
     private string? _parsedInstructionCodes = "";
     private string[]? _instructionCodes;
     private int _visualizedProgramCounter;
     private bool _autoStep = false;
-    private bool isRunning => _autoStep || _pic.PicRun is not null;
-    private bool showEEPROM = false;
+    private bool _isRunning => _autoStep || _pic.PicRun is not null;
+    private bool _showEeprom = false;
 
     private Pic _pic;
-    private RegisterPair[] _registerBindings;
+    private readonly RegisterPair[] _registerBindings;
 
     public Index()
     {
         _pic = new Pic();
         _visualizedProgramCounter = -1;
 
-        _registerBindings = new RegisterPair[Memory.MemoryLength / 2];
+        _registerBindings = new RegisterPair[Memory.MEMORY_LENGTH / 2];
         _createRegisterBindings();
     }
     

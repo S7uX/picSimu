@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using picSimu.Simulation;
+using picSimu.Simulation.Ports;
 
 namespace picSimu;
 
