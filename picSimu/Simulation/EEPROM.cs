@@ -165,6 +165,19 @@ public class EEPROM
                 _writeStartingValue = 0;
                 Console.WriteLine("EEPROM WRITE FINISHED");
             }
+
+            if (_memory.ReadRegister(0x0B).IsBitSet(6)) // EEIE: EE Write Complete Interrupt Enable bit - INTCON<6>
+            {
+                _pic.Interrupt();
+            }
         }
+        
+    }
+
+    public void Terminate()
+    {
+        _isWriting = false;
+        _writeStartingValue = 0;
+        EECON1 &= 0b_11101000;
     }
 }

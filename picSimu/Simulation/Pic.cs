@@ -14,7 +14,7 @@ public class Pic : IDisposable
     public Memory Memory;
     public readonly Stack Stack = new Stack(); // 13 bit wide
     private uint _programCounter = 0;
-    public bool ReleaseWatchdog { get; set; }
+    public bool WDTE { get; set; } = true;
 
     public uint ProgramCounter // 13 bit wide
     {
@@ -34,7 +34,7 @@ public class Pic : IDisposable
     private uint _watchdogCycleCounter = 0;
 
     public bool IsSleeping => !Memory.ReadRegister(0x83).IsBitSet(0x3); // STATUS<3> PD: low active --> 0 = sleep
-    private Instruction? currentInstruction;  
+    private Instruction? _currentInstruction;
 
 
     private double _durationOfSingleCycle => 4000 / FrequencyInKhz;
@@ -107,49 +107,41 @@ public class Pic : IDisposable
             Memory.MCLR();
         }
 
-        double cyclesToGet18Ms = 18000 / _durationOfSingleCycle;
         if (!IsSleeping) // STATUS<3>: PD (Check if Pic is sleeping)
         {
             // PD = 1 --> Not sleeping
 
-            currentInstruction = ProgramMemory[ProgramCounter];
-            EEPROM.CheckInstruction(currentInstruction);
-            if (currentInstruction.Execute() == 1)
+            _currentInstruction = ProgramMemory[ProgramCounter];
+            EEPROM.CheckInstruction(_currentInstruction);
+            _currentInstruction.Execute();
+            if (_currentInstruction.CycleTwo)
             {
-                currentInstruction.CycleTwo = false;
+                _currentInstruction.Execute();
+                Cycle();
+                if (WDTE)
+                {
+                    _watchdogCycleCounter++; // Increase Watchdog Counter
+                }
+
+                _currentInstruction.CycleTwo = false;
             }
 
             _serialHandler?.Write();
 
-            if (_watchdogCycleCounter > cyclesToGet18Ms)
-            {
-                _watchdogCycleCounter = 0;
-                Scaler--;
-                if (Scaler == 0)
-                {
-                    ResetScaler();
-                    Memory.WatchDogReset();
-                }
-            }
+            wdtStep();
         }
         else // PD = 0 --> Sleeping
         {
-            if (_watchdogCycleCounter > cyclesToGet18Ms)
-            {
-                _watchdogCycleCounter = 0;
-                Scaler--; // Postscaler
-                if (Scaler == 0)
-                {
-                    ResetScaler();
-                    Memory.WatchDogReset();
-                }
-            }
+            wdtStep();
         }
 
         EEPROM.CompleteWrite();
 
         Cycle();
-        _watchdogCycleCounter++; // Increase Watchdog Counter
+        if (WDTE)
+        {
+            _watchdogCycleCounter++; // Increase Watchdog Counter
+        }
     }
 
     #endregion execution
@@ -167,6 +159,31 @@ public class Pic : IDisposable
 
         BreakPoints = new bool[ProgramMemory.Length];
         ProgramLoaded = true;
+    }
+
+    private void wdtStep()
+    {
+        if (WDTE)
+        {
+            double cyclesToGet18Ms = 18000 / _durationOfSingleCycle;
+            if (_watchdogCycleCounter > cyclesToGet18Ms)
+            {
+                _watchdogCycleCounter = 0;
+                if (Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3> prescaler is assgined to WDT?
+                {
+                    Scaler--;
+                    if (Scaler == 0)
+                    {
+                        ResetScaler();
+                        Memory.WatchDogReset();
+                    }
+                }
+                else
+                {
+                    Memory.WatchDogReset();
+                }
+            }
+        }
     }
 
     #region timer
@@ -242,7 +259,7 @@ public class Pic : IDisposable
             {
                 // Interrupt is NOT masked
                 Interrupt();
-                Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(2)); // Set Flag that TMR 0 Interrupt occured
+                Memory.WriteRegister(0x0B, Memory.ReadRegister(0x0B).SetBitTo1(2)); // T0IF INTCON<4>: Set Flag that TMR0 interrupt occured
             }
         }
 
@@ -251,15 +268,19 @@ public class Pic : IDisposable
 
     public void Interrupt()
     {
-        if (currentInstruction != null && currentInstruction.CycleTwo)
+        if (Memory.ReadRegister(0x0B).IsBitSet(7)) // GIE bit INTCON<7>
         {
-            currentInstruction.CycleTwo = false;
+            if (_currentInstruction != null && _currentInstruction.CycleTwo)
+            {
+                _currentInstruction.CycleTwo = false;
+            }
+
+            Stack.Push(ProgramCounter);
+            ProgramCounter = 4; // interrupt vector
+            Memory.WriteRegister(0x02, 0b_00000100); // PCL
+            Memory.WriteRegister(0x0A, 0b_00000000); // PCLatch
         }
-        
-        Stack.Push(ProgramCounter);
-        ProgramCounter = 4; // interrupt vector
-        Memory.WriteRegister(0x02, 0b_00000100); // PCL
-        Memory.WriteRegister(0x0A, 0b_00000000); // PCLatch
+        // SLEEP 
     }
 
     public double CalculateRuntime()

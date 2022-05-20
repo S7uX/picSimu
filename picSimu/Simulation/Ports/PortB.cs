@@ -34,7 +34,7 @@ public class PortB : Port
                             Pic.Interrupt();
                             Memory.WriteRegister(0x0B,
                                 Memory.ReadRegister(0x0B)
-                                    .SetBitTo1(1)); //(INTF) Set Flag that RB0/INT Interrupt occured
+                                    .SetBitTo1(1)); // (INTF) Set Flag that RB0/INT Interrupt occured
                         }
                         else if (newValue && !edgeMode) // NTEDG := 0 --> interrupt on rising edge.
                         {
@@ -42,7 +42,7 @@ public class PortB : Port
                             Pic.Interrupt();
                             Memory.WriteRegister(0x0B,
                                 Memory.ReadRegister(0x0B)
-                                    .SetBitTo1(1)); //(INTF) Set Flag that RB0/INT Interrupt occured
+                                    .SetBitTo1(1)); // (INTF) Set Flag that RB0/INT Interrupt occured
                         }
                     }
                 }
@@ -65,7 +65,7 @@ public class PortB : Port
                             Pic.Interrupt();
                             Memory.WriteRegister(0x0B,
                                 Memory.ReadRegister(0x0B)
-                                    .SetBitTo1(0)); //(RBIF) Set Flag that RB Port change Interrupt occured
+                                    .SetBitTo1(0)); // (RBIF) Set Flag that RB Port change Interrupt occured
                         }
                     }
                 }

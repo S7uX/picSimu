@@ -39,17 +39,24 @@ public class Memory
 
     public void WatchDogReset()
     {
-        uint status = ReadRegister(0x03);
+        uint status = 0;
         if (_pic.IsSleeping)
         {
-            status |= 0b_00001000;
+            status = ReadRegister(0x03)
+                .SetBitTo0(4)
+                .SetBitTo1(3); // PD STATUS<3> = 1 for wake up
             _pic.ProgramCounter++;
         }
         else
         {
+            // WDT Time-out: normal operation
             AllOtherResets();
-            status |= 0b_00001000;
+            status = ReadRegister(0x03)
+                .SetBitTo0(4)
+                .SetBitTo1(3);
+            _pic.EEPROM.Terminate();
         }
+
         WriteRegister(0x03, status); // STATUS
     }
 
@@ -63,9 +70,11 @@ public class Memory
         {
             uint status = ReadRegister(0x03)
                 .SetBitTo1(4) // TO
-                .SetBitTo0(3); // PD
+                .SetBitTo1(3); // PD STATUS<3> = 1 for wake up
             WriteRegister(0x03, status); // STATUS
         }
+
+        _pic.EEPROM.Terminate();
     }
 
     public void AllOtherResets()
@@ -74,8 +83,9 @@ public class Memory
         uint status = ReadRegister(0x03) & 0b_0001_1111;
         WriteRegister(0x03, status); // STATUS
         WriteRegister(0x0A, 0); // PCLATH
+        // INTCON
         uint intcon = ReadRegister(0x0B) & 0b_0000_0001;
-        WriteRegister(0x02, intcon); // INTCON
+        WriteRegister(0x02, intcon);
         WriteRegister(0x81, 0b_1111_1111); // OPTION
         WriteRegister(0x85, 0b_00011111); // TRISA
         WriteRegister(0x86, 0b_11111111); // TRISB
