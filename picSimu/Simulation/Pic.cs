@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using picSimu.Simulation.Instructions;
+using picSimu.Simulation.Instructions.ControlInstructions;
 
 namespace picSimu.Simulation;
 
@@ -31,14 +32,14 @@ public class Pic : IDisposable
     public uint Scaler = 0;
     public double FrequencyInKhz = 4000;
     private SerialHandler? _serialHandler;
-    private uint _watchdogCycleCounter = 0;
+    public uint WatchdogCycles = 0;
 
-    public bool IsSleeping => !Memory.ReadRegister(0x83).IsBitSet(0x3); // STATUS<3> PD: low active --> 0 = sleep
+    public bool IsSleeping = false;
     private Instruction? _currentInstruction;
 
 
     private double _durationOfSingleCycle => 4000 / FrequencyInKhz;
-    public int WatchdogTime => (int) (_watchdogCycleCounter * _durationOfSingleCycle);
+    public int WatchdogTime => (int) (WatchdogCycles * _durationOfSingleCycle);
 
     public EEPROM EEPROM;
 
@@ -113,35 +114,34 @@ public class Pic : IDisposable
 
             _currentInstruction = ProgramMemory[ProgramCounter];
             EEPROM.CheckInstruction(_currentInstruction);
-            _currentInstruction.Execute();
-            if (_currentInstruction.CycleTwo)
+            if (_currentInstruction == null)
+            {
+                IncreaseProgramCounter(); // NOP
+            }
+            else
             {
                 _currentInstruction.Execute();
-                Cycle();
-                if (WDTE)
+                if (_currentInstruction.CycleTwo)
                 {
-                    _watchdogCycleCounter++; // Increase Watchdog Counter
-                }
+                    _currentInstruction.Execute();
+                    Cycle();
 
-                _currentInstruction.CycleTwo = false;
+                    _currentInstruction.CycleTwo = false;
+                }
             }
 
             _serialHandler?.Write();
-
-            wdtStep();
         }
         else // PD = 0 --> Sleeping
         {
-            wdtStep();
+            // do nothing
         }
+
 
         EEPROM.CompleteWrite();
 
         Cycle();
-        if (WDTE)
-        {
-            _watchdogCycleCounter++; // Increase Watchdog Counter
-        }
+        _wdtCheck();
     }
 
     #endregion execution
@@ -161,15 +161,15 @@ public class Pic : IDisposable
         ProgramLoaded = true;
     }
 
-    private void wdtStep()
+    private void _wdtCheck()
     {
         if (WDTE)
         {
             double cyclesToGet18Ms = 18000 / _durationOfSingleCycle;
-            if (_watchdogCycleCounter > cyclesToGet18Ms)
+            if (WatchdogCycles > cyclesToGet18Ms)
             {
-                _watchdogCycleCounter = 0;
-                if (Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3> prescaler is assgined to WDT?
+                WatchdogCycles = 0;
+                if (Memory.ReadRegister(0x81).IsBitSet(3)) // OPTION<3> prescaler assgined to WDT?
                 {
                     Scaler--;
                     if (Scaler == 0)
@@ -278,9 +278,19 @@ public class Pic : IDisposable
             Stack.Push(ProgramCounter);
             ProgramCounter = 4; // interrupt vector
             Memory.WriteRegister(0x02, 0b_00000100); // PCL
-            Memory.WriteRegister(0x0A, 0b_00000000); // PCLatch
+            Memory.WriteRegister(0x0A, 0b_00000000); // PCLATH
         }
-        // SLEEP 
+        else
+        {
+            if (IsSleeping)
+            {
+                Memory.WriteRegister(0x03, Memory.ReadRegister(0x03)
+                    .SetBitTo1(4) // TO
+                    .SetBitTo0(3)
+                ); // PD STATUS<3>); // STATUS
+                IsSleeping = false;
+            }
+        }
     }
 
     public double CalculateRuntime()
@@ -301,6 +311,11 @@ public class Pic : IDisposable
         if (!Memory.ReadRegister(0x81).IsBitSet(5)) // OPTION_REG<5> - Timer mode is selected by clearing the T0CS bit
         {
             TimerStep();
+        }
+
+        if (WDTE)
+        {
+            WatchdogCycles++; // Increase Watchdog Counter
         }
     }
 

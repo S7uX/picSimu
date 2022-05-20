@@ -14,6 +14,7 @@
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="AutoStepSimulation">Auto Step</button>
     <button class="btn btn-primary btn-sm" disabled="@(!isRunning)" @onclick="StopSimulation">Stop</button>
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="ResetSimulation">Reset Simulation</button>
+    <button class="btn btn-secondary btn-sm" @onclick="() => _pic.Memory.MCLR()">MCLR</button>
     <b style="margin-left: auto">picSimu</b>
 </div>
 
@@ -62,10 +63,12 @@
             <b style="color: #268bd2">Running</b>
             <div class="dot-flashing"></div>
         </div>
-        <label style="margin-left: auto" class="sfr-label">PC: </label>
+        <div style="margin-left: auto"></div>
+        <label class="sfr-label">PC: </label>
+
         <label style="width: 2.6em">@_pic.ProgramCounter.ToString("X3")h</label>
     </div>
-    <div id="code-block" class="code-block d-flex overflow-auto flex-row @(_pic.IsRunning? "code-block-disabled" : "")">
+    <div id="code-block" class="code-block d-flex overflow-auto flex-row @(_pic.IsRunning ? "code-block-disabled" : "")">
         @{
             int rowCount = Regex.Matches(_sourceCode, "$", RegexOptions.Multiline).Count;
             <div class="d-flex code-block-breakpoints">
@@ -277,7 +280,7 @@
                     </tr>
                     </tbody>
                 </table>
-                
+
                 <div></div>
 
             </div>

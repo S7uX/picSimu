@@ -44,8 +44,9 @@ public class Memory
         {
             status = ReadRegister(0x03)
                 .SetBitTo0(4)
-                .SetBitTo1(3); // PD STATUS<3> = 1 for wake up
+                .SetBitTo0(3); // PD STATUS<3>
             _pic.ProgramCounter++;
+            _pic.IsSleeping = false;
         }
         else
         {
@@ -70,8 +71,9 @@ public class Memory
         {
             uint status = ReadRegister(0x03)
                 .SetBitTo1(4) // TO
-                .SetBitTo1(3); // PD STATUS<3> = 1 for wake up
+                .SetBitTo0(3); // PD STATUS<3>
             WriteRegister(0x03, status); // STATUS
+            _pic.IsSleeping = false;
         }
 
         _pic.EEPROM.Terminate();

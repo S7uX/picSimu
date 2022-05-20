@@ -13,9 +13,13 @@ public class CLRWDT : ControlInstruction
         value.SetBitTo1(3); // 1 → PD
         value.SetBitTo1(4); // 1 → TO
         Pic.Memory.WriteRegister(0x83, value);
-        
-        Pic.Scaler = 0; // 0 → WDT prescaler
+
+        if (Memory.ReadRegister(0x81).IsBitSet(3))
+        {
+            Pic.ResetScaler();
+        } // OPTION<3> prescaler assgined to WDT?
         Pic.Memory.WriteRegister(0x01, 0x00); // 00h → WDT
+        Pic.WatchdogCycles = 0;
         return 0;
     }
 }
