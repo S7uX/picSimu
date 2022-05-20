@@ -9,7 +9,7 @@ public class Register
     private Memory _memory;
     public readonly uint Address;
     private static Regex regex = new Regex("^[a-fA-F0-9]{2}$", RegexOptions.Compiled);
-    
+
     public Register(Memory memory, uint address)
     {
         _memory = memory;
@@ -26,8 +26,8 @@ public class Register
                 _memory.WriteRegister(Address, Convert.ToUInt32(value, 16));
             }
         }
-    }    
-    
+    }
+
     public string ToolTip => _memory.Registers[Address].ToTooltipString();
 }
 
@@ -42,7 +42,6 @@ public class RegisterPair
         this.register1 = register1;
     }
 }
-
 
 public class RegisterBit
 {

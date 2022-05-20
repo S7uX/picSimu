@@ -18,6 +18,7 @@ public class CLRWDT : ControlInstruction
         {
             Pic.ResetScaler();
         } // OPTION<3> prescaler assgined to WDT?
+
         Pic.Memory.WriteRegister(0x01, 0x00); // 00h → WDT
         Pic.WatchdogCycles = 0;
         return 0;

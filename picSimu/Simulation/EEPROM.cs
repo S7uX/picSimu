@@ -171,7 +171,6 @@ public class EEPROM
                 _pic.Interrupt();
             }
         }
-        
     }
 
     public void Terminate()

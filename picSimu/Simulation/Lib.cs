@@ -67,7 +67,7 @@ public static class Lib
         {
             return false;
         }
-        
+
         return obj.GetType() == comparisonObject.GetType();
     }
 }

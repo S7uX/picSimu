@@ -28,7 +28,7 @@ public partial class Index : ComponentBase
         _registerBindings = new RegisterPair[Memory.MEMORY_LENGTH / 2];
         _createRegisterBindings();
     }
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)

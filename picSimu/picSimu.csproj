@@ -7,76 +7,76 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="doc\gui" />
-      <Folder Include="tree-sitter-pic\node_modules\.bin" />
+        <Folder Include="doc\gui"/>
+        <Folder Include="tree-sitter-pic\node_modules\.bin"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="tree-sitter-pic\node_modules\.package-lock.json" />
-      <Content Include="tree-sitter-pic\node_modules\nan\CHANGELOG.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\asyncworker.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\buffers.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\callback.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\converters.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\errors.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\json.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\maybe_types.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\methods.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\new.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\node_misc.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\object_wrappers.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\persistent.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\scopes.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\script.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\string_bytes.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\v8_internals.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\doc\v8_misc.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\include_dirs.js" />
-      <Content Include="tree-sitter-pic\node_modules\nan\LICENSE.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_callbacks.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_callbacks_12_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_callbacks_pre_12_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_converters.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_converters_43_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_converters_pre_43_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_define_own_property_helper.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_implementation_12_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_implementation_pre_12_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_json.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_maybe_43_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_maybe_pre_43_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_new.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_object_wrap.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_persistent_12_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_persistent_pre_12_inl.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_private.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_scriptorigin.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_string_bytes.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_typedarray_contents.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\nan_weak.h" />
-      <Content Include="tree-sitter-pic\node_modules\nan\package.json" />
-      <Content Include="tree-sitter-pic\node_modules\nan\README.md" />
-      <Content Include="tree-sitter-pic\node_modules\nan\tools\1to2.js" />
-      <Content Include="tree-sitter-pic\node_modules\nan\tools\package.json" />
-      <Content Include="tree-sitter-pic\node_modules\nan\tools\README.md" />
-      <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\cli.js" />
-      <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\install.js" />
-      <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\LICENSE" />
-      <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\package.json" />
-      <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\tree-sitter" />
+        <Content Include="tree-sitter-pic\node_modules\.package-lock.json"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\CHANGELOG.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\asyncworker.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\buffers.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\callback.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\converters.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\errors.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\json.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\maybe_types.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\methods.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\new.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\node_misc.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\object_wrappers.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\persistent.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\scopes.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\script.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\string_bytes.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\v8_internals.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\doc\v8_misc.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\include_dirs.js"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\LICENSE.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_callbacks.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_callbacks_12_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_callbacks_pre_12_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_converters.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_converters_43_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_converters_pre_43_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_define_own_property_helper.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_implementation_12_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_implementation_pre_12_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_json.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_maybe_43_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_maybe_pre_43_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_new.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_object_wrap.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_persistent_12_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_persistent_pre_12_inl.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_private.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_scriptorigin.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_string_bytes.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_typedarray_contents.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\nan_weak.h"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\package.json"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\README.md"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\tools\1to2.js"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\tools\package.json"/>
+        <Content Include="tree-sitter-pic\node_modules\nan\tools\README.md"/>
+        <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\cli.js"/>
+        <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\install.js"/>
+        <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\LICENSE"/>
+        <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\package.json"/>
+        <Content Include="tree-sitter-pic\node_modules\tree-sitter-cli\tree-sitter"/>
     </ItemGroup>
 
     <ItemGroup>
-      <TypeScriptCompile Include="tree-sitter-pic\node_modules\tree-sitter-cli\dsl.d.ts" />
+        <TypeScriptCompile Include="tree-sitter-pic\node_modules\tree-sitter-cli\dsl.d.ts"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="wwwroot\wasm\tree-sitter-pic.wasm" />
+        <None Include="wwwroot\wasm\tree-sitter-pic.wasm"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="System.IO.Ports" Version="6.0.0" />
+        <PackageReference Include="System.IO.Ports" Version="6.0.0"/>
     </ItemGroup>
 
 </Project>

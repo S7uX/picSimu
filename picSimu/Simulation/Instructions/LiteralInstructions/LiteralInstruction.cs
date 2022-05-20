@@ -12,7 +12,7 @@ public abstract class LiteralInstruction : Instruction
     {
         k = Convert.ToUInt16(binaryString.Substring(6, 8), 2);
     }
-    
+
     protected LiteralInstruction(ushort k)
     {
         this.k = k;
