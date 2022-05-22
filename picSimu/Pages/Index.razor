@@ -1,6 +1,5 @@
 @page "/"
 @using picSimu.Simulation
-@using System.Text.RegularExpressions
 @implements IAsyncDisposable
 @inject IJSRuntime Js
 
@@ -8,7 +7,7 @@
 <PageTitle>Index</PageTitle>
 
 <div class="top-row px-4">
-    <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple disabled="@(_isRunning)"/>
+    <input id="lst-file-input" type="file" style="width: 30em" class="form-control form-control-sm" multiple disabled="@(_isRunning)"/>
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="RunSimulation">Run</button>
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="SimulationStep">Step</button>
     <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="AutoStepSimulation">Auto Step</button>
@@ -24,7 +23,7 @@
     <label class="h5 pe-5">SFR + W:</label>
     <div>
         <label class="sfr-label">W: </label>
-        <label title="@_pic.WRegister.ToTooltipString()" class="sfr-value">@_pic.WRegister.ToHexString()</label>
+        <label title="@_pic.WRegister.ToTooltip()" class="sfr-value">@_pic.WRegister.ToHexString()</label>
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCL: </label>
@@ -59,28 +58,32 @@
 <div id="lst-container" style="flex-grow: 2" class="d-flex flex-column overflow-hidden">
     <div class="d-flex flex-row align-items-baseline">
         <label style="margin-right: 2em" class="h5">LST</label>
-        <div class="d-flex flex-row align-items-center @(!_pic.IsRunning ? "visually-hidden" : "")">
+        <div style="margin-left: 7em;" class="d-flex flex-row align-items-center @(!_run ? "visually-hidden" : "")">
             <b style="color: #268bd2">Running</b>
             <div class="dot-flashing"></div>
+        </div>
+        <div class="sleeping @(!_pic.IsSleeping ? "visually-hidden" : "")">
+          <span>z</span>
+          <span>z</span>
+          <span>z</span>
         </div>
         <div style="margin-left: auto"></div>
         <label class="sfr-label">PC: </label>
 
-        <label style="width: 2.6em">@_pic.ProgramCounter.ToString("X3")h</label>
+        <label style="width: 2.6em" title="@(_pic.ProgramCounter)d">@_pic.ProgramCounter.ToString("X3")h</label>
     </div>
-    <div id="code-block" class="code-block d-flex overflow-auto flex-row @(_pic.IsRunning ? "code-block-disabled" : "")">
+    <div id="code-block" class="code-block d-flex overflow-auto flex-row @(_run ? "code-block-disabled" : "")">
         @{
-            int rowCount = Regex.Matches(_sourceCode, "$", RegexOptions.Multiline).Count;
             <div class="d-flex code-block-breakpoints">
                 <pre id="breakpoint-pre">
-            @if (_sourceCode != "")
+            @if (_instructionCodes != null)
             {
                 int y = 0;
-                @for (int i = 0; i < rowCount - 1; i++)
+                @for (int i = 0; i <= _rowCount - 1; i++)
                 {
                     @if (_instructionRows.Contains(i))
                     {
-                        Breakpoint breakpoint = _pic.GetBreakPoint(y);
+                        Breakpoint breakpoint = _pic.GetBreakPoint(_instructionCodes[y].ProgramCounter);
                         <BootstrapCheckbox @bind-Value="breakpoint.Value"></BootstrapCheckbox>
                         y++;
                     }
@@ -129,12 +132,12 @@
                         uint value1 = _pic.EEPROM.Cells[i];
                         uint value2 = _pic.EEPROM.Cells[y];
                         <tr>
-                            <td title="@i.ToTooltipString()">@i.ToHexString()</td>
-                            <td title="@value1.ToTooltipString()">
+                            <td title="@i.ToTooltip()">@i.ToHexString()</td>
+                            <td title="@value1.ToTooltip()">
                                 @value1.ToHexString()
                             </td>
-                            <td title="@y.ToTooltipString()">@y.ToHexString()</td>
-                            <td title="@value2.ToTooltipString()">
+                            <td title="@y.ToTooltip()">@y.ToHexString()</td>
+                            <td title="@value2.ToTooltip()">
                                 @value2.ToHexString()
                             </td>
                         </tr>
@@ -170,11 +173,11 @@
                     <tbody>
                     <Virtualize Items="@_registerBindings" Context="registerPair">
                         <tr>
-                            <td title="@registerPair.register0.Address">@registerPair.register0.Address.ToHexString()</td>
+                            <td title="@(registerPair.register0.Address)d">@registerPair.register0.Address.ToHexString()</td>
                             <td class="hex-input">
                                 <HexInput @bind-Value="@registerPair.register0"></HexInput>
                             </td>
-                            <td title="@registerPair.register1.Address">@registerPair.register1.Address.ToHexString()</td>
+                            <td title="@(registerPair.register1.Address)d">@registerPair.register1.Address.ToHexString()</td>
                             <td class="hex-input">
                                 <HexInput @bind-Value="@registerPair.register1"></HexInput>
                             </td>
@@ -216,11 +219,12 @@
                     <table id="timing-info">
                         <tr>
                             <th>Cycles: </th>
-                            <td>@_pic.Cycles</td>
+                            <td colspan="2" title="@_pic.Cycles">@_pic.Cycles</td>
                         </tr>
                         <tr>
-                            <th>Runtime: </th>
-                            <td>@_pic.CalculateRuntime() µs</td>
+                            <th>Runtime:</th>
+                            <td title="@_pic.CalculateRuntime().TimeTooltip()"> @($" {_pic.CalculateRuntime()} ") </td>
+                            <td style="width: 1.3em;">µs</td>
                         </tr>
                     </table>
                 </div>
@@ -297,9 +301,10 @@
             @{
                 @for (int i = 0; i < Stack.Length; i++)
                 {
+                    uint address = _pic.Stack.Get(i);
                     <tr class='@(_pic.Stack.Pointer % Stack.Length == i ? "stack-highlight" : "")'>
                         <td>@i</td>
-                        <td>@_pic.Stack.Get(i).ToHexString()</td>
+                        <td title="@(address)d">@(address.ToString("X3"))h</td>
                     </tr>
                 }
             }

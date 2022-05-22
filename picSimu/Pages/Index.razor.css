@@ -128,6 +128,10 @@
     border: none;
 }
 
+#register-table td, #register-table th {
+    text-align: center;
+}
+
 .register-table-border-1, #register-table td:nth-child(2) {
     border-style: groove;
     border-right: rgb(0, 0, 0, .25);
@@ -239,4 +243,23 @@
     justify-content: space-around;
     flex: 1;
     margin-bottom: 0.3ex;
+}
+
+/*#timing-info td{*/
+/*    text-overflow: ellipsis;*/
+/*    max-width: 5em;*/
+/*    white-space: nowrap;*/
+/*    display: table-cell;*/
+/*    overflow: hidden;*/
+/*    direction: rtl;*/
+/*    text-align: left;*/
+/*}*/
+
+#timing-info td{
+    text-overflow: ellipsis;
+    width: 6em;
+    max-width: 6em;
+    white-space: pre;
+    overflow: hidden;
+    text-align: end;
 }

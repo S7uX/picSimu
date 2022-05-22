@@ -97,21 +97,28 @@ public class EEPROM
         }
     }
 
-    public void CheckInstruction(Instruction instruction)
+    public void CheckInstruction(Instruction? instruction)
     {
-        if (_nextRequiredInstructionForWrite == _requiredInstructionSequenceForWrite.Length)
+        if (instruction == null)
         {
             _nextRequiredInstructionForWrite = 0;
-        }
-
-        Instruction expected = _requiredInstructionSequenceForWrite[_nextRequiredInstructionForWrite];
-        if (instruction.Equals(expected))
-        {
-            _nextRequiredInstructionForWrite++;
         }
         else
         {
-            _nextRequiredInstructionForWrite = 0;
+            if (_nextRequiredInstructionForWrite == _requiredInstructionSequenceForWrite.Length)
+            {
+                _nextRequiredInstructionForWrite = 0;
+            }
+
+            Instruction expected = _requiredInstructionSequenceForWrite[_nextRequiredInstructionForWrite];
+            if (instruction.Equals(expected))
+            {
+                _nextRequiredInstructionForWrite++;
+            }
+            else
+            {
+                _nextRequiredInstructionForWrite = 0;
+            }
         }
     }
 

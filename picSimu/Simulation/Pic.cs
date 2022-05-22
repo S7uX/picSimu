@@ -22,7 +22,8 @@ public class Pic : IDisposable
         set
         {
             value &= 0b_1_1111_1111_1111;
-            Memory.Pcl = value % (uint) ProgramMemoryLength;
+            value %= (uint) ProgramMemoryLength;
+            Memory.Pcl = value;
             _programCounter = value; // clear last 8 bits
         }
     }
@@ -57,7 +58,7 @@ public class Pic : IDisposable
     }
 
     public CancellationTokenSource? PicRun;
-    public bool IsRunning => PicRun is not null;
+    public bool RunTaskRunning => PicRun is not null;
 
 
     #region execution
@@ -75,7 +76,7 @@ public class Pic : IDisposable
                 bool first = true;
                 while (true)
                 {
-                    if ((BreakPoints[ProgramCounter] || cT.IsCancellationRequested) && !first)
+                    if (cT.IsCancellationRequested || (BreakPoints[ProgramCounter] && !first))
                     {
                         break;
                     }
@@ -146,14 +147,17 @@ public class Pic : IDisposable
     #endregion execution
 
 
-    public void LoadInstructionCodes(string[] hexStrings)
+    public void LoadInstructionCodes(InstructionCode[] instructionCodes)
     {
-        int i = 0;
         ProgramMemory = new Instruction[ProgramMemoryLength];
-        foreach (string hexString in hexStrings)
+
+        foreach (InstructionCode instructionCode in instructionCodes)
         {
-            ProgramMemory[i] = InstructionDecoder.Decode(hexString, this);
-            i++;
+            int programCounter = instructionCode.ProgramCounter;
+            if (programCounter < ProgramMemoryLength)
+            {
+                ProgramMemory[programCounter] = InstructionDecoder.Decode(instructionCode.Opcode.ToString("X4"), this);
+            }
         }
 
         BreakPoints = new bool[ProgramMemory.Length];

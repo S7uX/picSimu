@@ -28,7 +28,7 @@ public class Register
         }
     }
 
-    public string ToolTip => _memory.Registers[Address].ToTooltipString();
+    public string ToolTip => _memory.Registers[Address].ToTooltip();
 }
 
 public class RegisterPair
