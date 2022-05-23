@@ -2,7 +2,7 @@
 
 public abstract class JumpInstruction : Instruction
 {
-    public ushort k { get; set; }
+    protected ushort k { get; set; }
 
     protected void SetProgramCounter(uint jumpAddressOpcode)
     {

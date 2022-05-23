@@ -1,19 +1,22 @@
-<input type="text" maxlength="2" class="@Class" title="@Value.ToolTip" 
-       value="@_value" @oninput="@OnInputChange" @onchange="@OnChange">
+<input type="text" maxlength="2" class="@Class" title="@Value?.ToolTip"
+       value="@_textFieldString" @oninput="@OnInputChange" @onchange="@OnChange">
 
 @code {
-    private string _value { get; set; }
+    private string _textFieldString { get; set; } = "00";
 
-    private Register _register;
-    
+    private Register? _register;
+
     [Parameter]
-    public Register Value
+    public Register? Value
     {
         get => _register;
         set
         {
             _register = value;
-            _value = value.Value;
+            if (value != null)
+            {
+                _textFieldString = value.Value;
+            }
         }
     }
 
@@ -21,18 +24,28 @@
     public string Class { get; set; } = "";
 
     [Parameter]
-    public EventCallback<Register> ValueChanged { get; set; }
+    public EventCallback<Register?> ValueChanged { get; set; }
 
-    private async Task OnInputChange(ChangeEventArgs args)
+    private Task OnInputChange(ChangeEventArgs args)
     {
-        _value = (string) args.Value;
+        if (args.Value != null)
+        {
+            _textFieldString = (string) args.Value;
+        }
+        return Task.CompletedTask;
     }
 
     private async Task OnChange(ChangeEventArgs args)
     {
-        Value.Value = (string) args.Value;
-        _value = Value.Value;
-        await ValueChanged.InvokeAsync(Value);
+        if (args.Value != null)
+        {
+            if (Value != null)
+            {
+                Value.Value = (string) args.Value;
+                _textFieldString = Value.Value;
+                await ValueChanged.InvokeAsync(Value);
+            }
+        }
     }
 
 }

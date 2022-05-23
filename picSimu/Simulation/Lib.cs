@@ -56,18 +56,24 @@ public static class Lib
         return value.ToString("X2") + "h";
     }
 
-    public static string ToTooltipString(this uint value)
+    public static string ToTooltip(this uint value)
     {
-        return value + "\n" + Convert.ToString(value, 2).PadLeft(8, '0');
+        return value + "d" + "\n" + Convert.ToString(value, 2).PadLeft(8, '0') + "b";
+    }
+    
+    public static string TimeTooltip(this double µs)
+    {
+        double ms = µs / 1000;
+        return $"{µs} µs\n{ms.ToString("F0")} ms\n{(ms / 1000).ToString("F2")} s";
     }
 
-    public static bool SameType(object obj, object? comparsionObject)
+    public static bool SameType(object obj, object? comparisonObject)
     {
-        if (comparsionObject == null)
+        if (comparisonObject == null)
         {
             return false;
         }
-        
-        return obj.GetType() == comparsionObject.GetType();
+
+        return obj.GetType() == comparisonObject.GetType();
     }
 }

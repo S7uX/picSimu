@@ -7,14 +7,14 @@ namespace picSimu.Simulation;
 
 public class EEPROM
 {
-    public const int Length = 64;
-    public readonly uint[] Cells = new uint[Length];
-    private Pic _pic;
-    private Memory _memory;
+    public const int LENGTH = 64;
+    public readonly uint[] Cells = new uint[LENGTH];
+    private readonly Pic _pic;
+    private readonly Memory _memory;
     private bool _isWriting = false;
     private double _writeStartingValue = 0;
 
-    private static readonly Instruction[] RequiredInstructionSequenceForWrite =
+    private static readonly Instruction[] _requiredInstructionSequenceForWrite =
     {
         new MOVWF(9, 1), // EECON2
         new MOVLW(0xAA),
@@ -23,7 +23,7 @@ public class EEPROM
     };
 
     private int _nextRequiredInstructionForWrite = 0;
-    private bool _sequenceOccurred => _nextRequiredInstructionForWrite == RequiredInstructionSequenceForWrite.Length;
+    private bool _sequenceOccurred => _nextRequiredInstructionForWrite == _requiredInstructionSequenceForWrite.Length;
 
 
     public EEPROM(Pic pic)
@@ -97,21 +97,28 @@ public class EEPROM
         }
     }
 
-    public void CheckInstruction(Instruction instruction)
+    public void CheckInstruction(Instruction? instruction)
     {
-        if (_nextRequiredInstructionForWrite == RequiredInstructionSequenceForWrite.Length)
+        if (instruction == null)
         {
             _nextRequiredInstructionForWrite = 0;
-        }
-
-        Instruction expected = RequiredInstructionSequenceForWrite[_nextRequiredInstructionForWrite];
-        if (instruction.Equals(expected))
-        {
-            _nextRequiredInstructionForWrite++;
         }
         else
         {
-            _nextRequiredInstructionForWrite = 0;
+            if (_nextRequiredInstructionForWrite == _requiredInstructionSequenceForWrite.Length)
+            {
+                _nextRequiredInstructionForWrite = 0;
+            }
+
+            Instruction expected = _requiredInstructionSequenceForWrite[_nextRequiredInstructionForWrite];
+            if (instruction.Equals(expected))
+            {
+                _nextRequiredInstructionForWrite++;
+            }
+            else
+            {
+                _nextRequiredInstructionForWrite = 0;
+            }
         }
     }
 
@@ -171,7 +178,6 @@ public class EEPROM
                 _pic.Interrupt();
             }
         }
-        
     }
 
     public void Terminate()

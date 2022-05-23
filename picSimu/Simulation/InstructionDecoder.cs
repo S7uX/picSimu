@@ -11,7 +11,7 @@ public static class InstructionDecoder
 {
     public static Instruction Decode(string instructionHexString, Pic pic)
     {
-        string binaryString = String.Join(String.Empty,
+        string binaryString = string.Join(string.Empty,
             instructionHexString.Select(c => Convert.ToString(Convert.ToInt32
                 (c.ToString(), 16), 2).PadLeft(4, '0'))
         );
@@ -91,6 +91,6 @@ public static class InstructionDecoder
 
 
         // ERROR
-        throw new ArgumentOutOfRangeException();
+        throw new Exception("Cannot decode opcode: " + binaryString);
     }
 }

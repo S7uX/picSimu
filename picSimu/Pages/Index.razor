@@ -1,6 +1,5 @@
 @page "/"
 @using picSimu.Simulation
-@using System.Text.RegularExpressions
 @implements IAsyncDisposable
 @inject IJSRuntime Js
 
@@ -8,23 +7,23 @@
 <PageTitle>Index</PageTitle>
 
 <div class="top-row px-4">
-    <InputFile style="width: 30em" class="form-control form-control-sm" OnChange="@LoadFiles" multiple disabled="@(isRunning)"/>
-    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="RunSimulation">Run</button>
-    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="SimulationStep">Step</button>
-    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="AutoStepSimulation">Auto Step</button>
-    <button class="btn btn-primary btn-sm" disabled="@(!isRunning)" @onclick="StopSimulation">Stop</button>
-    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || isRunning)" @onclick="ResetSimulation">Reset Simulation</button>
-    <button class="btn btn-secondary btn-sm" @onclick="() => _pic.Memory.MCLR()">MCLR</button>
+    <input id="lst-file-input" type="file" style="width: 30em" class="form-control form-control-sm" multiple disabled="@(_isRunning)"/>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="RunSimulation">Run</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="SimulationStep">Step</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="AutoStepSimulation">Auto Step</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_isRunning)" @onclick="StopSimulation">Stop</button>
+    <button class="btn btn-primary btn-sm" disabled="@(!_pic.ProgramLoaded || _isRunning)" @onclick="ResetSimulation">Reset Simulation</button>
+    <button class="btn btn-secondary btn-sm" @onclick="() => _pic.Memory.MCLR()" disabled="@(!_pic.ProgramLoaded)">MCLR</button>
     <b style="margin-left: auto">picSimu</b>
 </div>
 
 <div class="content">
 
-<fieldset id="sfr-w" class="d-flex flex-row justify-content-between" disabled="@isRunning">
+<fieldset id="sfr-w" class="d-flex flex-row justify-content-between" disabled="@_isRunning">
     <label class="h5 pe-5">SFR + W:</label>
     <div>
         <label class="sfr-label">W: </label>
-        <label title="@_pic.WRegister.ToTooltipString()" class="sfr-value">@_pic.WRegister.ToHexString()</label>
+        <label title="@_pic.WRegister.ToTooltip()" class="sfr-value">@_pic.WRegister.ToHexString()</label>
     </div>
     <div class="hex-input">
         <label class="sfr-label">PCL: </label>
@@ -52,35 +51,39 @@
     </div>
 </fieldset>
 
-<hr class="my-1">
+<hr style="margin-top: 0; margin-bottom: .25rem">
 
-<div style="flex: 1; overflow-x: auto" class="d-flex flex-row pt-2">
+<div class="main-area">
 
 <div id="lst-container" style="flex-grow: 2" class="d-flex flex-column overflow-hidden">
     <div class="d-flex flex-row align-items-baseline">
         <label style="margin-right: 2em" class="h5">LST</label>
-        <div class="d-flex flex-row align-items-center @(!_pic.IsRunning ? "visually-hidden" : "")">
+        <div style="margin-left: 7em;" class="d-flex flex-row align-items-center @(!_run ? "visually-hidden" : "")">
             <b style="color: #268bd2">Running</b>
             <div class="dot-flashing"></div>
+        </div>
+        <div class="sleeping @(!_pic.IsSleeping ? "visually-hidden" : "")">
+          <span>z</span>
+          <span>z</span>
+          <span>z</span>
         </div>
         <div style="margin-left: auto"></div>
         <label class="sfr-label">PC: </label>
 
-        <label style="width: 2.6em">@_pic.ProgramCounter.ToString("X3")h</label>
+        <label style="width: 2.6em" title="@(_pic.ProgramCounter)d">@_pic.ProgramCounter.ToString("X3")h</label>
     </div>
-    <div id="code-block" class="code-block d-flex overflow-auto flex-row @(_pic.IsRunning ? "code-block-disabled" : "")">
+    <div id="code-block" class="code-block d-flex overflow-auto flex-row @(_run ? "code-block-disabled" : "")">
         @{
-            int rowCount = Regex.Matches(_sourceCode, "$", RegexOptions.Multiline).Count;
             <div class="d-flex code-block-breakpoints">
                 <pre id="breakpoint-pre">
-            @if (_sourceCode != "")
+            @if (_instructionCodes != null)
             {
                 int y = 0;
-                @for (int i = 0; i < rowCount - 1; i++)
+                @for (int i = 0; i <= _rowCount - 1; i++)
                 {
                     @if (_instructionRows.Contains(i))
                     {
-                        Breakpoint breakpoint = _pic.GetBreakPoint(y);
+                        Breakpoint breakpoint = _pic.GetBreakPoint(_instructionCodes[y].ProgramCounter);
                         <BootstrapCheckbox @bind-Value="breakpoint.Value"></BootstrapCheckbox>
                         y++;
                     }
@@ -103,13 +106,13 @@
 
 <div id="register-table" class="d-flex flex-column">
     @{
-        if (showEEPROM)
+        if (_showEeprom)
         {
             <div class="register-table-top">
                 <div class="d-flex flex-column">
                     <label class="h5">EEPROM</label>
                 </div>
-                <button class="btn btn-secondary btn-sm" @onclick="() => showEEPROM = !showEEPROM">GPR</button>
+                <button class="btn btn-secondary btn-sm" @onclick="() => _showEeprom = !_showEeprom">GPR</button>
             </div>
 
             <div style="overflow-x: hidden;" class="d-flex">
@@ -123,18 +126,18 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @for (uint i = 0; i < EEPROM.Length / 2; i++)
+                    @for (uint i = 0; i < EEPROM.LENGTH / 2; i++)
                     {
-                        uint y = i + EEPROM.Length / 2;
-                        uint value1 = @_pic.EEPROM.Cells[i];
-                        uint value2 = @_pic.EEPROM.Cells[y];
+                        uint y = i + EEPROM.LENGTH / 2;
+                        uint value1 = _pic.EEPROM.Cells[i];
+                        uint value2 = _pic.EEPROM.Cells[y];
                         <tr>
-                            <td title="@i.ToTooltipString()">@i.ToHexString()</td>
-                            <td title="@value1.ToTooltipString()">
+                            <td title="@i.ToTooltip()">@i.ToHexString()</td>
+                            <td title="@value1.ToTooltip()">
                                 @value1.ToHexString()
                             </td>
-                            <td title="@y.ToTooltipString()">@y.ToHexString()</td>
-                            <td title="@value2.ToTooltipString()">
+                            <td title="@y.ToTooltip()">@y.ToHexString()</td>
+                            <td title="@value2.ToTooltip()">
                                 @value2.ToHexString()
                             </td>
                         </tr>
@@ -150,10 +153,10 @@
                     <label class="h5">File Register</label>
                     <label class="h5">(SFR & GPR)</label>
                 </div>
-                <button class="btn btn-secondary btn-sm" @onclick="() => showEEPROM = !showEEPROM">EEPROM</button>
+                <button class="btn btn-secondary btn-sm" @onclick="() => _showEeprom = !_showEeprom">EEPROM</button>
             </div>
 
-            <fieldset style="overflow-x: hidden;" class="d-flex" disabled="@isRunning">
+            <fieldset style="overflow-x: hidden;" class="d-flex" disabled="@_isRunning">
                 <table class="table-sm">
                     <thead>
                     <tr>
@@ -170,11 +173,11 @@
                     <tbody>
                     <Virtualize Items="@_registerBindings" Context="registerPair">
                         <tr>
-                            <td title="@registerPair.register0.Address">@registerPair.register0.Address.ToHexString()</td>
+                            <td title="@(registerPair.register0.Address)d">@registerPair.register0.Address.ToHexString()</td>
                             <td class="hex-input">
                                 <HexInput @bind-Value="@registerPair.register0"></HexInput>
                             </td>
-                            <td title="@registerPair.register1.Address">@registerPair.register1.Address.ToHexString()</td>
+                            <td title="@(registerPair.register1.Address)d">@registerPair.register1.Address.ToHexString()</td>
                             <td class="hex-input">
                                 <HexInput @bind-Value="@registerPair.register1"></HexInput>
                             </td>
@@ -194,67 +197,62 @@
 <div class="d-flex flex-row justify-content-around">
     <div id="timing-control" class="d-flex flex-column">
         <label style="align-self: center;" class="h5">Timing</label>
-        <div class="d-flex flex-row flex-grow-1">
+        <div class="d-flex flex-row flex-grow-1 section">
+
             <div class="d-flex flex-column smaller-text justify-content-between">
 
-                <div id="frequency-control">
-                    <label class="sfr-label">Quartz: </label>
-                    <select type="number" class="form-select-sm" @bind="_pic.FrequencyInKhz">
-                        <option value="32">32 KHz</option>
-                        <option value="100">100 KHz</option>
-                        <option value="500">0.5 MHz</option>
-                        <option value="4000">4 MHz</option>
-                        <option value="8000">8 MHz</option>
-                        <option value="16000">16 MHz</option>
-                        <option value="32000">32 MHz</option>
-                        <option value="64000">64 MHz</option>
-                    </select>
+                <div class="section">
+                    <div id="frequency-control">
+                        <label class="sfr-label">Quartz: </label>
+                        <select type="number" class="form-select-sm" @bind="_pic.FrequencyInKhz">
+                            <option value="32">32 KHz</option>
+                            <option value="100">100 KHz</option>
+                            <option value="500">0.5 MHz</option>
+                            <option value="4000">4 MHz</option>
+                            <option value="8000">8 MHz</option>
+                            <option value="16000">16 MHz</option>
+                            <option value="32000">32 MHz</option>
+                            <option value="64000">64 MHz</option>
+                        </select>
+                    </div>
+
+                    <table id="timing-info">
+                        <tr>
+                            <th>Cycles: </th>
+                            <td colspan="2" title="@_pic.Cycles">@_pic.Cycles</td>
+                        </tr>
+                        <tr>
+                            <th>Runtime:</th>
+                            <td title="@_pic.CalculateRuntime().TimeTooltip()"> @($" {_pic.CalculateRuntime()} ") </td>
+                            <td style="width: 1.3em;">µs</td>
+                        </tr>
+                    </table>
                 </div>
 
-                <table id="timing-info">
-                    <tbody>
-                    <tr>
-                        <th>Cycles: </th>
-                        <td>@_pic.Cycles</td>
-                    </tr>
-                    <tr>
-                        <th>Runtime: </th>
-                        <td>@_pic.CalculateRuntime() µs</td>
-                    </tr>
-                    </tbody>
-                </table>
-
                 <hr>
 
-                <table>
-                    <caption class="h6">Timer0</caption>
-                    <tbody>
-                    <tr>
-                        <td class="hex-input">
-                            <label class="sfr-label">TMR0: </label>
-                            <fieldset disabled="@isRunning">
-                                <HexInput class="form-control" @bind-Value="_registerBindings[1].register0"></HexInput>
-                            </fieldset>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <hr>
-
-                <table>
-                    <caption class="h6">Watchdog</caption>
-                    <tbody>
-                    <tr>
-                        <td>
-                            <label class="sfr-label">WDT: </label> @_pic.WatchdogTime µs
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
                 <div>
-                    <label class="sfr-label">WDTE conf. bit </label>
-                    <BootstrapCheckbox @bind-Value="_pic.WDTE"></BootstrapCheckbox>
+                    <div class="h6">Timer0</div>
+                    <div class="hex-input">
+                        <div class="sfr-label">TMR0: </div>
+                        <fieldset disabled="@_isRunning">
+                            <HexInput class="form-control" @bind-Value="_registerBindings[1].register0"></HexInput>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="section">
+                    <div class="h6">Watchdog</div>
+                    <div>
+                        <label class="sfr-label">WDT: </label> @_pic.WatchdogTime µs
+                    </div>
+                    <div>
+                        <label class="sfr-label">WDTE conf.</label>
+                        <BootstrapCheckbox @bind-Value="_pic.WDTE"></BootstrapCheckbox>
+                        <div class="small">Watchdog enable bit</div>
+                    </div>
                 </div>
             </div>
 
@@ -303,9 +301,10 @@
             @{
                 @for (int i = 0; i < Stack.Length; i++)
                 {
+                    uint address = _pic.Stack.Get(i);
                     <tr class='@(_pic.Stack.Pointer % Stack.Length == i ? "stack-highlight" : "")'>
                         <td>@i</td>
-                        <td>@_pic.Stack.Get(i).ToHexString()</td>
+                        <td title="@(address)d">@(address.ToString("X3"))h</td>
                     </tr>
                 }
             }

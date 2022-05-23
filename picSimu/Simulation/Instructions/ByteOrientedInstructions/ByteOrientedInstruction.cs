@@ -6,8 +6,8 @@
 /// </summary>
 public abstract class ByteOrientedInstruction : Instruction
 {
-    public ushort f { get; set; }
-    public ushort d { get; set; }
+    protected ushort f { get; set; }
+    protected ushort d { get; set; }
 
     protected ByteOrientedInstruction(string binaryString, Pic pic) : base(binaryString, pic)
     {

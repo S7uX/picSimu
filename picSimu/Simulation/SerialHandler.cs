@@ -1,5 +1,6 @@
 ﻿using System.IO.Ports;
 using System.Text;
+using picSimu.Simulation.Ports;
 
 namespace picSimu.Simulation;
 
@@ -34,23 +35,22 @@ public class SerialHandler : IDisposable
             if (_serialPort.BytesToRead > 4)
             {
                 var data = new byte[5];
-                _serialPort.Read(data, 0, 5); // Get Bytes
-                uint valueToSet = 0;
-                valueToSet = (data[0] & (uint) 0b_00001111) << 4; //Get Highbyte of PortA
-                valueToSet |= (data[1] & (uint) 0b_00001111); //Get Lowbyte of PortA
-                _memory.PortA.ExternalValue = valueToSet; //Write PortA
+                _serialPort.Read(data, 0, 5); // get bytes
+                uint valueToSet = (data[0] & (uint) 0b_00001111) << 4;
+                valueToSet |= (data[1] & (uint) 0b_00001111); // get low byte of PortA
+                _memory.PortA.ExternalValue = valueToSet; // write PortA
                 if (valueToSet.IsBitSet(5))
                 {
-                    _memory.MCLRPIN = true;
+                    _memory.MclrPin = true;
                 }
                 else
                 {
-                    _memory.MCLRPIN = false;
+                    _memory.MclrPin = false;
                 }
 
-                valueToSet = (data[2] & (uint) 0b_00001111) << 4; //Get Highbyte of PortA
-                valueToSet |= (data[3] & (uint) 0b_00001111); //Get Lowbyte of PortA
-                _memory.PortB.ExternalValue = valueToSet; //Write PortA
+                valueToSet = (data[2] & (uint) 0b_00001111) << 4; // get high byte of PortA
+                valueToSet |= (data[3] & (uint) 0b_00001111); // get low byte of PortA
+                _memory.PortB.ExternalValue = valueToSet; // write PortA
             }
         }
         catch (Exception ex)
@@ -62,7 +62,7 @@ public class SerialHandler : IDisposable
     private byte[] GenerateSerialPayload()
     {
         var payload = new byte[9];
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         Port portA = _memory.PortA;
         Port portB = _memory.PortB;
         uint trisaReg = _memory.ReadRegister(0x85);

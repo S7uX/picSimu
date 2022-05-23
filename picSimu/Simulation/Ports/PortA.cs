@@ -1,4 +1,4 @@
-namespace picSimu.Simulation;
+namespace picSimu.Simulation.Ports;
 
 public class PortA : Port
 {
@@ -40,6 +40,7 @@ public class PortA : Port
                     }
                 }
             }
+
             base.ExternalValue = value;
         }
     }

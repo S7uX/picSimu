@@ -1,14 +1,16 @@
+using picSimu.Simulation.Ports;
+
 namespace picSimu.Simulation;
 
 public class Memory
 {
-    private Pic _pic;
-    public const uint MemoryLength = 256;
-    public readonly uint[] Registers = new uint[MemoryLength];
+    private readonly Pic _pic;
+    public const uint MEMORY_LENGTH = 256;
+    public readonly uint[] Registers = new uint[MEMORY_LENGTH];
     public readonly Port PortA;
     public readonly Port PortB;
 
-    public bool MCLRPIN = true;
+    public bool MclrPin = true;
 
     public Memory(Pic pic)
     {
@@ -16,7 +18,7 @@ public class Memory
         _pic = pic;
         PortA = new PortA(_pic, 5, 0x85);
         PortB = new PortB(_pic, 6, 0x86);
-        PowerOnReset();
+        _powerOnReset();
     }
 
     public uint Pcl // 8-bits wide
@@ -25,11 +27,11 @@ public class Memory
         set => WriteRegister(2, value & 0b_1111_1111);
     }
 
-    public bool BankSelect => Registers[3].IsBitSet(5);
+    private bool _bankSelect => Registers[3].IsBitSet(5);
 
     #region Reset
 
-    public void PowerOnReset()
+    private void _powerOnReset()
     {
         WriteRegister(0x03, 0b_00011000); // STATUS
         WriteRegister(0x81, 0b_11111111); // OPTION_REG
@@ -39,7 +41,7 @@ public class Memory
 
     public void WatchDogReset()
     {
-        uint status = 0;
+        uint status;
         if (_pic.IsSleeping)
         {
             status = ReadRegister(0x03)
@@ -51,7 +53,7 @@ public class Memory
         else
         {
             // WDT Time-out: normal operation
-            AllOtherResets();
+            _allOtherResets();
             status = ReadRegister(0x03)
                 .SetBitTo0(4)
                 .SetBitTo1(3);
@@ -66,7 +68,7 @@ public class Memory
     /// </summary>
     public void MCLR()
     {
-        AllOtherResets();
+        _allOtherResets();
         if (_pic.IsSleeping)
         {
             uint status = ReadRegister(0x03)
@@ -79,7 +81,7 @@ public class Memory
         _pic.EEPROM.Terminate();
     }
 
-    public void AllOtherResets()
+    private void _allOtherResets()
     {
         _pic.ProgramCounter = 0;
         uint status = ReadRegister(0x03) & 0b_0001_1111;
@@ -91,12 +93,12 @@ public class Memory
         WriteRegister(0x81, 0b_1111_1111); // OPTION
         WriteRegister(0x85, 0b_00011111); // TRISA
         WriteRegister(0x86, 0b_11111111); // TRISB
-        uint eecon_1 = ReadRegister(0x0B);
-        eecon_1.SetBitTo0(0);
-        eecon_1.SetBitTo0(1);
-        eecon_1.SetBitTo0(2);
-        eecon_1.SetBitTo0(4);
-        WriteRegister(0x0B, eecon_1); // EECON_1
+        uint eecon1 = ReadRegister(0x0B);
+        eecon1.SetBitTo0(0);
+        eecon1.SetBitTo0(1);
+        eecon1.SetBitTo0(2);
+        eecon1.SetBitTo0(4);
+        WriteRegister(0x0B, eecon1); // EECON_1
     }
 
     #endregion Reset
@@ -135,7 +137,7 @@ public class Memory
 
     private uint _calculateAddressWithRp0(uint address)
     {
-        if (!BankSelect) // rp0 bit
+        if (!_bankSelect) // rp0 bit
         {
             // bank 0
             return address.SetBitTo0(7);
@@ -246,10 +248,7 @@ public class Memory
                     || (currentOptionRegister.IsBitSet(2) ^ value.IsBitSet(2))
                 )
                 {
-                    if (_pic.Memory != null)
-                    {
-                        _pic.ResetScaler();
-                    }
+                    _pic.ResetScaler();
                 }
 
                 break;
