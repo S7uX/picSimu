@@ -1,0 +1,17 @@
+{"rule":"DE_CASE","sentence":"^\\QDie Arbeit ist im dritten Semester in Zusammenarbeit mit dem Dualen Partner Netze BW GmbH entstanden.\\E$"}
+{"rule":"DE_SENTENCE_WHITESPACE","sentence":"^\\QAbkürzungsverzeichnis\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QEnterprise Resource Planning.\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QSAP Business Planning and Consolidation.\\E$"}
+{"rule":"GERMAN_WORD_REPEAT_RULE","sentence":"^\\Qheight .5pt 2pt 2pt height 1pt\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qheight .5pt 2pt 2pt height 1pt\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qfigure\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qheight -.3ex depth .38ex m #1\\E$"}
+{"rule":"UPPERCASE_SENTENCE_START","sentence":"^\\Qfigure\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qnumbers=left, numbersep=10pt, basicstyle=, aboveskip=, belowcaptionskip=, frame=single, framexleftmargin=1.5pt, framexrightmargin=25pt, backgroundcolor = , rulecolor = , numberstyle=, breaklines=true, framexbottommargin=5pt,\\E$"}
+{"rule":"GERMAN_WORD_REPEAT_RULE","sentence":"^\\Qwrapfigure wrapfigure\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QDINPro[ Path = ./fonts/DINPro/, Extension = .ttf, UprightFont = *-Light, BoldFont = *-Medium, AutoFakeSlant, BoldItalicFont = *-Medium, BoldItalicFeatures=FakeSlant, BoldSlantedFont = *-Medium, BoldSlantedFeatures=FakeSlant ]\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\QDINPro[ Path = ./fonts/DINPro/, Extension = .ttf, UprightFont = *-Regular, ]\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qwrapfigure figure wrapfigure\\E$"}
+{"rule":"GERMAN_SPELLER_RULE","sentence":"^\\Qwrapfigure figure wrapfigure figure\\E$"}
+{"rule":"MODALVERB_FLEKT_VERB","sentence":"^\\QDie Anforderungen in diesem Sinne sind bei einer Software ihre Funktionen: Also die Antwort nach der fachlichen Fragestellung: Was soll die Software können?.\\E$"}
+{"rule":"DE_CASE","sentence":"^\\Q[Schematische Darstellung der S/4 Systemlandschaft] Schematische Darstellung der S/4 Systemlandschaft; zusammengestellt aus \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q \\E(?:Dummy|Ina|Jimmy-)[0-9]+$"}

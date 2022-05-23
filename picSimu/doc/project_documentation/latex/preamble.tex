@@ -1,0 +1,425 @@
+
+% ToDo:
+% extra section level
+% design: table
+% DinPro & Inconsolata: slanted, small-caps
+% wrapfig richtig einrichten (ohne etoolbox)
+% fußnoten hyperlinks
+% komischer header bug
+%
+
+
+
+%----------------- Meta -----------------------
+% Titel, Author, ...
+\input{metadaten.tex} % Metadaten: pdfa.xmpi
+%----------------- Meta -----------------------
+
+
+
+\PassOptionsToPackage{hyperfootnotes=false}{hyperref}
+
+
+
+\documentclass[
+  ngerman, % neue deutsche Rechtschreibung
+  a4paper, % Papiergrösse
+  % twoside, % Zweiseitiger Druck (rechts/links)
+  12pt, % Schriftgrösse
+  parskip=full-,
+  % parskip=half,
+]{scrartcl} % “article”-like class of the koma-script collection - https://ctan.org/pkg/scrartcl
+
+
+
+%----------------- packages ---------------------------------------------------------------------------------------------------
+\usepackage[a-3b]{pdfx} % PDF/X and PDF/A support - https://ctan.org/pkg/pdfx
+\usepackage{babel} % Sprachanpassungen für generierte Texte wie "Inhaltsverzeichnis" etc - https://ctan.org/pkg/babel
+\usepackage[babel, autostyle, german=guillemets]{csquotes} % Context sensitive quotation facilities - https://ctan.org/pkg/csquotes
+\usepackage{xspace} % space commands - https://ctan.org/pkg/xspace
+\usepackage{bookmark} % Bookmarks for hyperref - https://ctan.org/pkg/bookmark
+\usepackage{graphicx} % Enhanced support for graphics - https://ctan.org/pkg/graphicx
+\usepackage{pdfpages} % Include PDF documents - https://ctan.org/pkg/pdfpages
+\usepackage{framed} % framed environemnt and more - https://ctan.org/pkg/framed
+\usepackage{setspace} % Abstand zwischen den Zeilen. \onehalfspacing % https://ctan.org/pkg/setspace
+\usepackage{float} % Improved interface for floating objects - https://ctan.org/pkg/float
+\usepackage{wrapfig} % Produces figures which text can flow around - https://www.ctan.org/pkg/wrapfig
+\usepackage{caption} % Customising captions in floating environments - https://www.ctan.org/pkg/caption
+%----------------- packages ---------------------------------------------------------------------------------------------------
+
+
+
+%-------------------- header & footer ---------------------------------------------------------------------
+\usepackage{scrlayer-scrpage} % Define and manage page styles - https://ctan.org/pkg/scrlayer-scrpage
+\clearpairofpagestyles
+\automark[section]{section} % verstehe ich nicht: vermutlich wegen package clash nötig :/
+\ihead{16F84-Simulator}
+\chead{}
+\ohead{\rightmark} % section titel links
+\ifoot{© Daniel Rittershofer \& Valerio Cocco}
+\ofoot{\pagemark}
+\addtokomafont{pagehead}{\footnotesize\upshape\sffamily}
+\addtokomafont{pagefoot}{\footnotesize\upshape\sffamily}
+\addtokomafont{pagenumber}{\bfseries\footnotesize\sffamily}
+%-------------------- header & footer ---------------------------------------------------------------------
+
+
+
+% Seitenlayout
+\usepackage[
+    a4paper,
+    top=2.5cm,
+    headsep=1cm,
+    left=1.8cm,
+    right=1.8cm,
+    bottom=2.2cm,
+    footskip=1.2cm,
+]{geometry} % interface to document dimensions - https://ctan.org/pkg/geometry
+
+
+
+%------------------ Farben ----------------------------------------------------------
+\usepackage{xcolor} % Extending LATEX color facilities % https://ctan.org/pkg/xcolor
+\definecolor{Mittelblau}{RGB}{55,74,154}
+\definecolor{Horizontorange}{RGB}{255,153,0}
+\definecolor{Grau50}{RGB}{151,151,151}
+\definecolor{Grau70}{RGB}{104,104,104}
+\definecolor{Grau90}{RGB}{85,85,85}
+\definecolor{Anthrazitgrau}{RGB}{59,59,59}
+\definecolor{Gelb}{RGB}{246,194,81}
+\definecolor{solarized-base-2}{RGB}{252,251,247}
+\definecolor{solarized-base-3}{RGB}{253,246,227}
+%------------------ Farben ----------------------------------------------------------
+
+
+
+%-------------------------------------------------- Schrift -------------------------------------------------------------------
+\usepackage{fontspec} % Schrift aus Dateien laden. https://ctan.org/pkg/fontspec
+
+\usepackage{libertineRoman}
+
+\setmonofont{JetBrainsMono}[
+  Path = ./fonts/JetBrainsMono/,
+  Extension = .otf,
+  % 
+  UprightFont = *-Light,
+  BoldFont = *-Bold,
+  ItalicFont = *-LightItalic,
+  BoldItalicFont = *-BoldItalic,
+  Scale=0.8,
+]
+
+\usepackage{microtype} % Subliminal refinements towards typographical perfection - https://ctan.org/pkg/microtype
+%-------------------------------------------------- Schrift -------------------------------------------------------------------
+
+
+
+%-------------------- Bibliographie ------------------------------------------------------------------
+\usepackage[
+	hyperref=true,          % Klickbare Referenzen in der PDF-Datei
+  backref=true,           % In der Literaturref. die Seiten angeben, wo ein \cite dazu steht
+	style=ext-authoryear-comp,
+  maxnames=1,
+  backend=biber,
+  sortlocale=auto
+	sorting=nty]{biblatex} % https://ctan.org/pkg/biblatex
+
+% Blockzitate csquote
+\renewcommand{\mkbibnamefamily}[1]{\textsc{#1}}
+\DeclareFieldFormat{postnote}{\textsl{#1}}
+
+% Abstand der einzelnen Einträge in der Literaturangaben
+\renewcommand{\bibitemsep}{1ex}
+
+% Welche Klammern soll \parencite{..} benutzen? csquote
+\DeclareOuterCiteDelims{parencite}{\bibopenbracket}{\bibclosebracket}
+
+% biblatex's \cite{..} gibt "normalerweise" keine Klammern um die Referenz aus
+% \parencite{..} gibt Klammern aus (die oben definiert sind)
+% Damit das "normale" Verhalten andere BibTeX-Stile realisiert wird, d.h. \cite{..}
+% gibt Klammen aus, wird folgendes definiert:
+% "Merke" ursprünliche Definition unter neuem Namen
+\let\citeNoParen\cite
+% "Redefiniere" \cite:
+\let\cite\parencite
+
+\let\citesNoParen\cites
+% "Redefiniere" \cites:
+\let\cites\parencites
+
+\renewcommand{\mkccitation}[1]{ #1}
+\renewcommand{\mkcitation}[1]{ #1}
+\renewcommand{\mkbegdispquote}[2]{\itshape}{}
+\renewcommand{\mkenddispquote}[2]{\normalfont#2}{}
+
+
+% \bibliographystyle{alphadin}
+\bibliography{literatur} % literatur.bib laden
+%-------------------- Bibliographie ------------------------------------------------------------------
+
+
+
+%--------------------------- listing -----------------------------------------------------
+% \usepackage{listings} % Typeset source code listings - https://ctan.org/pkg/listings
+\usepackage[most, minted]{tcolorbox}
+% \usepackage[most, listings]{tcolorbox}
+
+% Wie sollen die Überschriften benannt werden:
+\renewcommand{\lstlistingname}{Auflistung}
+
+\renewcommand{\lstlistlistingname}{Liste der Auflistungen}
+
+% \lstset{
+%   numbers=left,              % Zeilennummern einfügen
+%   numbersep=10pt,             % Abstand der Nummern zum Text
+%   basicstyle=\ttfamily\small,         % Wie soll der Code gesetzt werden
+%   aboveskip=\intextsep,
+%   belowcaptionskip=\bigskipamount,
+%   frame=single,           % Ein Rahmen um den Code
+%   framexleftmargin=1.5pt,  % Rahmen link von den Zahlen
+%   framexrightmargin=25pt,
+%   backgroundcolor = \color{Gelb!10},
+%   rulecolor = \color{Mittelblau},
+%   numberstyle=\sffamily,
+%   breaklines=true,
+%   framexbottommargin=5pt,
+% }
+  
+% custom syntax highlighting definitions 
+\input{listing_styles.tex}
+%--------------------------- listing -----------------------------------------------------
+
+
+
+%-------------------------------- Index --------------------------
+%\usepackage{makeidx} % Standard package for creating indexes - https://ctan.org/pkg/makeidx
+%\makeindex
+
+% \newcommand{\Def}[2][]{%
+%    \def\OPTARG{#1}%
+%    \def\EMPTY{}%
+%    \ifx\OPTARG\EMPTY\index{#2}\else\index{#1}\fi%
+%    \textbf{#2}\xspace%
+% }
+%-------------------------------- Index --------------------------
+
+
+
+%-------------------------------- Formelverzeichnis --------------
+% \newfloat{eq}{H}{for}[section]
+% \newcommand{\forname}{Formelverzeichnis}
+% \newcommand{\listofequations}{\listof{eq}{\forname}}
+
+% \newcommand{\eqlabel}[2]{
+%     \label{#1}
+%     \addcontentsline{for}{eq}{(\ref{#1}) #2}
+% }
+%-------------------------------- Formelverzeichnis --------------
+
+
+
+%------------------------- Links ------------------------------------------------------
+\PassOptionsToPackage{hyphens}{url} % allows breaks after explicit hyphen characters
+\usepackage{url} % command \url URL-sensitive line breaks - https://ctan.org/pkg/url
+\hypersetup{
+  % 
+  colorlinks=true, % false --> black
+  linkcolor=Anthrazitgrau,
+  filecolor=Anthrazitgrau,
+  citecolor = black,      
+  urlcolor=blue,
+  % pdfborderstyle={/S/U/W 1},
+}
+\urlstyle{sf}
+%------------------------- Links ------------------------------------------------------
+
+
+
+%-------------- reference style ----------------------------------
+\newcommand{\reffont}{\sffamily}% References will be \small
+\AtBeginDocument{%
+  \LetLtxMacro\oldref\ref% Capture \ref in \oldref
+  \renewcommand{\ref}[1]{% Update \ref to use...
+    {\reffont\oldref{#1}}%
+  }%
+}
+\AtBeginDocument{%
+  \LetLtxMacro\oldpageref\pageref% Capture \ref in \oldref
+  \renewcommand{\pageref}[1]{% Update \ref to use...
+    {\reffont\oldpageref{#1}}%
+  }%
+}
+\AtBeginDocument{%
+  \LetLtxMacro\oldnameref\nameref% Capture \ref in \oldref
+  \renewcommand{\nameref}[1]{% Update \ref to use...
+    {\reffont\oldnameref{#1}}%
+  }%
+}
+\AtBeginDocument{%
+  \LetLtxMacro\oldautoref\autoref% Capture \ref in \oldref
+  \renewcommand{\autoref}[1]{% Update \ref to use...
+    {\reffont\oldautoref{#1}}%
+  }%
+}
+%-------------- reference style ----------------------------------
+
+
+
+%------------------ url style ------------------------------------
+\AtBeginDocument{%
+  \LetLtxMacro\oldurl\url% Capture \ref in \oldref
+  \renewcommand{\url}[1]{% Update \ref to use...
+    \ul{\oldurl{#1}}
+  }% ...\reffont
+}
+%------------------ url style ------------------------------------
+
+
+
+%------------------------ Überschriften -------------------------------
+% \addtokomafont{section}{\normalfont\color{Mittelblau}}
+% \addtokomafont{subsection}{\color{Grau90}}
+% \addtokomafont{subsubsection}{\color{black}}
+
+% Abstand
+\RedeclareSectionCommand[
+  runin=false,
+  beforeskip=.3\baselineskip plus 2pt minus 2pt,
+  afterskip=-.1\baselineskip plus 2pt minus 2pt]{section}
+  \RedeclareSectionCommand[
+  runin=false,
+  beforeskip=0.15\baselineskip plus 2pt minus 2pt,
+  afterskip=-.2\baselineskip plus 2pt minus 2pt]{subsection}
+  \RedeclareSectionCommand[
+  runin=false,
+  beforeskip=.1\baselineskip plus 2pt minus 2pt,
+  afterskip=-.5em plus 2pt minus 2pt]{subsubsection}
+  \RedeclareSectionCommand[
+  runin=true,
+  beforeskip=0pt,
+  afterskip=-1em plus 2pt minus 2pt]{paragraph}
+  \RedeclareSectionCommand[
+  runin=false,
+  beforeskip=0pt,
+  afterskip=-1em plus 2pt minus 2pt]{subparagraph}
+%------------------------ Überschriften -------------------------------
+
+
+
+%------------------------ Auflistungen ----------------------------------------------------------------------------
+\usepackage{enumitem} % control layout of itemize, enumerate, description - https://ctan.org/pkg/enumitem?lang=de
+\setlist{itemsep=-1.5ex plus 2pt minus 2pt}
+
+% Auflistungssymbole - http://tug.ctan.org/tex-archive/macros/latex/contrib/koma-script/doc/scrguide.pdf
+%------------------------ Auflistungen ----------------------------------------------------------------------------
+
+
+
+%-------------------- Fußnoten ----------------------------------------
+\addtokomafont{footnote}{\sffamily}
+\addtokomafont{footnotereference}{\sffamily}
+
+\renewcommand{\footnoterule}{%
+  \vfill%
+  \hskip 8pt plus 2pt minus 1pt
+  {%
+    \hrule width 0.65\textwidth height 0.65pt
+  }%
+  \hskip 7pt plus 2pt minus 1pt
+  \vspace{4px}
+}
+%-------------------- Fußnoten ----------------------------------------
+
+
+
+%------------------- captions floating environments -----------------------------------------------------------------------
+% \addtokomafont{captionlabel}{\dinProRegular}
+\usepackage{caption} % Customising captions in floating environments - https://ctan.org/pkg/caption
+\captionsetup{skip=\bigskipamount, textfont=sf, font=small}
+%------------------- captions floating environments -----------------------------------------------------------------------
+
+
+
+%---------------------- figures -------------------------------------------------------------------------
+
+\makeatletter
+
+\newcommand\fs@tbruled{%
+  \def\@fs@cfont{\normalfont}%
+  \let\@fs@capt\floatc@plain
+  \def\@fs@pre{{\color{Mittelblau}\hrule height .5pt \kern2pt} \vspace{\bigskipamount}}%
+  \def\@fs@post{\vspace{\bigskipamount} {\color{Mittelblau} \kern2pt\hrule height 1pt \relax}}%
+  \def\@fs@mid{\vspace{\abovecaptionskip}}%
+  \let\@fs@iftopcapt\iffalse
+}
+
+% remove space above wrap figure
+\newcommand\fs@wrap{
+  \def\@fs@cfont{\rmfamily}\let\@fs@capt\floatc@plain
+  \def\@fs@pre{\vskip -\intextsep}
+  \def\@fs@post{}%
+  \def\@fs@mid{\vspace\abovecaptionskip\relax}%
+  \let\@fs@iftopcapt\iffalse
+}
+
+\makeatother
+
+\floatstyle{tbruled} % apply style
+
+% change styles for the standard float types figure and table
+\restylefloat{figure} 
+
+% wrapfig patch
+\BeforeBeginEnvironment{wrapfigure}{\floatstyle{wrap}\restylefloat{figure}}
+\AfterEndEnvironment{wrapfigure}{\floatstyle{tbruled}\restylefloat{figure}}
+
+
+%---------------------- figures -------------------------------------------------------------------------
+
+
+
+%--------------------- underline ----------------------------------------------
+% new command \ul
+\usepackage{lua-ul} % Underlining for LuaLaTEX - https://ctan.org/pkg/lua-ul
+\newunderlinetype\beginUl{%
+  \leaders\vrule height -.3ex depth .38ex
+}
+\NewDocumentCommand\ul{m}{{\beginUl#1}}
+%--------------------- underline ----------------------------------------------
+
+
+
+%--------------- pdf bookmarks -----------------------------------
+\usepackage{hyperref} % cross-referencing support (hypertext) - https://ctan.org/pkg/hyperref
+\hypersetup{
+  pdfencoding=unicode, % Umlaute in pdfbookmarks
+  bookmarksopen,
+  bookmarksnumbered,
+}
+%--------------- pdf bookmarks -----------------------------------
+
+\usepackage{scrhack} % Patcht Fremdpakete für Zusammenarbeit mit Koma - https://komascript.de/~mkohm/scrguide.pdf
+
+\input{commands.tex}
+
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 

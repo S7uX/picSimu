@@ -1,0 +1,60 @@
+\section{Vorwort}
+Die Dokumentation orientiert sich an der Reihenfolge der Aufgaben im Bewertungsschema.
+Alle Testprogramme funktionieren und die Hardwareansteuerung wurde umgesetzt.
+
+
+
+\section{Simulatoren}
+Entwickelt wurde ein Simulator für den PIC16F84.
+Also eine Software, die das Verhalten dieses Mikrocontrollers nachbildet,
+um PIC16F84 Assemblerprogramme auf einem x86 Computer in einer grafischen Oberfläche Ausführen zu können.
+Hierbei wurde nicht das genaue Verhalten implementiert, mit allen internen Zuständen,
+sondern das Ergebnis nach außen.
+
+\paragraph{Vor- \& Nachteile}
+
+
+
+\section{Funktionsweise}
+
+\subsection{Gewählte Technologien}
+Die Software ist als Webanwendung umgesetzt.
+Es gibt also zwei Teile, in die die Anwendung unterteilt werden kann:
+Front- und Back-End.
+Das Back-End ist in der Programmiersprache C\# geschrieben, mit der \char`\~90~\% des Codes geschrieben wurde,
+die Logik im Front-End in JavaScript.
+Zum Beschreiben der grafischen Oberfläche wurde HTML verwendet.
+
+
+\subsection{Einlesen von Programmen}
+
+\subsubsection{Parser}
+Das Einlesen der LST-Dateien funktioniert über einen Parser im Front-End,
+der mit dem Parsergenerator Tree-sitter\urlfootnote{https://tree-sitter.github.io/tree-sitter/} erstellt wurde.
+Tree-sitter generiert aus einer LR(1) Grammatik C-Code für einen Parser,
+der zu WebAssembly compiliert wird, ein Bytecode-Standard der W3C zum Ausführen von Programmen innerhalb des Webbrowsers.
+Die Anbindung an die JS-API des Browsers funktioniert über eine 
+Bibliothek\urlfootnote{https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_web} des Tree-sitter Projekts.
+Das stellt den Grund dafür, dass dieser Teil der Logik im Front-End ist. 
+
+\js[Auszug der Grammatik zum Einlesen der LST-Dateien (\texttt{tree-sitter-pic/grammar.js}).]{./listings/grammatik.js}
+
+
+\subsubsection{Befehlsdecodierung}
+Die Befehlsdecodierung funktioniert über ein Interpretieren der geparsten Opcodes Strings als Zahlen.
+Die Zahlen werden wieder in Strings der Zahlen in Binärdarstellung umgewandelt.
+
+
+\subsection{Grafische Oberfläche}
+
+\subsubsection{Bedienung}
+
+
+
+\section{Zusammenfassung}
+
+\subsection{Ergebnis}
+
+
+\subsection{Persönliches Fazit (Valerio Cocco)}
+

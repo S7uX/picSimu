@@ -1,0 +1,149 @@
+% enabled: false
+%
+%
+%
+% \lstdefinelanguage{docker}{
+%   keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+%   keywordstyle=\color{blue}\bfseries,
+%   identifierstyle=\color{black},
+%   sensitive=false,
+%   comment=[l]{\#},
+%   commentstyle=\color{purple}\ttfamily,
+%   stringstyle=\color{red}\ttfamily,
+%   morestring=[b]',
+%   morestring=[b]"
+% }
+
+% \lstdefinelanguage{docker-compose}{
+%   keywords={image, environment, ports, container_name, ports, volumes, links},
+%   keywordstyle=\color{blue}\bfseries,
+%   identifierstyle=\color{black},
+%   sensitive=false,
+%   comment=[l]{\#},
+%   commentstyle=\color{purple}\ttfamily,
+%   stringstyle=\color{red}\ttfamily,
+%   morestring=[b]',
+%   morestring=[b]"
+% }
+% \lstdefinelanguage{docker-compose-2}{
+%   keywords={version, volumes, services},
+%   keywordstyle=\color{blue}\bfseries,
+%   keywords=[2]{image, environment, ports, container_name, ports, links, build},
+%   keywordstyle=[2]\color{olive}\bfseries,
+%   identifierstyle=\color{black},
+%   sensitive=false,
+%   comment=[l]{\#},
+%   commentstyle=\color{purple}\ttfamily,
+%   stringstyle=\color{red}\ttfamily,
+%   morestring=[b]',
+%   morestring=[b]"
+% }
+
+% \lstset{basicstyle=\ttfamily,
+%   showstringspaces=false,
+%   commentstyle=\color{red},
+%   keywordstyle=\color{blue},
+%   inputencoding=utf8,
+%   extendedchars=true
+% }
+
+% \newcommand\YAMLcolonstyle{\color{red}\mdseries}
+% \newcommand\YAMLkeystyle{\color{black}\bfseries\ttfamily}
+% \newcommand\YAMLvaluestyle{\color{blue}\mdseries}
+
+% \makeatletter
+
+% % here is a macro expanding to the name of the language
+% % (handy if you decide to change it further down the road)
+% \newcommand\language@yaml{yaml}
+
+% \expandafter\expandafter\expandafter\lstdefinelanguage
+% \expandafter{\language@yaml}
+% {
+%   keywords={true,false,null,y,n},
+%   keywordstyle=\color{darkgray}\bfserie,
+%   basicstyle=\YAMLkeystyle,                                 % assuming a key comes first
+%   sensitive=false,
+%   comment=[l]{\#},
+%   morecomment=[s]{/*}{*/},
+%   commentstyle=\color{purple},
+%   stringstyle=\YAMLvaluestyle,
+%   moredelim=[l][\color{orange}]{\&},
+%   moredelim=[l][\color{magenta}]{*},
+%   moredelim=**[il][\YAMLcolonstyle{:}\YAMLvaluestyle]{:},   % switch to value style at :
+%   morestring=[b]',
+%   morestring=[b]",
+%   literate =    {---}{{\ProcessThreeDashes}}3
+%                 {>}{{\textcolor{red}\textgreater}}1     
+%                 {|}{{\textcolor{red}\textbar}}1 
+%                 {\ -\ }{{\mdseries\ -\ }}3,
+% }
+
+% % switch to key style at EOL
+% \lst@AddToHook{EveryLine}{\ifx\lst@language\language@yaml\YAMLkeystyle\fi}
+% \makeatother
+
+\usemintedstyle{xcode}
+\renewcommand{\theFancyVerbLine}{\tiny\sffamily \textcolor{black}{\arabic{FancyVerbLine}}}
+\newtcbinputlisting{js}[2][]{%
+  listing engine=minted,
+  % listing engine=listings,
+  minted language=javascript,
+  listing only,
+  breakable,
+  enhanced,
+  minted options = {
+    linenos, 
+    breaklines=true, 
+    breakbefore=., 
+    fontsize=\footnotesize, 
+    numbersep=2.1mm,
+    xleftmargin=0.8mm,
+  baselinestretch=1.2
+  },
+    % listing options={
+    %     language=Assembler,
+    %     basicstyle=\ttfamily\footnotesize,
+    %     numbers=left,
+    %     breaklines=true,
+    %     numberstyle=\tiny\ttfamily,
+    %     xleftmargin=0mm,
+    %     numbersep=2.5mm,
+    % },
+  overlay={%
+      \begin{tcbclipinterior}
+          \fill[solarized-base-3] (frame.south west) rectangle ([xshift=4.6mm]frame.north west);
+      \end{tcbclipinterior}
+  },
+  colframe=black,
+  boxrule=0.8pt,
+  colback=solarized-base-2,
+  sharp corners,
+  top=0pt,
+  bottom=0pt,
+  % title=#1,
+  after={\captionof*{figure}{#1}},
+  listing file =#2
+}
+
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% 
