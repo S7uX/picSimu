@@ -8,8 +8,7 @@ public class ADDLW : LiteralInstruction
 
     public override int Execute()
     {
-        uint WOld = Pic.WRegister;
-        uint Wnew = WOld + k;
+        uint Wnew = Pic.WRegister + k;
         if (Wnew == 0)
         {
             Pic.Memory.SetZeroFlag(true);
@@ -28,9 +27,9 @@ public class ADDLW : LiteralInstruction
             Pic.Memory.SetCarryFlag(false);
         }
 
-        uint val1 = WOld & 15; //Maskierung auf nur lowest 4 Bit
+        uint dc = Pic.WRegister & 15; //Maskierung auf nur lowest 4 Bit
         int val2 = k & 15; //Maskierung auf nur lowest 4 Bit
-        if (val1 + val2 > 15)
+        if (dc + val2 > 15)
         {
             Pic.Memory.SetDigitCarryFlag(true);
         }

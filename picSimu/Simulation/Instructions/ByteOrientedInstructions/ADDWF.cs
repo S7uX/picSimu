@@ -28,30 +28,22 @@ public class ADDWF : ByteOrientedInstruction
             Pic.Memory.SetCarryFlag(false);
         }
 
+        uint dc = (Pic.WRegister & 0b_0000_1111) + (Pic.Memory.ReadRegisterForInstructions(f) & 0b_0000_1111);
+        if (dc > 15)
+        {
+            Pic.Memory.SetDigitCarryFlag(true);
+        }
+        else
+        {
+            Pic.Memory.SetDigitCarryFlag(false);
+        }
+
         if (d == 0)
         {
-            if (Pic.WRegister < 15 && result > 15)
-            {
-                Pic.Memory.SetDigitCarryFlag(true);
-            }
-            else
-            {
-                Pic.Memory.SetDigitCarryFlag(false);
-            }
-
             Pic.WRegister = result;
         }
         else
         {
-            if (Pic.Memory.ReadRegisterForInstructions(f) < 15 && result > 15)
-            {
-                Pic.Memory.SetDigitCarryFlag(true);
-            }
-            else
-            {
-                Pic.Memory.SetDigitCarryFlag(false);
-            }
-
             Pic.Memory.WriteRegisterForInstructions(f, result);
         }
 

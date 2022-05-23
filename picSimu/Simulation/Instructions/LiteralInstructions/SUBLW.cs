@@ -21,8 +21,8 @@ public class SUBLW : LiteralInstruction
 
         if (Wnew > 255)
         {
-            Wnew &= 255; //Maskierung auf nur lowest 8 Bit
-            Wnew = 256 - Wnew; //Magic
+            Wnew &= 255; // Maskierung auf nur lowest 8 Bit
+            Wnew = 256 - Wnew; // Magic
             Pic.Memory.SetCarryFlag(true);
         }
         else
