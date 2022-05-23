@@ -8,8 +8,7 @@ public class SUBLW : LiteralInstruction
 
     public override int Execute()
     {
-        uint WOld = Pic.WRegister;
-        uint Wnew = WOld - k;
+        uint Wnew = k - Pic.WRegister;
         if (Wnew == 0)
         {
             Pic.Memory.SetZeroFlag(true);
@@ -22,18 +21,18 @@ public class SUBLW : LiteralInstruction
         if (Wnew > 255)
         {
             Wnew &= 255; // Maskierung auf nur lowest 8 Bit
-            Wnew = 256 - Wnew; // Magic
-            Pic.Memory.SetCarryFlag(true);
+            Wnew = 256 - Wnew; // Overflow beheben
+            Pic.Memory.SetCarryFlag(false);
         }
         else
         {
-            Pic.Memory.SetCarryFlag(false);
+            Pic.Memory.SetCarryFlag(true);
         }
 
-        uint val1 = WOld & 15; //Maskierung auf nur lowest 4 Bit
-        int val2 = k & 15; //Maskierung auf nur lowest 4 Bit
+        uint Wlow = Pic.WRegister & 15; //Maskierung auf nur lowest 4 Bit
+        int Klow = k & 15; //Maskierung auf nur lowest 4 Bit
 
-        if (val1 - val2 <= 0) //inklusive 0 weil 2er komplement? also vielleicht :D
+        if (Klow - Wlow <= 0) //inklusive 0 weil 2er komplement? also vielleicht :D
         {
             Pic.Memory.SetDigitCarryFlag(true);
         }
