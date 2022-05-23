@@ -32,7 +32,7 @@ public class SUBLW : LiteralInstruction
         uint WLow = Pic.WRegister & 15; //Maskierung auf nur lowest 4 Bit
         int KLow = k & 15; //Maskierung auf nur lowest 4 Bit
 
-        if ((int)KLow - WLow < 0) //inklusive 0 weil 2er komplement? also vielleicht :D
+        if ((int)KLow - WLow < 0)
         {
             Pic.Memory.SetDigitCarryFlag(false);
         }

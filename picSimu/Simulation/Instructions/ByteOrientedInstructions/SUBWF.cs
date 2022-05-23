@@ -31,7 +31,7 @@ public class SUBWF : ByteOrientedInstruction
         uint WLow = Pic.WRegister & 15; //Maskierung auf nur lowest 4 Bit
         uint KLow = Pic.Memory.ReadRegisterForInstructions(f) & 15; //Maskierung auf nur lowest 4 Bit
 
-        if ((int)KLow - WLow < 0) //inklusive 0 weil 2er komplement? also vielleicht :D
+        if ((int)KLow - WLow < 0)
         {
             Pic.Memory.SetDigitCarryFlag(false);
         }
