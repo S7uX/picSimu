@@ -29,16 +29,16 @@ public class SUBLW : LiteralInstruction
             Pic.Memory.SetCarryFlag(true);
         }
 
-        uint Wlow = Pic.WRegister & 15; //Maskierung auf nur lowest 4 Bit
-        int Klow = k & 15; //Maskierung auf nur lowest 4 Bit
+        uint WLow = Pic.WRegister & 15; //Maskierung auf nur lowest 4 Bit
+        int KLow = k & 15; //Maskierung auf nur lowest 4 Bit
 
-        if (Klow - Wlow <= 0) //inklusive 0 weil 2er komplement? also vielleicht :D
+        if ((int)KLow - WLow < 0) //inklusive 0 weil 2er komplement? also vielleicht :D
         {
-            Pic.Memory.SetDigitCarryFlag(true);
+            Pic.Memory.SetDigitCarryFlag(false);
         }
         else
         {
-            Pic.Memory.SetDigitCarryFlag(false);
+            Pic.Memory.SetDigitCarryFlag(true);
         }
 
         Pic.WRegister = Wnew;
