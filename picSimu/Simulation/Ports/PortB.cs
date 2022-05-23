@@ -28,7 +28,7 @@ public class PortB : Port
                     bool edgeMode = Memory.ReadRegister(0x81).IsBitSet(6); // OPTION_REG<6> - NTEDG
                     if (currentValue != newValue) // check edge
                     {
-                        if (!newValue && edgeMode) // NTEDG := 1 --> interrupt on falling edge.
+                        if (newValue && edgeMode) // NTEDG := 1 --> interrupt on falling edge.
                         {
                             // Interrupt is NOT masked
                             Pic.Interrupt();
@@ -36,7 +36,7 @@ public class PortB : Port
                                 Memory.ReadRegister(0x0B)
                                     .SetBitTo1(1)); // (INTF) Set Flag that RB0/INT Interrupt occured
                         }
-                        else if (newValue && !edgeMode) // NTEDG := 0 --> interrupt on rising edge.
+                        else if (!newValue && !edgeMode) // NTEDG := 0 --> interrupt on rising edge.
                         {
                             // Interrupt is NOT masked
                             Pic.Interrupt();
