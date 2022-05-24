@@ -5,7 +5,7 @@ Alle Testprogramme funktionieren und die Hardwareansteuerung wurde umgesetzt.
 
 
 \section{Simulatoren}
-Entwickelt wurde ein Simulator für den PIC16F84.
+Entwickelt wurde ein Simulator für den PIC16F84:
 Also eine Software, die das Verhalten dieses Mikrocontrollers nachbildet,
 um PIC16F84 Assemblerprogramme auf einem x86 Computer in einer grafischen Oberfläche Ausführen zu können.
 Hierbei wurde nicht das genaue Verhalten implementiert, mit allen internen Zuständen,
@@ -23,31 +23,103 @@ Es gibt also zwei Teile, in die die Anwendung unterteilt werden kann:
 Front- und Back-End.
 Das Back-End ist in der Programmiersprache C\# geschrieben, mit der \char`\~90~\% des Codes geschrieben wurde,
 die Logik im Front-End in JavaScript.
-Zum Beschreiben der grafischen Oberfläche wurde HTML verwendet.
+Zum Beschreiben der grafischen Oberfläche wird HTML verwendet.
+Es wird das Blazor\urlfootnote{https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor} Web-Framework verwendet.
+Der Grund für die Wahl von Blazor ist,
+diese für uns unbekannte Technologie beim Entwickeln dieses Projekts kennenzulernen. 
 
 
 \subsection{Einlesen von Programmen}
-
-\subsubsection{Parser}
 Das Einlesen der LST-Dateien funktioniert über einen Parser im Front-End,
 der mit dem Parsergenerator Tree-sitter\urlfootnote{https://tree-sitter.github.io/tree-sitter/} erstellt wurde.
 Tree-sitter generiert aus einer LR(1) Grammatik C-Code für einen Parser,
 der zu WebAssembly compiliert wird, ein Bytecode-Standard der W3C zum Ausführen von Programmen innerhalb des Webbrowsers.
 Die Anbindung an die JS-API des Browsers funktioniert über eine 
 Bibliothek\urlfootnote{https://github.com/tree-sitter/tree-sitter/tree/master/lib/binding_web} des Tree-sitter Projekts.
-Das stellt den Grund dafür, dass dieser Teil der Logik im Front-End ist. 
+Das ist der Grund dafür, dass dieser Teil der Logik im Front-End ist.
 
-\js[Auszug der Grammatik zum Einlesen der LST-Dateien (\texttt{tree-sitter-pic/grammar.js}).]{./listings/grammatik.js}
+\js[Auszug der Grammatik für LST-Dateien (\texttt{tree-sitter-pic/grammar.js}).]{./listings/grammatik.js}
 
+Der Parser baut einen konkreten Syntaxbaum auf.
+Durch Traversieren des Baumes wird der Text (zum Anzeigen mit Syntaxhervorhebung) in HTML-Elemente verpackt,
+weiter werden durch das Traversieren die relevanten Informationen für den Simulator extrahiert:
+
+\begin{itemize}
+    \item Position im Programmspeicher
+    \item Opcode 
+    \item Zeilennummer im Quellcode (für Breakpoints)
+\end{itemize}
+
+Diese Informationen werden an das Back-End (den C\# Teil) übergeben,
+der damit ein \texttt{Pic}-Objekt initialisiert, das Hauptobjekt des Simulators.
+
+\subsection{\texttt{Pic}-Objekt}
+Das Hauptobjekt im Simulator im vom Typt \texttt{Pic}.
+Es enthält alle simulierten Elemente des PIC16F84,
+wie z. B. den Haupt-, Programmspeicher und das W-Register. 
+
+
+\subsection{Befehle}
 
 \subsubsection{Befehlsdecodierung}
-Die Befehlsdecodierung funktioniert über ein Interpretieren der geparsten Opcodes Strings als Zahlen.
-Die Zahlen werden wieder in Strings der Zahlen in Binärdarstellung umgewandelt.
+Die Befehlsdecodierung funktioniert über das Interpretieren der geparsten Opcode-Zeichenketten als Zahlen.
+Die Zahlen werden wieder in Strings mit Binärdarstellung der Zahlen umgewandelt,
+für einen Vergleich vom Stringanfang um den Befehl zu bestimmen.
+
+\cs[Logik zum dekodieren der Opcode-Strings (\texttt{Simulation/InstructionDecoder.cs}).]{./listings/instruction-decoder.cs}
+
+\subsubsection{Befehlsmodellierung}
+Befehle werden durch Klassen modelliert (z. B. \texttt{ADDWF}).
+Sie erben alle von der abstrakten Klasse \texttt{Instruction}.
+
+\paragraph{Programmspeicher}
+Der Programmspeicher ist ein Array vom Typ \texttt{Instruction},
+der die alle dekodierten Befehle in Reihenfolge der LST-Datei einhält. 
+
+\texttt{Instruction}-Objekte haben eine Referenz auf ihr zugehöriges \texttt{Pic}-Objekt
+und verändern durch Aufrufen ihrer \texttt{Execute}-Methode den Zustand von diesem,
+beispielsweise die Flags im Statusregister.
+
+\cs[\texttt{Execute}-Methode vom MOVLW-Befehl (\texttt{Simulation/Instructions/LiteralInstructions/MOVLW.cs})]{./listings/movlw.cs}
+
+\paragraph{Befehlsabarbeitung}
+Die Befehlsabarbeitung funktioniert über eine Schleife,
+die mit dem Programmzähler (als Index) den aktuellen Befehl aus dem Programmspeicher-Array holt.
+
+
+\subsection{RAM}
+
+
+\subsection{Programmzähler}
+
+
+\subsection{Timerfunktion}
+
+
+\subsection{Interrupts}
+
+
+\subsection{Sleep}
+
+
+\subsection{Watchdog}
+
+
+\subsection{EEPROM}
+
+
+\subsection{I/O Ausgangslatch}
+
+
+\subsection{Hardwareanbindung}
+
 
 
 \subsection{Grafische Oberfläche}
 
 \subsubsection{Bedienung}
+
+\subsubsection{Breakpoints}
 
 
 

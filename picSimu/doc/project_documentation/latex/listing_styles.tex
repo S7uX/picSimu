@@ -85,10 +85,52 @@
 
 \usemintedstyle{xcode}
 \renewcommand{\theFancyVerbLine}{\tiny\sffamily \textcolor{black}{\arabic{FancyVerbLine}}}
+
 \newtcbinputlisting{js}[2][]{%
   listing engine=minted,
   % listing engine=listings,
   minted language=javascript,
+  listing only,
+  breakable,
+  enhanced,
+  minted options = {
+    linenos, 
+    breaklines=true, 
+    breakbefore=., 
+    fontsize=\footnotesize, 
+    numbersep=2.1mm,
+    xleftmargin=0.8mm,
+  baselinestretch=1.2
+  },
+    % listing options={
+    %     language=Assembler,
+    %     basicstyle=\ttfamily\footnotesize,
+    %     numbers=left,
+    %     breaklines=true,
+    %     numberstyle=\tiny\ttfamily,
+    %     xleftmargin=0mm,
+    %     numbersep=2.5mm,
+    % },
+  overlay={%
+      \begin{tcbclipinterior}
+          \fill[solarized-base-3] (frame.south west) rectangle ([xshift=4.6mm]frame.north west);
+      \end{tcbclipinterior}
+  },
+  colframe=black,
+  boxrule=0.8pt,
+  colback=solarized-base-2,
+  sharp corners,
+  top=0pt,
+  bottom=0pt,
+  % title=#1,
+  after={\captionof*{figure}{#1}},
+  listing file =#2
+}
+
+\newtcbinputlisting{cs}[2][]{%
+  listing engine=minted,
+  % listing engine=listings,
+  minted language=cs,
   listing only,
   breakable,
   enhanced,

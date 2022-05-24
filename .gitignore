@@ -3,3 +3,5 @@ obj/
 .idea/
 node_modules
 build
+out/
+_minted*/

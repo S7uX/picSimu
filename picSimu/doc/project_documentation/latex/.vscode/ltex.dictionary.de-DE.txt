@@ -52,3 +52,9 @@ Adressierbarkeit
 GET
 DELETE
 boolean
+Blazor
+LR
+Front-End
+Valerio
+Cocco
+TINF
