@@ -87,10 +87,29 @@ Die Befehlsabarbeitung funktioniert über eine Schleife,
 die mit dem Programmzähler (als Index) den aktuellen Befehl aus dem Programmspeicher-Array holt.
 
 
-\subsection{RAM}
+\subsection{Hauptspeicher}
+Der Hautspeicher ist als Klasse \texttt{Memory} umgesetzt,
+die ein Array vom Typ \texttt{uint} für die Regsiter enthält.
+Das Lesen und Schreiben in den Hautspeicher funktioniert über spezielle Methoden: \texttt{ReadRegister} und \texttt{WriteRegsiter}.
+In diesen Methoden werden Bedingungen wie die Adressspiegelung für spezielle Regsiter umgesetzt.
+
+\cs[Teil der Switch-Case in der \texttt{WriteRegister}-Methode]{./listings/switch-case-memory.cs}
+
+Weiter gibt es zwei extra Methoden für das Lesen und Schreiben die das \texttt{RP0}-Bit beachten. 
 
 
 \subsection{Programmzähler}
+Der Programmzähler wird in der Variable \texttt{\_programCounter} in \texttt{Pic} gespeichert.
+Das Schreiben funktioniert über einen Setter,
+der immer das Pcl-Regsiter aktualisiert.
+Falls in das Pcl-Register geschrieben wird,
+wird die \_programCounter Variable aktualisiert (von der \texttt{Memory}-Klasse aus).
+
+\paragraph{PCLATH}
+Der Wert im PCLATH-Regsiter wird bei jedem \texttt{GOTO} und \texttt{CALL} Befehl beachtet.
+Hier wird in der \texttt{Execute}-Methode die \texttt{\_programCounter} Variable aktualisiert.
+Die Beachtung für z. B. ein \texttt{ADDWF} wird auch in der \texttt{Memory}-Klasse umgesetzt,
+wenn in das PCL-Regsiter geschrieben wird. 
 
 
 \subsection{Timerfunktion}
