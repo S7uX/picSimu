@@ -8,71 +8,16 @@
 
 \input{titelseite.tex}
 
+\pagenumbering{Roman}
+\pdfbookmark[section]{\contentsname}{toc}%
+\tableofcontents
+\clearpage
+
 \pagenumbering{arabic}
 \onehalfspacing
 
 \input{inhalt.tex}
 
-
-
-%---------------------- Verzeichnisse ------------------------------------------------------------
-{
-  % clearpage je nach belieben einfügen
-  %------------------ Inhaltsverzeichnis -----------------------------------------
-  \pdfbookmark[section]{\contentsname}{toc}%
-  % \tableofcontents
-  \clearpage
-  %------------------ Inhaltsverzeichnis -----------------------------------------
-
-  %------------------- Liste der Tabellen ----------------------------------------
-  % \pdfbookmark[subsection]{\listtablename}{lot}
-  % \listoftables
-  % \clearpage
-  %------------------- Liste der Tabellen ----------------------------------------
-
-  %------------------- Liste der Listings ----------------------------------------
-  % \pdfbookmark[subsection]{\lstlistlistingname}{lol}
-  % \lstlistoflistings
-  % \clearpage
-  %------------------- Liste der Listings ----------------------------------------
-
-  %------------------- Liste der Formeln -----------------------------------------
-  % \pdfbookmark[subsection]{\forname}{for}
-  % \listofequations
-  %------------------- Liste der Formeln -----------------------------------------
-}
-\clearpage
-%---------------------- Verzeichnisse ------------------------------------------------------------
-    
-
-%---------------------- Inhalt -----------------------------
-% Jetzt kommt der "eigentliche" Text
-% \input{inhalt/einleitung.tex}
-% \input{inhalt/theoretische_grundlagen.tex}
-% \input{inhalt/entwicklung_des_prototyps.tex}
-% \input{inhalt/ende.tex}
-
-\clearpage
-%---------------------- Inhalt -----------------------------
-
-
-%---------------------- Literaturverzeichniss --------------
-% \def\refname{Literaturverzeichnis} % Überschrift
-% \printbibliography[heading=bibintoc]
-%---------------------- Literaturverzeichniss --------------
-
-
-% \pagenumbering{Roman} 
-%---------------------- Anhang -----------------------------
-% \appendix
-% \addcontentsline{toc}{section}{Anhang}
-%---------------------- Anhang -----------------------------
-
-
-%---------------------- Indexseiten ------------------------
-% \addcontentsline{toc}{section}{Index}
-% \printindex
-%---------------------- Indexseiten ------------------------
 
 \end{document}
 % 

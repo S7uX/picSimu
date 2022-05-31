@@ -7,10 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="doc\gui" />
-        <Folder Include="doc\project_documentation" />
+<!--        <Compile Exclude="doc/*"/>-->
+        <!--        <Folder Exclude="doc"/>-->
         <Folder Include="tree-sitter-pic\node_modules\.bin" />
     </ItemGroup>
+
 
     <ItemGroup>
         <Content Include="tree-sitter-pic\node_modules\.package-lock.json" />
