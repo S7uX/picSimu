@@ -31,7 +31,6 @@ public class Pic : IDisposable
     public double Cycles = 0;
     public uint Scaler = 0;
     public double FrequencyInKhz = 4000;
-    private SerialHandler? _serialHandler;
     public uint WatchdogCycles = 0;
 
     public bool IsSleeping = false;
@@ -129,8 +128,6 @@ public class Pic : IDisposable
                     _currentInstruction.CycleTwo = false;
                 }
             }
-
-            _serialHandler?.Write();
         }
         else // PD = 0 --> Sleeping
         {
@@ -333,7 +330,6 @@ public class Pic : IDisposable
 
     public void Dispose()
     {
-        _serialHandler?.Dispose();
         StopRun();
     }
 }

@@ -1,4 +1,10 @@
+const parserIframe = document.createElement("iframe")
+parserIframe.setAttribute("src", "parser-ifrmae.html")
+parserIframe.setAttribute("hidden", "hidden")
+document.body.appendChild(parserIframe)
+
 async function createTree(sourceCode) {
+    const Parser = parserIframe.contentWindow.TreeSitter
     await Parser.init();
     const parser = new Parser;
     const PicLang = await Parser.Language.load("wasm/tree-sitter-pic.wasm")

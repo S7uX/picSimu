@@ -1,4 +1,4 @@
-@page "/"
+﻿@page "/"
 @using picSimu.Simulation
 @implements IAsyncDisposable
 @inject IJSRuntime Js
@@ -63,9 +63,9 @@
             <div class="dot-flashing"></div>
         </div>
         <div class="sleeping @(!_pic.IsSleeping ? "visually-hidden" : "")">
-          <span>z</span>
-          <span>z</span>
-          <span>z</span>
+            <span>z</span>
+            <span>z</span>
+            <span>z</span>
         </div>
         <div style="margin-left: auto"></div>
         <label class="sfr-label">PC: </label>
@@ -192,8 +192,9 @@
 
 <div style="margin-left: 0.5em" class="vr"></div>
 
-<div class="d-flex flex-column justify-content-around">
+<div id="right-control" class="justify-content-around">
 
+<div style="overflow-y: auto; max-height: 100%; overflow-x: hidden">
 <div class="d-flex flex-row justify-content-around">
     <div id="timing-control" class="d-flex flex-column">
         <label style="align-self: center;" class="h5">Timing</label>
@@ -482,6 +483,7 @@
 </div>
 @* Port B *@
 
+</div>
 </div>
 </div>
 </div>
