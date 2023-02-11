@@ -1,0 +1,76 @@
+@font-face {
+    font-family: 'JetBrainsMono';
+    src: url('../font/JetBrainsMono-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+
+.other {
+    color: #d27728 !important;
+}
+
+.mnemonic {
+    color: blue !important;
+}
+
+.comment {
+    color: #008000 !important;
+}
+
+.row-number {
+    color: #343232 !important;
+}
+
+.instruction {
+    color: #6f42c1 !important;
+}
+
+.code-block {
+    flex-grow: 1;
+}
+
+.code-block pre {
+    font-family: JetBrainsMono, monospace;
+    margin: 0;
+    width: 100%;
+    padding: 1ex .5em 1ex .7ex;
+    display: table;
+}
+
+.code-block-disabled pre {
+    background-color: #eee8d5;
+}
+
+.code-block-breakpoints pre {
+    width: 2em;
+    white-space: break-spaces;
+    background-color: #c7d5de;
+    border-right-style: solid;
+    border-width: 1px;
+    border-color: #93a1a1;
+}
+
+.code-line {
+    display: block;
+}
+
+.code-line-highlight {
+    background-color: #fff900;
+}
+
+#code-div {
+    flex: 1;
+    height: fit-content;
+    overflow-x: auto;
+    margin-bottom: auto;
+}
+
+.code-block {
+    background-color: #fdf6e3;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #93a1a1;
+}
+
+
+
