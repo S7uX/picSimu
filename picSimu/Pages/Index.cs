@@ -41,7 +41,7 @@ public partial class Index : ComponentBase
     {
         if (firstRender)
         {
-            _module = await Js.InvokeAsync<IJSObjectReference>("import", "./js/parser.js");
+            _module = await Js.InvokeAsync<IJSObjectReference>("import", "/js/parser.js");
 
             DotNetObjectReference<Index> dotNetObjRef = DotNetObjectReference.Create(this);
             await _module.InvokeVoidAsync("setDotNetObjRef", dotNetObjRef);
