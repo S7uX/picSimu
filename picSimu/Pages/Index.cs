@@ -161,7 +161,7 @@ public partial class Index : ComponentBase
                 SimulationStep();
             }
 
-            await Task.Yield(); // give execution context back to gui - continue when gui awaits something
+            await Task.Delay(1); // give execution context back to gui - continue when gui awaits something
         }
 
         StopSimulation();
